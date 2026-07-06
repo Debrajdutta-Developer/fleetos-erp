@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../trips/presentation/trip_providers.dart';
-import '../presentation/dashboard_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
-import '../../drivers/domain/driver_entity.dart';
 
 class DashboardStats {
   final int activeFleetCount;

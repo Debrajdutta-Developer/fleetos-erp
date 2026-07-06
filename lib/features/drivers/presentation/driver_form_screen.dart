@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
+import '../../auth/presentation/auth_providers.dart';
 import '../domain/driver_entity.dart';
 import 'driver_providers.dart';
 
@@ -81,7 +82,6 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final user = ref.read(currentUserProvider);
-    final companyId = user?.companyId ?? '';
 
     final driver = DriverEntity(
       id: widget.driverId ?? '',

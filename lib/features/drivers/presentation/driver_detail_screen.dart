@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
-import '../../trips/presentation/trip_providers.dart';
 import '../domain/driver_entity.dart';
 import 'driver_providers.dart';
 
@@ -22,8 +21,6 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final driversAsync = ref.watch(driversStreamProvider);
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isDesktop = screenWidth > 992;
 
     return Scaffold(
       appBar: AppBar(
@@ -195,12 +192,13 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                     ),
                                   );
                                   if (confirmed == true) {
+                                    final router = GoRouter.of(context);
                                     final success = await ref
                                         .read(driverListControllerProvider
                                             .notifier)
                                         .deleteDriver(driver.id);
-                                    if (success && mounted) {
-                                      context.pop();
+                                    if (success) {
+                                      router.pop();
                                     }
                                   }
                                 },

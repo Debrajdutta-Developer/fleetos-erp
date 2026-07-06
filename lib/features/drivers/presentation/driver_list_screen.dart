@@ -20,7 +20,6 @@ class _DriverListScreenState extends ConsumerState<DriverListScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final driversAsync = ref.watch(driversStreamProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;

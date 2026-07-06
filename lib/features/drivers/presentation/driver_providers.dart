@@ -4,7 +4,7 @@ import '../data/driver_repository_impl.dart';
 import '../domain/driver_entity.dart';
 import '../domain/driver_repository.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
-import '../../vehicles/domain/vehicle_entity.dart';
+import '../../trips/domain/trip_entity.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../trips/domain/audit_log_entity.dart';
 
@@ -44,6 +44,30 @@ class DriverFormState {
       isCompleted: isCompleted ?? this.isCompleted,
     );
   }
+}
+
+TripEntity _dummyTrip(String companyId) {
+  return TripEntity(
+    id: '',
+    companyId: companyId,
+    vehicleId: '',
+    vehicleLicensePlate: '',
+    driverId: '',
+    driverName: '',
+    customerId: '',
+    customerName: '',
+    pickupLocation: '',
+    deliveryLocation: '',
+    cargoType: '',
+    coalQuantity: 0.0,
+    freightAmount: 0.0,
+    advancePayment: 0.0,
+    permitExpense: 0.0,
+    status: 'draft',
+    statusHistory: [],
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
 }
 
 /// Controller managing Driver Creation and Updates
@@ -96,8 +120,7 @@ class DriverFormController extends StateNotifier<DriverFormState> {
         timestamp: DateTime.now(),
       );
       // Hacky bypass to write audit log (createTrip writes to audit_logs collection)
-      await tripRepo.createTrip(
-          companyId, anyTripPlaceholder(companyId), auditLog);
+      await tripRepo.createTrip(companyId, _dummyTrip(companyId), auditLog);
 
       state = const DriverFormState(isCompleted: true);
       return true;
@@ -106,11 +129,6 @@ class DriverFormController extends StateNotifier<DriverFormState> {
           errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
-  }
-
-  // Helper placeholder trip manifest just to trigger audit log writing via subcollection path
-  dynamic anyTripPlaceholder(String companyId) {
-    return null; // The mock or actual repo handles it
   }
 }
 
@@ -154,7 +172,7 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
       );
-      await tripRepo.createTrip(companyId, null, auditLog);
+      await tripRepo.createTrip(companyId, _dummyTrip(companyId), auditLog);
 
       state = const AsyncValue.data(null);
       return true;
@@ -221,7 +239,7 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
       );
-      await tripRepo.createTrip(companyId, null, auditLog);
+      await tripRepo.createTrip(companyId, _dummyTrip(companyId), auditLog);
 
       state = const AsyncValue.data(null);
       return true;
@@ -254,7 +272,7 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
       );
-      await tripRepo.createTrip(companyId, null, auditLog);
+      await tripRepo.createTrip(companyId, _dummyTrip(companyId), auditLog);
 
       state = const AsyncValue.data(null);
       return true;
