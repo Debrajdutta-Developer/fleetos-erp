@@ -49,7 +49,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,15 +63,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
           enabled: widget.enabled,
           maxLines: widget.maxLines,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: widget.enabled ? theme.colorScheme.onBackground : theme.colorScheme.onBackground.withOpacity(0.38),
+            color: widget.enabled
+                ? theme.colorScheme.onBackground
+                : theme.colorScheme.onBackground.withOpacity(0.38),
           ),
           decoration: InputDecoration(
             labelText: widget.labelText,
             hintText: widget.hintText,
             helperText: widget.helperText,
             alignLabelWithHint: widget.maxLines > 1,
-            prefixIcon: widget.prefixIcon != null 
-                ? Icon(widget.prefixIcon, size: 20, color: theme.colorScheme.onSurface.withOpacity(0.5)) 
+            prefixIcon: widget.prefixIcon != null
+                ? Icon(
+                    widget.prefixIcon,
+                    size: 20,
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  )
                 : null,
             suffixIcon: widget.isPassword
                 ? IconButton(

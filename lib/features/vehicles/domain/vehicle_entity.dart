@@ -76,15 +76,29 @@ class VehicleEntity {
       status: map['status'] as String? ?? 'registration',
       fuelType: map['fuelType'] as String? ?? 'diesel',
       odometer: (map['odometer'] as num? ?? 0.0).toDouble(),
-      lastServiceDate: map['lastServiceDate'] != null ? DateTime.parse(map['lastServiceDate'] as String) : null,
-      insuranceExpiry: map['insuranceExpiry'] != null ? DateTime.parse(map['insuranceExpiry'] as String) : DateTime.now(),
-      pucExpiry: map['pucExpiry'] != null ? DateTime.parse(map['pucExpiry'] as String) : DateTime.now(),
-      fitnessExpiry: map['fitnessExpiry'] != null ? DateTime.parse(map['fitnessExpiry'] as String) : DateTime.now(),
+      lastServiceDate: map['lastServiceDate'] != null
+          ? DateTime.parse(map['lastServiceDate'] as String)
+          : null,
+      insuranceExpiry: map['insuranceExpiry'] != null
+          ? DateTime.parse(map['insuranceExpiry'] as String)
+          : DateTime.now(),
+      pucExpiry: map['pucExpiry'] != null
+          ? DateTime.parse(map['pucExpiry'] as String)
+          : DateTime.now(),
+      fitnessExpiry: map['fitnessExpiry'] != null
+          ? DateTime.parse(map['fitnessExpiry'] as String)
+          : DateTime.now(),
       assignedDriverId: map['assignedDriverId'] as String?,
       assignedDriverName: map['assignedDriverName'] as String?,
-      createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt'] as String) : DateTime.now(),
-      updatedAt: map['updatedAt'] != null ? DateTime.parse(map['updatedAt'] as String) : DateTime.now(),
-      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt'] as String) : null,
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.parse(map['updatedAt'] as String)
+          : DateTime.now(),
+      deletedAt: map['deletedAt'] != null
+          ? DateTime.parse(map['deletedAt'] as String)
+          : null,
     );
   }
 

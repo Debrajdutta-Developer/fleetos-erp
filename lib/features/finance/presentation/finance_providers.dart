@@ -11,28 +11,31 @@ final financeRepositoryProvider = Provider<FinanceRepository>((ref) {
 });
 
 /// StreamProvider listening to real-time active transactions list.
-final financeTransactionsStreamProvider = StreamProvider.autoDispose<List<FinanceTransactionEntity>>((ref) {
-  final user = ref.watch(currentUserProvider);
-  if (user?.companyId == null) return Stream.value([]);
-  return ref.watch(financeRepositoryProvider).watchTransactions(user!.companyId!);
-});
+final financeTransactionsStreamProvider =
+    StreamProvider.autoDispose<List<FinanceTransactionEntity>>((ref) {
+      final user = ref.watch(currentUserProvider);
+      if (user?.companyId == null) return Stream.value([]);
+      return ref
+          .watch(financeRepositoryProvider)
+          .watchTransactions(user!.companyId!);
+    });
 
 /// StreamProvider listening to audit logs for finance transactions.
-final financeAuditLogsStreamProvider = StreamProvider.autoDispose<List<AuditLogEntity>>((ref) {
-  final user = ref.watch(currentUserProvider);
-  if (user?.companyId == null) return Stream.value([]);
-  return ref.watch(financeRepositoryProvider).watchAuditLogsForFinance(user!.companyId!);
-});
+final financeAuditLogsStreamProvider =
+    StreamProvider.autoDispose<List<AuditLogEntity>>((ref) {
+      final user = ref.watch(currentUserProvider);
+      if (user?.companyId == null) return Stream.value([]);
+      return ref
+          .watch(financeRepositoryProvider)
+          .watchAuditLogsForFinance(user!.companyId!);
+    });
 
 /// Ledger Entry Model containing a transaction and its running balance
 class LedgerEntry {
   final FinanceTransactionEntity transaction;
   final double runningBalance;
 
-  const LedgerEntry({
-    required this.transaction,
-    required this.runningBalance,
-  });
+  const LedgerEntry({required this.transaction, required this.runningBalance});
 }
 
 /// Provider to automatically calculate the Ledger with running balance from transactions
@@ -98,7 +101,8 @@ final profitLossProvider = Provider.autoDispose<ProfitLossReport>((ref) {
       income += tx.amount;
     } else {
       expense += tx.amount;
-      expensesByCategory[tx.category] = (expensesByCategory[tx.category] ?? 0.0) + tx.amount;
+      expensesByCategory[tx.category] =
+          (expensesByCategory[tx.category] ?? 0.0) + tx.amount;
     }
   }
 
@@ -146,7 +150,20 @@ final financeSummaryProvider = Provider.autoDispose<FinanceSummary>((ref) {
   final Map<String, double> yearlyIncome = {};
   final Map<String, double> yearlyExpense = {};
 
-  final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  final months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   for (final tx in txs) {
     final date = tx.transactionDate;
@@ -163,8 +180,9 @@ final financeSummaryProvider = Provider.autoDispose<FinanceSummary>((ref) {
   }
 
   final List<SummaryPeriod> monthly = [];
-  final allMonthsKeys = (monthlyIncome.keys.toSet()..addAll(monthlyExpense.keys)).toList();
-  
+  final allMonthsKeys =
+      (monthlyIncome.keys.toSet()..addAll(monthlyExpense.keys)).toList();
+
   // Sort keys chronologically (newest first)
   allMonthsKeys.sort((a, b) {
     final aParts = a.split(' ');
@@ -180,17 +198,22 @@ final financeSummaryProvider = Provider.autoDispose<FinanceSummary>((ref) {
   for (final key in allMonthsKeys) {
     final inc = monthlyIncome[key] ?? 0.0;
     final exp = monthlyExpense[key] ?? 0.0;
-    monthly.add(SummaryPeriod(label: key, income: inc, expense: exp, profit: inc - exp));
+    monthly.add(
+      SummaryPeriod(label: key, income: inc, expense: exp, profit: inc - exp),
+    );
   }
 
   final List<SummaryPeriod> yearly = [];
-  final allYearKeys = (yearlyIncome.keys.toSet()..addAll(yearlyExpense.keys)).toList()
-    ..sort((a, b) => b.compareTo(a));
+  final allYearKeys =
+      (yearlyIncome.keys.toSet()..addAll(yearlyExpense.keys)).toList()
+        ..sort((a, b) => b.compareTo(a));
 
   for (final key in allYearKeys) {
     final inc = yearlyIncome[key] ?? 0.0;
     final exp = yearlyExpense[key] ?? 0.0;
-    yearly.add(SummaryPeriod(label: key, income: inc, expense: exp, profit: inc - exp));
+    yearly.add(
+      SummaryPeriod(label: key, income: inc, expense: exp, profit: inc - exp),
+    );
   }
 
   return FinanceSummary(monthlySummaries: monthly, yearlySummaries: yearly);
@@ -229,9 +252,9 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
   FinanceFormController({
     required FinanceRepository repository,
     required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const FinanceFormState());
+  }) : _repository = repository,
+       _ref = ref,
+       super(const FinanceFormState());
 
   /// Save (create/update) transaction with verification audits
   Future<bool> saveTransaction(FinanceTransactionEntity transaction) async {
@@ -246,7 +269,9 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
         companyId: companyId,
         entityType: 'finance_transaction',
         entityId: transaction.id,
-        action: transaction.id.isEmpty ? 'transaction_created' : 'transaction_updated',
+        action: transaction.id.isEmpty
+            ? 'transaction_created'
+            : 'transaction_updated',
         description: transaction.id.isEmpty
             ? '${transaction.type.toUpperCase()} recorded for Category: ${transaction.category.toUpperCase()} with Amount: \$${transaction.amount.toStringAsFixed(2)}.'
             : 'Transaction updated.',
@@ -259,7 +284,9 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
       state = const FinanceFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = FinanceFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = FinanceFormState(
+        errorMessage: e.toString().replaceAll('Exception: ', ''),
+      );
       return false;
     }
   }
@@ -267,10 +294,12 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
 
 /// Provider for FinanceFormController.
 final financeFormControllerProvider =
-    StateNotifierProvider.autoDispose<FinanceFormController, FinanceFormState>((ref) {
-  final repository = ref.watch(financeRepositoryProvider);
-  return FinanceFormController(repository: repository, ref: ref);
-});
+    StateNotifierProvider.autoDispose<FinanceFormController, FinanceFormState>((
+      ref,
+    ) {
+      final repository = ref.watch(financeRepositoryProvider);
+      return FinanceFormController(repository: repository, ref: ref);
+    });
 
 /// Controller overseeing list actions (soft delete)
 class FinanceListController extends StateNotifier<AsyncValue<void>> {
@@ -280,12 +309,16 @@ class FinanceListController extends StateNotifier<AsyncValue<void>> {
   FinanceListController({
     required FinanceRepository repository,
     required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const AsyncValue.data(null));
+  }) : _repository = repository,
+       _ref = ref,
+       super(const AsyncValue.data(null));
 
   /// Soft deletes a transaction, writing an audit log
-  Future<bool> deleteTransaction(String transactionId, String category, double amount) async {
+  Future<bool> deleteTransaction(
+    String transactionId,
+    String category,
+    double amount,
+  ) async {
     state = const AsyncValue.loading();
     try {
       final user = _ref.read(currentUserProvider);
@@ -297,13 +330,18 @@ class FinanceListController extends StateNotifier<AsyncValue<void>> {
         entityType: 'finance_transaction',
         entityId: transactionId,
         action: 'transaction_deleted',
-        description: 'Transaction $transactionId of Category $category and Amount \$$amount was soft-deleted.',
+        description:
+            'Transaction $transactionId of Category $category and Amount \$$amount was soft-deleted.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
       );
 
-      await _repository.deleteTransaction(user.companyId!, transactionId, deleteAuditLog);
+      await _repository.deleteTransaction(
+        user.companyId!,
+        transactionId,
+        deleteAuditLog,
+      );
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {
@@ -315,7 +353,9 @@ class FinanceListController extends StateNotifier<AsyncValue<void>> {
 
 /// Provider for FinanceListController.
 final financeListControllerProvider =
-    StateNotifierProvider.autoDispose<FinanceListController, AsyncValue<void>>((ref) {
-  final repository = ref.watch(financeRepositoryProvider);
-  return FinanceListController(repository: repository, ref: ref);
-});
+    StateNotifierProvider.autoDispose<FinanceListController, AsyncValue<void>>((
+      ref,
+    ) {
+      final repository = ref.watch(financeRepositoryProvider);
+      return FinanceListController(repository: repository, ref: ref);
+    });

@@ -105,7 +105,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
         );
 
         if (_selectedVehicle != null) {
-          _selectedVehiclePermitExpiry = VehiclePermitValidator.getPermitExpiry(_selectedVehicle!.id);
+          _selectedVehiclePermitExpiry = VehiclePermitValidator.getPermitExpiry(
+            _selectedVehicle!.id,
+          );
         }
       } catch (_) {}
     }
@@ -126,12 +128,16 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
   Future<void> _pickPermitExpiry() async {
     if (_selectedVehicle == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a vehicle first to manage its permit.')),
+        const SnackBar(
+          content: Text('Please select a vehicle first to manage its permit.'),
+        ),
       );
       return;
     }
 
-    final initialDate = _selectedVehiclePermitExpiry ?? DateTime.now().add(const Duration(days: 30));
+    final initialDate =
+        _selectedVehiclePermitExpiry ??
+        DateTime.now().add(const Duration(days: 30));
     final picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -151,19 +157,31 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedVehicle == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Validation Failure: Please assign a vehicle to this trip.')),
+        const SnackBar(
+          content: Text(
+            'Validation Failure: Please assign a vehicle to this trip.',
+          ),
+        ),
       );
       return;
     }
     if (_selectedDriverId == null || _selectedDriverName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Validation Failure: Please assign a driver to this trip.')),
+        const SnackBar(
+          content: Text(
+            'Validation Failure: Please assign a driver to this trip.',
+          ),
+        ),
       );
       return;
     }
     if (_selectedCustomerId == null || _selectedCustomerName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Validation Failure: Please assign a customer to this trip.')),
+        const SnackBar(
+          content: Text(
+            'Validation Failure: Please assign a customer to this trip.',
+          ),
+        ),
       );
       return;
     }
@@ -171,11 +189,16 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
     final coal = double.tryParse(_coalController.text.trim()) ?? 0.0;
     final freight = double.tryParse(_freightController.text.trim()) ?? 0.0;
     final advance = double.tryParse(_advanceController.text.trim()) ?? 0.0;
-    final permitExpense = double.tryParse(_permitExpenseController.text.trim()) ?? 0.0;
+    final permitExpense =
+        double.tryParse(_permitExpenseController.text.trim()) ?? 0.0;
 
     if (advance > freight) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Validation Failure: Advance payment cannot be greater than total freight amount.')),
+        const SnackBar(
+          content: Text(
+            'Validation Failure: Advance payment cannot be greater than total freight amount.',
+          ),
+        ),
       );
       return;
     }
@@ -222,7 +245,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text(state.errorMessage ?? 'An error occurred during verification.'),
+          content: Text(
+            state.errorMessage ?? 'An error occurred during verification.',
+          ),
         ),
       );
     }
@@ -237,7 +262,11 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.tripId == null ? 'Schedule Logistics Trip' : 'Edit Trip Details'),
+        title: Text(
+          widget.tripId == null
+              ? 'Schedule Logistics Trip'
+              : 'Edit Trip Details',
+        ),
       ),
       body: formState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -268,11 +297,17 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.assignment_outlined, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.assignment_outlined,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Resource Deployments',
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -280,20 +315,36 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Vehicle Dropdown
                                 vehiclesAsync.when(
-                                  loading: () => const LinearProgressIndicator(),
+                                  loading: () =>
+                                      const LinearProgressIndicator(),
                                   error: (err, st) => Text(
                                     'Error loading vehicles: $err',
                                     style: const TextStyle(color: Colors.red),
                                   ),
                                   data: (vehicles) {
                                     // Remove soft-deleted vehicles
-                                    final activeVehicles = vehicles.where((v) => v.deletedAt == null).toList();
+                                    final activeVehicles = vehicles
+                                        .where((v) => v.deletedAt == null)
+                                        .toList();
 
-                                    return DropdownButtonFormField<VehicleEntity>(
-                                      value: _selectedVehicle != null && activeVehicles.any((v) => v.id == _selectedVehicle!.id)
-                                          ? activeVehicles.firstWhere((v) => v.id == _selectedVehicle!.id)
+                                    return DropdownButtonFormField<
+                                      VehicleEntity
+                                    >(
+                                      value:
+                                          _selectedVehicle != null &&
+                                              activeVehicles.any(
+                                                (v) =>
+                                                    v.id ==
+                                                    _selectedVehicle!.id,
+                                              )
+                                          ? activeVehicles.firstWhere(
+                                              (v) =>
+                                                  v.id == _selectedVehicle!.id,
+                                            )
                                           : null,
-                                      hint: const Text('Assign Vehicle License Plate'),
+                                      hint: const Text(
+                                        'Assign Vehicle License Plate',
+                                      ),
                                       items: activeVehicles.map((vehicle) {
                                         return DropdownMenuItem<VehicleEntity>(
                                           value: vehicle,
@@ -306,7 +357,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         setState(() {
                                           _selectedVehicle = vehicle;
                                           if (vehicle != null) {
-                                            _selectedVehiclePermitExpiry = VehiclePermitValidator.getPermitExpiry(vehicle.id);
+                                            _selectedVehiclePermitExpiry =
+                                                VehiclePermitValidator.getPermitExpiry(
+                                                  vehicle.id,
+                                                );
                                           } else {
                                             _selectedVehiclePermitExpiry = null;
                                           }
@@ -314,7 +368,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                       },
                                       decoration: const InputDecoration(
                                         labelText: 'Select Fleet Asset',
-                                        prefixIcon: Icon(Icons.local_shipping_outlined),
+                                        prefixIcon: Icon(
+                                          Icons.local_shipping_outlined,
+                                        ),
                                       ),
                                     );
                                   },
@@ -326,45 +382,76 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
-                                      color: colorScheme.surfaceVariant.withOpacity(0.3),
+                                      color: colorScheme.surfaceVariant
+                                          .withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+                                      border: Border.all(
+                                        color: colorScheme.outline.withOpacity(
+                                          0.2,
+                                        ),
+                                      ),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           'Assigned Vehicle Compliance Expirations:',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
                                         ),
                                         const SizedBox(height: 8),
                                         _ComplianceRow(
                                           title: 'Insurance Expiry',
-                                          date: _selectedVehicle!.insuranceExpiry,
-                                          isExpired: _selectedVehicle!.insuranceExpiry.isBefore(DateTime.now()),
+                                          date:
+                                              _selectedVehicle!.insuranceExpiry,
+                                          isExpired: _selectedVehicle!
+                                              .insuranceExpiry
+                                              .isBefore(DateTime.now()),
                                         ),
                                         _ComplianceRow(
                                           title: 'PUC Compliance Expiry',
                                           date: _selectedVehicle!.pucExpiry,
-                                          isExpired: _selectedVehicle!.pucExpiry.isBefore(DateTime.now()),
+                                          isExpired: _selectedVehicle!.pucExpiry
+                                              .isBefore(DateTime.now()),
                                         ),
                                         _ComplianceRow(
                                           title: 'Fitness Certificate Expiry',
                                           date: _selectedVehicle!.fitnessExpiry,
-                                          isExpired: _selectedVehicle!.fitnessExpiry.isBefore(DateTime.now()),
+                                          isExpired: _selectedVehicle!
+                                              .fitnessExpiry
+                                              .isBefore(DateTime.now()),
                                         ),
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
                                             _ComplianceRow(
-                                              title: 'Vehicle Road Permit Expiry',
-                                              date: _selectedVehiclePermitExpiry ?? DateTime.now().add(const Duration(days: 365)),
-                                              isExpired: _selectedVehiclePermitExpiry != null && _selectedVehiclePermitExpiry!.isBefore(DateTime.now()),
+                                              title:
+                                                  'Vehicle Road Permit Expiry',
+                                              date:
+                                                  _selectedVehiclePermitExpiry ??
+                                                  DateTime.now().add(
+                                                    const Duration(days: 365),
+                                                  ),
+                                              isExpired:
+                                                  _selectedVehiclePermitExpiry !=
+                                                      null &&
+                                                  _selectedVehiclePermitExpiry!
+                                                      .isBefore(DateTime.now()),
                                             ),
                                             TextButton.icon(
                                               onPressed: _pickPermitExpiry,
-                                              icon: const Icon(Icons.edit_calendar_outlined, size: 16),
-                                              label: const Text('Manage Permit', style: TextStyle(fontSize: 12)),
+                                              icon: const Icon(
+                                                Icons.edit_calendar_outlined,
+                                                size: 16,
+                                              ),
+                                              label: const Text(
+                                                'Manage Permit',
+                                                style: TextStyle(fontSize: 12),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -376,7 +463,12 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Driver Dropdown
                                 DropdownButtonFormField<String>(
-                                  value: _drivers.any((d) => d['id'] == _selectedDriverId) ? _selectedDriverId : null,
+                                  value:
+                                      _drivers.any(
+                                        (d) => d['id'] == _selectedDriverId,
+                                      )
+                                      ? _selectedDriverId
+                                      : null,
                                   hint: const Text('Assign Primary Driver'),
                                   items: _drivers.map((driver) {
                                     return DropdownMenuItem<String>(
@@ -387,19 +479,28 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedDriverId = id;
-                                      _selectedDriverName = _drivers.firstWhere((d) => d['id'] == id)['name'];
+                                      _selectedDriverName = _drivers.firstWhere(
+                                        (d) => d['id'] == id,
+                                      )['name'];
                                     });
                                   },
                                   decoration: const InputDecoration(
                                     labelText: 'Select Primary Driver',
-                                    prefixIcon: Icon(Icons.person_outline_rounded),
+                                    prefixIcon: Icon(
+                                      Icons.person_outline_rounded,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 16),
 
                                 // Customer Dropdown
                                 DropdownButtonFormField<String>(
-                                  value: _customers.any((c) => c['id'] == _selectedCustomerId) ? _selectedCustomerId : null,
+                                  value:
+                                      _customers.any(
+                                        (c) => c['id'] == _selectedCustomerId,
+                                      )
+                                      ? _selectedCustomerId
+                                      : null,
                                   hint: const Text('Assign Billed Customer'),
                                   items: _customers.map((cust) {
                                     return DropdownMenuItem<String>(
@@ -410,7 +511,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedCustomerId = id;
-                                      _selectedCustomerName = _customers.firstWhere((c) => c['id'] == id)['name'];
+                                      _selectedCustomerName = _customers
+                                          .firstWhere(
+                                            (c) => c['id'] == id,
+                                          )['name'];
                                     });
                                   },
                                   decoration: const InputDecoration(
@@ -433,18 +537,25 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.route_outlined, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.route_outlined,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Route Parameters',
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
                                 const Divider(height: 24),
                                 CustomTextField(
                                   controller: _pickupController,
-                                  hintText: 'Enter pickup warehouse or terminal location',
+                                  hintText:
+                                      'Enter pickup warehouse or terminal location',
                                   labelText: 'Pickup Location',
                                   prefixIcon: Icons.circle_outlined,
                                   validator: (val) {
@@ -457,7 +568,8 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                 const SizedBox(height: 16),
                                 CustomTextField(
                                   controller: _deliveryController,
-                                  hintText: 'Enter destination client or cargo hub location',
+                                  hintText:
+                                      'Enter destination client or cargo hub location',
                                   labelText: 'Delivery Location',
                                   prefixIcon: Icons.location_on_outlined,
                                   validator: (val) {
@@ -482,18 +594,25 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.currency_exchange_outlined, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.currency_exchange_outlined,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Cargo & Financial Parameters',
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
                                 const Divider(height: 24),
                                 CustomTextField(
                                   controller: _cargoController,
-                                  hintText: 'Coal, Perishables, Hazardous materials, Heavy Machinery...',
+                                  hintText:
+                                      'Coal, Perishables, Hazardous materials, Heavy Machinery...',
                                   labelText: 'Cargo Type Description',
                                   prefixIcon: Icons.inventory_2_outlined,
                                   validator: (val) {
@@ -509,7 +628,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   hintText: '0.00',
                                   labelText: 'Coal Quantity (tons)',
                                   prefixIcon: Icons.line_weight_outlined,
-                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
                                   validator: (val) {
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Coal Quantity is a mandatory field.';
@@ -530,12 +652,18 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: 'Freight Charges (\$)',
                                         prefixIcon: Icons.attach_money_outlined,
-                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        keyboardType:
+                                            const TextInputType.numberWithOptions(
+                                              decimal: true,
+                                            ),
                                         validator: (val) {
-                                          if (val == null || val.trim().isEmpty) {
+                                          if (val == null ||
+                                              val.trim().isEmpty) {
                                             return 'Required.';
                                           }
-                                          final numVal = double.tryParse(val.trim());
+                                          final numVal = double.tryParse(
+                                            val.trim(),
+                                          );
                                           if (numVal == null || numVal < 0) {
                                             return 'Must be >= 0.';
                                           }
@@ -550,12 +678,18 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: 'Advance Payment (\$)',
                                         prefixIcon: Icons.payments_outlined,
-                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        keyboardType:
+                                            const TextInputType.numberWithOptions(
+                                              decimal: true,
+                                            ),
                                         validator: (val) {
-                                          if (val == null || val.trim().isEmpty) {
+                                          if (val == null ||
+                                              val.trim().isEmpty) {
                                             return 'Required.';
                                           }
-                                          final numVal = double.tryParse(val.trim());
+                                          final numVal = double.tryParse(
+                                            val.trim(),
+                                          );
                                           if (numVal == null || numVal < 0) {
                                             return 'Must be >= 0.';
                                           }
@@ -570,12 +704,18 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: 'Permit Expense (\$)',
                                         prefixIcon: Icons.receipt_long_outlined,
-                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        keyboardType:
+                                            const TextInputType.numberWithOptions(
+                                              decimal: true,
+                                            ),
                                         validator: (val) {
-                                          if (val == null || val.trim().isEmpty) {
+                                          if (val == null ||
+                                              val.trim().isEmpty) {
                                             return 'Required.';
                                           }
-                                          final numVal = double.tryParse(val.trim());
+                                          final numVal = double.tryParse(
+                                            val.trim(),
+                                          );
                                           if (numVal == null || numVal < 0) {
                                             return 'Must be >= 0.';
                                           }
@@ -601,7 +741,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                             ),
                             const SizedBox(width: 16),
                             CustomButton(
-                              text: widget.tripId == null ? 'SCHEDULE DISPATCH' : 'SAVE CHANGES',
+                              text: widget.tripId == null
+                                  ? 'SCHEDULE DISPATCH'
+                                  : 'SAVE CHANGES',
                               icon: Icons.check_circle_outline_rounded,
                               width: 200,
                               onPressed: _submitForm,

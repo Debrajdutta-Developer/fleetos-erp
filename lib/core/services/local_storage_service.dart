@@ -10,8 +10,8 @@ class LocalStorageService {
   LocalStorageService({
     required SharedPreferences prefs,
     required FlutterSecureStorage secureStorage,
-  })  : _prefs = prefs,
-        _secureStorage = secureStorage;
+  }) : _prefs = prefs,
+       _secureStorage = secureStorage;
 
   // --- Shared Preferences Keys ---
   static const String _keyThemeMode = 'theme_mode';
@@ -80,5 +80,7 @@ class LocalStorageService {
 /// Since SharedPreferences requires an async initialization, we will initialize it in `main.dart`
 /// and override this provider in the [ProviderScope].
 final localStorageServiceProvider = Provider<LocalStorageService>((ref) {
-  throw UnimplementedError('localStorageServiceProvider must be overridden in main.dart');
+  throw UnimplementedError(
+    'localStorageServiceProvider must be overridden in main.dart',
+  );
 });

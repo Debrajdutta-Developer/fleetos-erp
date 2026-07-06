@@ -15,7 +15,9 @@ class ThemeController extends StateNotifier<ThemeMode> {
 }
 
 /// Global provider for managing Light/Dark theme configuration overrides.
-final themeModeProvider = StateNotifierProvider<ThemeController, ThemeMode>((ref) {
+final themeModeProvider = StateNotifierProvider<ThemeController, ThemeMode>((
+  ref,
+) {
   return ThemeController();
 });
 
@@ -62,7 +64,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Session Teardown'),
-        content: const Text('Are you sure you want to log out? This will terminate your secure session key.'),
+        content: const Text(
+          'Are you sure you want to log out? This will terminate your secure session key.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -99,16 +103,44 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final bool isDesktop = screenWidth > 992;
 
     // Loading details
-    final companyName = _loadingCompany 
-        ? 'Loading company...' 
+    final companyName = _loadingCompany
+        ? 'Loading company...'
         : (_company?.name ?? 'FleetOS Operator');
 
     // Stats mock data
     final stats = [
-      _StatCardData(title: 'Active Fleet Count', value: '42', subtitle: 'Vehicles online', icon: Icons.local_shipping_outlined, trend: '+4% vs yesterday', isPositive: true),
-      _StatCardData(title: 'Trips Scheduled', value: '18', subtitle: 'Dispatched today', icon: Icons.route_outlined, trend: 'Normal volume', isPositive: true),
-      _StatCardData(title: 'Critical Diagnostics', value: '02', subtitle: 'Fault codes raised', icon: Icons.warning_amber_rounded, trend: 'Action needed', isPositive: false),
-      _StatCardData(title: 'Active Cargo Volume', value: '88%', subtitle: 'Average payload capacity', icon: Icons.inventory_2_outlined, trend: '+12% peak efficiency', isPositive: true),
+      _StatCardData(
+        title: 'Active Fleet Count',
+        value: '42',
+        subtitle: 'Vehicles online',
+        icon: Icons.local_shipping_outlined,
+        trend: '+4% vs yesterday',
+        isPositive: true,
+      ),
+      _StatCardData(
+        title: 'Trips Scheduled',
+        value: '18',
+        subtitle: 'Dispatched today',
+        icon: Icons.route_outlined,
+        trend: 'Normal volume',
+        isPositive: true,
+      ),
+      _StatCardData(
+        title: 'Critical Diagnostics',
+        value: '02',
+        subtitle: 'Fault codes raised',
+        icon: Icons.warning_amber_rounded,
+        trend: 'Action needed',
+        isPositive: false,
+      ),
+      _StatCardData(
+        title: 'Active Cargo Volume',
+        value: '88%',
+        subtitle: 'Average payload capacity',
+        icon: Icons.inventory_2_outlined,
+        trend: '+12% peak efficiency',
+        isPositive: true,
+      ),
     ];
 
     final Widget dashboardBody = SingleChildScrollView(
@@ -140,7 +172,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ],
               ),
               IconButton(
-                icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+                icon: Icon(
+                  themeMode == ThemeMode.dark
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                ),
                 tooltip: 'Toggle Theme',
                 onPressed: () {
                   ref.read(themeModeProvider.notifier).toggleTheme();
@@ -194,8 +230,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   value: 'This Week',
                                   underline: const SizedBox(),
                                   items: const [
-                                    DropdownMenuItem(value: 'This Week', child: Text('This Week')),
-                                    DropdownMenuItem(value: 'Last Month', child: Text('Last Month')),
+                                    DropdownMenuItem(
+                                      value: 'This Week',
+                                      child: Text('This Week'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'Last Month',
+                                      child: Text('Last Month'),
+                                    ),
                                   ],
                                   onChanged: (_) {},
                                 ),
@@ -208,7 +250,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               decoration: BoxDecoration(
                                 color: colorScheme.primary.withOpacity(0.04),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: colorScheme.primary.withOpacity(0.08)),
+                                border: Border.all(
+                                  color: colorScheme.primary.withOpacity(0.08),
+                                ),
                               ),
                               child: Center(
                                 child: Column(
@@ -220,12 +264,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       color: colorScheme.primary,
                                     ),
                                     const SizedBox(height: 12),
-                                    const Text('Interactive Analytics Graph Placeholder'),
+                                    const Text(
+                                      'Interactive Analytics Graph Placeholder',
+                                    ),
                                     const SizedBox(height: 4),
                                     Text(
                                       'Available in Fleet Modules integration.',
                                       style: TextStyle(
-                                        color: colorScheme.onBackground.withOpacity(0.4),
+                                        color: colorScheme.onBackground
+                                            .withOpacity(0.4),
                                         fontSize: 12,
                                       ),
                                     ),
@@ -260,7 +307,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             color: Colors.amber,
                             title: 'Route Warning Engine',
                             time: '2 mins ago',
-                            subtitle: 'Vehicle F-201 reported traffic deviation.',
+                            subtitle:
+                                'Vehicle F-201 reported traffic deviation.',
                           ),
                           const Divider(height: 24),
                           _ActivityItem(
@@ -268,7 +316,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             color: Colors.green,
                             title: 'Maintenance Sync',
                             time: '1 hour ago',
-                            subtitle: 'Truck T-88 service log uploaded to database.',
+                            subtitle:
+                                'Truck T-88 service log uploaded to database.',
                           ),
                           const Divider(height: 24),
                           _ActivityItem(
@@ -350,14 +399,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   label: 'Trip Management',
                   onTap: () => context.push('/trips'),
                 ),
-                _SidebarNavItem(icon: Icons.people_outline_rounded, label: 'Driver Portal'),
-                _SidebarNavItem(icon: Icons.inventory_2_outlined, label: 'Storage & Hubs'),
+                _SidebarNavItem(
+                  icon: Icons.people_outline_rounded,
+                  label: 'Driver Portal',
+                ),
+                _SidebarNavItem(
+                  icon: Icons.inventory_2_outlined,
+                  label: 'Storage & Hubs',
+                ),
                 _SidebarNavItem(
                   icon: Icons.account_balance_outlined,
                   label: 'Finance & Ledger',
                   onTap: () => context.push('/finance'),
                 ),
-                _SidebarNavItem(icon: Icons.settings_outlined, label: 'ERP Settings'),
+                _SidebarNavItem(
+                  icon: Icons.settings_outlined,
+                  label: 'ERP Settings',
+                ),
               ],
             ),
           ),
@@ -370,8 +428,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 CircleAvatar(
                   backgroundColor: colorScheme.primary.withOpacity(0.12),
                   child: Text(
-                    (currentUser?.displayName ?? 'O').substring(0, 1).toUpperCase(),
-                    style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                    (currentUser?.displayName ?? 'O')
+                        .substring(0, 1)
+                        .toUpperCase(),
+                    style: TextStyle(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -383,7 +446,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         currentUser?.displayName ?? 'Operator',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                       ),
                       Text(
                         currentUser?.role.toUpperCase() ?? 'ADMIN',
@@ -414,7 +480,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               title: Text(companyName),
               actions: [
                 IconButton(
-                  icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+                  icon: Icon(
+                    themeMode == ThemeMode.dark
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
+                  ),
                   onPressed: () {
                     ref.read(themeModeProvider.notifier).toggleTheme();
                   },
@@ -436,8 +506,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     currentAccountPicture: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Text(
-                        (currentUser?.displayName ?? 'O').substring(0, 1).toUpperCase(),
-                        style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 24),
+                        (currentUser?.displayName ?? 'O')
+                            .substring(0, 1)
+                            .toUpperCase(),
+                        style: TextStyle(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
                       ),
                     ),
                     decoration: BoxDecoration(color: colorScheme.primary),
@@ -608,14 +684,18 @@ class _SidebarNavItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       decoration: BoxDecoration(
-        color: isSelected ? colorScheme.primary.withOpacity(0.08) : Colors.transparent,
+        color: isSelected
+            ? colorScheme.primary.withOpacity(0.08)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       child: ListTile(
         visualDensity: const VisualDensity(vertical: -2),
         leading: Icon(
           icon,
-          color: isSelected ? colorScheme.primary : colorScheme.onSurface.withOpacity(0.6),
+          color: isSelected
+              ? colorScheme.primary
+              : colorScheme.onSurface.withOpacity(0.6),
           size: 20,
         ),
         title: Text(
@@ -671,18 +751,28 @@ class _ActivityItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
                   ),
                   Text(
                     time,
-                    style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.4), fontSize: 11),
+                    style: TextStyle(
+                      color: theme.colorScheme.onBackground.withOpacity(0.4),
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.6), fontSize: 12, height: 1.3),
+                style: TextStyle(
+                  color: theme.colorScheme.onBackground.withOpacity(0.6),
+                  fontSize: 12,
+                  height: 1.3,
+                ),
               ),
             ],
           ),

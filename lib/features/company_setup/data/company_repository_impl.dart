@@ -18,10 +18,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
     required LocalStorageService localStorage,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance,
-        _localStorage = localStorage,
-        _uuid = const Uuid();
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _storage = storage ?? FirebaseStorage.instance,
+       _localStorage = localStorage,
+       _uuid = const Uuid();
 
   @override
   Future<CompanyEntity> createCompany({
@@ -65,7 +65,10 @@ class CompanyRepositoryImpl implements CompanyRepository {
       );
 
       // 3. Save to Firestore (Offline persistence handles queuing if offline)
-      await _firestore.collection('companies').doc(companyId).set(company.toMap());
+      await _firestore
+          .collection('companies')
+          .doc(companyId)
+          .set(company.toMap());
 
       // 4. Cache company selection locally
       await _localStorage.cacheUserCompanyId(companyId);
@@ -95,7 +98,11 @@ class CompanyRepositoryImpl implements CompanyRepository {
   @override
   Future<String> uploadLogo(String companyId, File logoFile) async {
     try {
-      final ref = _storage.ref().child('companies').child(companyId).child('logo.png');
+      final ref = _storage
+          .ref()
+          .child('companies')
+          .child(companyId)
+          .child('logo.png');
       final uploadTask = await ref.putFile(
         logoFile,
         SettableMetadata(contentType: 'image/png'),

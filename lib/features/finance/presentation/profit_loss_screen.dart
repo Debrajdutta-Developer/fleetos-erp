@@ -11,7 +11,10 @@ class ProfitLossScreen extends ConsumerWidget {
   }
 
   String _formatCategoryKey(String key) {
-    return key.split('_').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
+    return key
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   @override
@@ -54,7 +57,9 @@ class ProfitLossScreen extends ConsumerWidget {
               child: _MetricCard(
                 title: 'NET SURPLUS (PROFIT/LOSS)',
                 value: _formatCurrency(plReport.netProfit),
-                color: plReport.netProfit >= 0 ? colorScheme.primary : Colors.red,
+                color: plReport.netProfit >= 0
+                    ? colorScheme.primary
+                    : Colors.red,
                 icon: Icons.account_balance_rounded,
                 isLarge: true,
               ),
@@ -72,11 +77,15 @@ class ProfitLossScreen extends ConsumerWidget {
           children: [
             Text(
               'Expenditures by Category Allocation',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const Divider(height: 24),
             ...plReport.expensesByCategory.entries.map((entry) {
-              final pct = plReport.totalExpense > 0 ? (entry.value / plReport.totalExpense) : 0.0;
+              final pct = plReport.totalExpense > 0
+                  ? (entry.value / plReport.totalExpense)
+                  : 0.0;
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Column(
@@ -86,12 +95,17 @@ class ProfitLossScreen extends ConsumerWidget {
                       children: [
                         Text(
                           _formatCategoryKey(entry.key),
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                         ),
                         Text(
                           '${_formatCurrency(entry.value)} (${(pct * 100).toStringAsFixed(1)}%)',
                           style: TextStyle(
-                            color: entry.value > 0 ? Colors.red : colorScheme.onSurface.withOpacity(0.4),
+                            color: entry.value > 0
+                                ? Colors.red
+                                : colorScheme.onSurface.withOpacity(0.4),
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
@@ -125,7 +139,9 @@ class ProfitLossScreen extends ConsumerWidget {
             children: [
               Text(
                 'Financial Performance Summaries',
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 12),
               const TabBar(
@@ -159,9 +175,7 @@ class ProfitLossScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profit & Loss Statements'),
-      ),
+      appBar: AppBar(title: const Text('Profit & Loss Statements')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Center(
@@ -265,10 +279,7 @@ class _SummaryList extends StatelessWidget {
   final List<SummaryPeriod> periods;
   final String Function(double) formatCurrency;
 
-  const _SummaryList({
-    required this.periods,
-    required this.formatCurrency,
-  });
+  const _SummaryList({required this.periods, required this.formatCurrency});
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +309,10 @@ class _SummaryList extends StatelessWidget {
               Expanded(
                 child: Text(
                   period.label,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ),
               Column(
@@ -306,13 +320,30 @@ class _SummaryList extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.arrow_upward_rounded, color: Colors.green, size: 12),
+                      const Icon(
+                        Icons.arrow_upward_rounded,
+                        color: Colors.green,
+                        size: 12,
+                      ),
                       const SizedBox(width: 2),
-                      Text(formatCurrency(period.income), style: const TextStyle(fontSize: 11, color: Colors.green)),
+                      Text(
+                        formatCurrency(period.income),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.green,
+                        ),
+                      ),
                       const SizedBox(width: 8),
-                      const Icon(Icons.arrow_downward_rounded, color: Colors.red, size: 12),
+                      const Icon(
+                        Icons.arrow_downward_rounded,
+                        color: Colors.red,
+                        size: 12,
+                      ),
                       const SizedBox(width: 2),
-                      Text(formatCurrency(period.expense), style: const TextStyle(fontSize: 11, color: Colors.red)),
+                      Text(
+                        formatCurrency(period.expense),
+                        style: const TextStyle(fontSize: 11, color: Colors.red),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 2),

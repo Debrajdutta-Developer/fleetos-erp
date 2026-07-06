@@ -41,7 +41,9 @@ class CustomButton extends StatelessWidget {
 
     final defaultTextColor = type == ButtonType.primary
         ? (isDark ? theme.colorScheme.onPrimary : Colors.white)
-        : (type == ButtonType.secondary ? theme.colorScheme.primary : theme.colorScheme.primary);
+        : (type == ButtonType.secondary
+              ? theme.colorScheme.primary
+              : theme.colorScheme.primary);
 
     final finalBgColor = backgroundColor ?? defaultBgColor;
     final finalTextColor = textColor ?? defaultTextColor;
@@ -60,7 +62,9 @@ class CustomButton extends StatelessWidget {
         Text(
           text,
           style: theme.textTheme.labelLarge?.copyWith(
-            color: onPressed == null ? theme.colorScheme.onSurface.withOpacity(0.38) : finalTextColor,
+            color: onPressed == null
+                ? theme.colorScheme.onSurface.withOpacity(0.38)
+                : finalTextColor,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -76,9 +80,13 @@ class CustomButton extends StatelessWidget {
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: finalBgColor,
-            disabledBackgroundColor: theme.colorScheme.onSurface.withOpacity(0.12),
+            disabledBackgroundColor: theme.colorScheme.onSurface.withOpacity(
+              0.12,
+            ),
             minimumSize: Size(width ?? double.infinity, height),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: buttonContent,
         );
@@ -95,7 +103,9 @@ class CustomButton extends StatelessWidget {
                   : (backgroundColor ?? theme.colorScheme.primary),
               width: 1.5,
             ),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: buttonContent,
         );
@@ -106,7 +116,9 @@ class CustomButton extends StatelessWidget {
           onPressed: isLoading ? null : onPressed,
           style: TextButton.styleFrom(
             minimumSize: Size(width ?? double.infinity, height),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: buttonContent,
         );

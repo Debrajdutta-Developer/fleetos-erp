@@ -10,11 +10,9 @@ class FirebaseService {
   final FirebaseFirestore _firestore;
   final FirebaseMessaging _messaging;
 
-  FirebaseService({
-    FirebaseFirestore? firestore,
-    FirebaseMessaging? messaging,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _messaging = messaging ?? FirebaseMessaging.instance;
+  FirebaseService({FirebaseFirestore? firestore, FirebaseMessaging? messaging})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _messaging = messaging ?? FirebaseMessaging.instance;
 
   /// Initialize Firebase Core and setup Offline persistence.
   static Future<void> initialize() async {
@@ -50,12 +48,13 @@ class FirebaseService {
       );
 
       if (kDebugMode) {
-        print('User notification permission status: ${settings.authorizationStatus}');
+        print(
+          'User notification permission status: ${settings.authorizationStatus}',
+        );
       }
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional) {
-        
         // 2. Fetch the FCM token for this device
         String? token;
         if (kIsWeb) {
@@ -86,7 +85,9 @@ class FirebaseService {
   void _setupForegroundMessaging() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (kDebugMode) {
-        print('Received a foreground notification message: ${message.notification?.title}');
+        print(
+          'Received a foreground notification message: ${message.notification?.title}',
+        );
         print('Message data payload: ${message.data}');
       }
       // Trigger local notification visual or stream controller
@@ -94,7 +95,9 @@ class FirebaseService {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       if (kDebugMode) {
-        print('A user clicked on the FCM notification to open the app: ${message.data}');
+        print(
+          'A user clicked on the FCM notification to open the app: ${message.data}',
+        );
       }
       // Navigate to respective dashboard/notification module if needed
     });

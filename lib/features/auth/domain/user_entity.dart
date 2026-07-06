@@ -4,7 +4,8 @@ class UserEntity {
   final String email;
   final String displayName;
   final String role;
-  final String? companyId; // Null indicates user has not completed onboarding/company setup
+  final String?
+  companyId; // Null indicates user has not completed onboarding/company setup
   final DateTime createdAt;
   final bool isActive;
 
@@ -39,8 +40,8 @@ class UserEntity {
       displayName: map['displayName'] as String,
       role: map['role'] as String,
       companyId: map['companyId'] as String?,
-      createdAt: map['createdAt'] != null 
-          ? DateTime.parse(map['createdAt'] as String) 
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),
       isActive: map['isActive'] as bool? ?? true,
     );

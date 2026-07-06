@@ -43,7 +43,10 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
   }
 
   String _formatCategoryKey(String key) {
-    return key.split('_').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
+    return key
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1))
+        .join(' ');
   }
 
   Color _getCategoryColor(String type) {
@@ -55,7 +58,9 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Soft-Delete Ledger Record'),
-        content: Text('Are you sure you want to remove the ledger entry for \$${tx.amount.toStringAsFixed(2)}? This action is soft-delete only.'),
+        content: Text(
+          'Are you sure you want to remove the ledger entry for \$${tx.amount.toStringAsFixed(2)}? This action is soft-delete only.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -108,26 +113,34 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
         ],
       ),
       body: transactionsAsync.when(
-        loading: () => LoadingWidget.fullScreen(message: 'Compiling financial reports...'),
+        loading: () =>
+            LoadingWidget.fullScreen(message: 'Compiling financial reports...'),
         error: (err, stack) => Center(
           child: EmptyStateWidget(
             title: 'Finance Ledger Connection Failed',
             description: err.toString(),
             icon: Icons.error_outline_rounded,
             actionText: 'Retry Connection',
-            onActionPressed: () => ref.invalidate(financeTransactionsStreamProvider),
+            onActionPressed: () =>
+                ref.invalidate(financeTransactionsStreamProvider),
           ),
         ),
         data: (txs) {
           // Filter ledger entries
           final filteredLedger = ledgerEntries.where((entry) {
             final tx = entry.transaction;
-            final matchesType = _typeFilter == 'ALL' || tx.type.toLowerCase() == _typeFilter.toLowerCase();
-            final matchesCategory = _categoryFilter == 'ALL' || tx.category.toLowerCase() == _categoryFilter.toLowerCase();
+            final matchesType =
+                _typeFilter == 'ALL' ||
+                tx.type.toLowerCase() == _typeFilter.toLowerCase();
+            final matchesCategory =
+                _categoryFilter == 'ALL' ||
+                tx.category.toLowerCase() == _categoryFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
-            final matchesQuery = (tx.notes?.toLowerCase().contains(query) ?? false) ||
+            final matchesQuery =
+                (tx.notes?.toLowerCase().contains(query) ?? false) ||
                 (tx.referenceNumber?.toLowerCase().contains(query) ?? false) ||
-                (tx.vehicleLicensePlate?.toLowerCase().contains(query) ?? false) ||
+                (tx.vehicleLicensePlate?.toLowerCase().contains(query) ??
+                    false) ||
                 (tx.tripNumber?.toLowerCase().contains(query) ?? false) ||
                 tx.category.toLowerCase().contains(query);
             return matchesType && matchesCategory && matchesQuery;
@@ -144,10 +157,16 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+                        onChanged: (val) => setState(
+                          () => _searchQuery = val.trim().toLowerCase(),
+                        ),
                         decoration: InputDecoration(
-                          hintText: 'Search by category, notes, check reference, vehicle plate...',
-                          prefixIcon: Icon(Icons.search_outlined, color: colorScheme.onSurface.withOpacity(0.5)),
+                          hintText:
+                              'Search by category, notes, check reference, vehicle plate...',
+                          prefixIcon: Icon(
+                            Icons.search_outlined,
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
@@ -193,7 +212,9 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                       width: 200,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        border: Border.all(color: colorScheme.outline.withOpacity(0.3)),
+                        border: Border.all(
+                          color: colorScheme.outline.withOpacity(0.3),
+                        ),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: DropdownButtonHideUnderline(
@@ -203,7 +224,10 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                           items: _categories.map((c) {
                             return DropdownMenuItem<String>(
                               value: c['value'],
-                              child: Text(c['label']!, style: const TextStyle(fontSize: 12)),
+                              child: Text(
+                                c['label']!,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             );
                           }).toList(),
                           onChanged: (val) {
@@ -227,13 +251,19 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                               ? 'No transactions recorded for this tenant company.'
                               : 'No matches found. Try broadening your filters.',
                           icon: Icons.payments_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Record First Entry' : null,
-                          onActionPressed: _searchQuery.isEmpty ? () => context.push('/finance/new') : null,
+                          actionText: _searchQuery.isEmpty
+                              ? 'Record First Entry'
+                              : null,
+                          onActionPressed: _searchQuery.isEmpty
+                              ? () => context.push('/finance/new')
+                              : null,
                         )
                       : Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            border: Border.all(color: colorScheme.outline.withOpacity(0.2)),
+                            border: Border.all(
+                              color: colorScheme.outline.withOpacity(0.2),
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: ClipRRect(
@@ -243,7 +273,9 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: DataTable(
-                                  headingRowColor: MaterialStateProperty.all(colorScheme.surfaceVariant.withOpacity(0.5)),
+                                  headingRowColor: MaterialStateProperty.all(
+                                    colorScheme.surfaceVariant.withOpacity(0.5),
+                                  ),
                                   columns: const [
                                     DataColumn(label: Text('DATE')),
                                     DataColumn(label: Text('CATEGORY')),
@@ -256,49 +288,104 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                   ],
                                   rows: filteredLedger.map((entry) {
                                     final tx = entry.transaction;
-                                    final dateStr = DateFormat('dd MMM yyyy').format(tx.transactionDate);
+                                    final dateStr = DateFormat(
+                                      'dd MMM yyyy',
+                                    ).format(tx.transactionDate);
                                     final color = _getCategoryColor(tx.type);
-                                    final sign = tx.type == 'income' ? '+' : '-';
+                                    final sign = tx.type == 'income'
+                                        ? '+'
+                                        : '-';
 
                                     // Display allocation strings
                                     List<String> allocs = [];
-                                    if (tx.vehicleLicensePlate != null) allocs.add('Vehicle: ${tx.vehicleLicensePlate}');
-                                    if (tx.tripNumber != null) allocs.add('Trip #${tx.tripNumber}');
-                                    final allocStr = allocs.isEmpty ? 'General' : allocs.join('\n');
+                                    if (tx.vehicleLicensePlate != null)
+                                      allocs.add(
+                                        'Vehicle: ${tx.vehicleLicensePlate}',
+                                      );
+                                    if (tx.tripNumber != null)
+                                      allocs.add('Trip #${tx.tripNumber}');
+                                    final allocStr = allocs.isEmpty
+                                        ? 'General'
+                                        : allocs.join('\n');
 
                                     return DataRow(
                                       cells: [
-                                        DataCell(Text(dateStr, style: const TextStyle(fontSize: 12))),
+                                        DataCell(
+                                          Text(
+                                            dateStr,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
                                         DataCell(
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: color.withOpacity(0.08),
-                                              borderRadius: BorderRadius.circular(6),
-                                              border: Border.all(color: color.withOpacity(0.3)),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                color: color.withOpacity(0.3),
+                                              ),
                                             ),
                                             child: Text(
-                                              _formatCategoryKey(tx.category).toUpperCase(),
-                                              style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
+                                              _formatCategoryKey(
+                                                tx.category,
+                                              ).toUpperCase(),
+                                              style: TextStyle(
+                                                color: color,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
                                         ),
                                         DataCell(
                                           Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text(tx.paymentMode.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                                              Text(
+                                                tx.paymentMode.toUpperCase(),
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
                                               if (tx.referenceNumber != null)
-                                                Text(tx.referenceNumber!, style: TextStyle(fontSize: 10, color: colorScheme.onSurface.withOpacity(0.5))),
+                                                Text(
+                                                  tx.referenceNumber!,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: colorScheme.onSurface
+                                                        .withOpacity(0.5),
+                                                  ),
+                                                ),
                                             ],
                                           ),
                                         ),
-                                        DataCell(Text(allocStr, style: const TextStyle(fontSize: 11))),
+                                        DataCell(
+                                          Text(
+                                            allocStr,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ),
                                         DataCell(
                                           Text(
                                             '$sign\$${tx.amount.toStringAsFixed(2)}',
-                                            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
+                                            style: TextStyle(
+                                              color: color,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                            ),
                                           ),
                                         ),
                                         DataCell(
@@ -307,7 +394,9 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 13,
-                                              color: entry.runningBalance >= 0 ? colorScheme.primary : Colors.red,
+                                              color: entry.runningBalance >= 0
+                                                  ? colorScheme.primary
+                                                  : Colors.red,
                                             ),
                                           ),
                                         ),
@@ -318,7 +407,9 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                               tx.notes ?? '-',
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(fontSize: 11),
+                                              style: const TextStyle(
+                                                fontSize: 11,
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -326,13 +417,25 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                           Row(
                                             children: [
                                               IconButton(
-                                                icon: const Icon(Icons.edit_outlined, size: 18),
-                                                onPressed: () => context.push('/finance/${tx.id}/edit'),
+                                                icon: const Icon(
+                                                  Icons.edit_outlined,
+                                                  size: 18,
+                                                ),
+                                                onPressed: () => context.push(
+                                                  '/finance/${tx.id}/edit',
+                                                ),
                                                 tooltip: 'Edit Record',
                                               ),
                                               IconButton(
-                                                icon: const Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red),
-                                                onPressed: () => _handleDeleteTransaction(tx),
+                                                icon: const Icon(
+                                                  Icons.delete_outline_rounded,
+                                                  size: 18,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () =>
+                                                    _handleDeleteTransaction(
+                                                      tx,
+                                                    ),
                                                 tooltip: 'Soft Delete',
                                               ),
                                             ],

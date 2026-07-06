@@ -9,7 +9,10 @@ abstract class FinanceRepository {
   Future<List<FinanceTransactionEntity>> getTransactions(String companyId);
 
   /// Fetch a single transaction by ID
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId);
+  Future<FinanceTransactionEntity?> getTransactionById(
+    String companyId,
+    String transactionId,
+  );
 
   /// Create or update a transaction
   Future<FinanceTransactionEntity> createTransaction(

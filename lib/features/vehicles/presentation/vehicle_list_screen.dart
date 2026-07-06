@@ -20,7 +20,13 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
-  final List<String> _filters = ['All', 'active', 'maintenance', 'idle', 'sold'];
+  final List<String> _filters = [
+    'All',
+    'active',
+    'maintenance',
+    'idle',
+    'sold',
+  ];
 
   @override
   void dispose() {
@@ -49,7 +55,8 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
         ],
       ),
       body: vehiclesAsync.when(
-        loading: () => LoadingWidget.fullScreen(message: 'Syncing vehicle telemetry...'),
+        loading: () =>
+            LoadingWidget.fullScreen(message: 'Syncing vehicle telemetry...'),
         error: (err, stack) => Center(
           child: EmptyStateWidget(
             title: 'Telemetry Connection Failed',
@@ -62,8 +69,10 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
         data: (vehicles) {
           // Apply query searches & status filter maps
           final filteredVehicles = vehicles.where((v) {
-            final matchesStatus = _statusFilter == 'All' || v.status == _statusFilter;
-            final matchesQuery = v.licensePlate.toLowerCase().contains(_searchQuery) ||
+            final matchesStatus =
+                _statusFilter == 'All' || v.status == _statusFilter;
+            final matchesQuery =
+                v.licensePlate.toLowerCase().contains(_searchQuery) ||
                 v.vin.toLowerCase().contains(_searchQuery) ||
                 v.make.toLowerCase().contains(_searchQuery) ||
                 v.model.toLowerCase().contains(_searchQuery);
@@ -81,10 +90,15 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+                        onChanged: (val) => setState(
+                          () => _searchQuery = val.trim().toLowerCase(),
+                        ),
                         decoration: InputDecoration(
                           hintText: 'Search by VIN, License Plate, Make...',
-                          prefixIcon: Icon(Icons.search_outlined, color: colorScheme.onSurface.withOpacity(0.5)),
+                          prefixIcon: Icon(
+                            Icons.search_outlined,
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
@@ -113,7 +127,8 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                           label: Text(filter.toUpperCase()),
                           selected: isSelected,
                           onSelected: (selected) {
-                            if (selected) setState(() => _statusFilter = filter);
+                            if (selected)
+                              setState(() => _statusFilter = filter);
                           },
                         ),
                       );
@@ -127,21 +142,28 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                   child: filteredVehicles.isEmpty
                       ? EmptyStateWidget(
                           title: 'No Vehicles Registered',
-                          description: _searchQuery.isEmpty 
-                              ? 'Your company partition is clean. Register your first vehicle to get started.' 
+                          description: _searchQuery.isEmpty
+                              ? 'Your company partition is clean. Register your first vehicle to get started.'
                               : 'No matches found. Try widening your search queries.',
                           icon: Icons.local_shipping_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Onboard Vehicle' : null,
-                          onActionPressed: _searchQuery.isEmpty ? () => context.push('/vehicles/new') : null,
+                          actionText: _searchQuery.isEmpty
+                              ? 'Onboard Vehicle'
+                              : null,
+                          onActionPressed: _searchQuery.isEmpty
+                              ? () => context.push('/vehicles/new')
+                              : null,
                         )
                       : GridView.builder(
                           itemCount: filteredVehicles.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 1.5,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: isDesktop
+                                    ? 3
+                                    : (screenWidth > 600 ? 2 : 1),
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 1.5,
+                              ),
                           itemBuilder: (context, index) {
                             final vehicle = filteredVehicles[index];
                             return _VehicleCard(vehicle: vehicle);
@@ -168,7 +190,8 @@ class _VehicleCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     // Compliance color warnings
-    final hasIssues = VehicleComplianceHelper.isInsuranceExpired(vehicle) ||
+    final hasIssues =
+        VehicleComplianceHelper.isInsuranceExpired(vehicle) ||
         VehicleComplianceHelper.isPucExpired(vehicle) ||
         VehicleComplianceHelper.isFitnessExpired(vehicle);
 
@@ -198,7 +221,9 @@ class _VehicleCard extends StatelessWidget {
                     children: [
                       Text(
                         vehicle.licensePlate,
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         'VIN: ${vehicle.vin.substring(0, 8).toUpperCase()}...',
@@ -213,9 +238,12 @@ class _VehicleCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
                     decoration: BoxDecoration(
-                      color: (statusColors[vehicle.status] ?? Colors.blue).withOpacity(0.08),
+                      color: (statusColors[vehicle.status] ?? Colors.blue)
+                          .withOpacity(0.08),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: statusColors[vehicle.status] ?? Colors.blue),
+                      border: Border.all(
+                        color: statusColors[vehicle.status] ?? Colors.blue,
+                      ),
                     ),
                     child: Text(
                       vehicle.status.toUpperCase(),
@@ -243,11 +271,17 @@ class _VehicleCard extends StatelessWidget {
                     children: [
                       Text(
                         'Odometer: ${vehicle.odometer.toStringAsFixed(0)} km',
-                        style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 13),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 13,
+                        ),
                       ),
                       Text(
                         vehicle.fuelType.toUpperCase(),
-                        style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 12),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -266,7 +300,9 @@ class _VehicleCard extends StatelessWidget {
                         vehicle.assignedDriverName ?? 'No Driver',
                         style: TextStyle(
                           fontSize: 12,
-                          color: vehicle.assignedDriverName == null ? Colors.amber : Colors.green,
+                          color: vehicle.assignedDriverName == null
+                              ? Colors.amber
+                              : Colors.green,
                         ),
                       ),
                     ],
@@ -274,11 +310,19 @@ class _VehicleCard extends StatelessWidget {
                   if (hasIssues)
                     Row(
                       children: const [
-                        Icon(Icons.warning_amber_rounded, color: Colors.red, size: 18),
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.red,
+                          size: 18,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           'ALERTS',
-                          style: TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),

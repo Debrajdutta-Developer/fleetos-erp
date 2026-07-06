@@ -45,8 +45,8 @@ class AuditLogEntity {
       description: map['description'] as String? ?? '',
       userId: map['userId'] as String? ?? '',
       userName: map['userName'] as String? ?? '',
-      timestamp: map['timestamp'] != null 
-          ? DateTime.parse(map['timestamp'] as String) 
+      timestamp: map['timestamp'] != null
+          ? DateTime.parse(map['timestamp'] as String)
           : DateTime.now(),
     );
   }

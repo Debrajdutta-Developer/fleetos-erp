@@ -10,8 +10,8 @@ class FinanceRepositoryImpl implements FinanceRepository {
   final Uuid _uuid;
 
   FinanceRepositoryImpl({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
-        _uuid = const Uuid();
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _uuid = const Uuid();
 
   @override
   Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) {
@@ -22,17 +22,19 @@ class FinanceRepositoryImpl implements FinanceRepository {
         .where('deletedAt', isNull: true)
         .snapshots()
         .map((snapshot) {
-      final list = snapshot.docs
-          .map((doc) => FinanceTransactionEntity.fromMap(doc.data()))
-          .toList();
-      // Sort in-memory to ensure correct sorting offline/online
-      list.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
-      return list;
-    });
+          final list = snapshot.docs
+              .map((doc) => FinanceTransactionEntity.fromMap(doc.data()))
+              .toList();
+          // Sort in-memory to ensure correct sorting offline/online
+          list.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
+          return list;
+        });
   }
 
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async {
+  Future<List<FinanceTransactionEntity>> getTransactions(
+    String companyId,
+  ) async {
     try {
       final snapshot = await _firestore
           .collection('companies')
@@ -52,7 +54,10 @@ class FinanceRepositoryImpl implements FinanceRepository {
   }
 
   @override
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async {
+  Future<FinanceTransactionEntity?> getTransactionById(
+    String companyId,
+    String transactionId,
+  ) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -74,7 +79,9 @@ class FinanceRepositoryImpl implements FinanceRepository {
     AuditLogEntity auditLog,
   ) async {
     try {
-      final transactionId = transaction.id.isEmpty ? _uuid.v4() : transaction.id;
+      final transactionId = transaction.id.isEmpty
+          ? _uuid.v4()
+          : transaction.id;
       final auditLogId = auditLog.id.isEmpty ? _uuid.v4() : auditLog.id;
 
       final now = DateTime.now();
@@ -181,11 +188,11 @@ class FinanceRepositoryImpl implements FinanceRepository {
         .where('entityType', isEqualTo: 'finance_transaction')
         .snapshots()
         .map((snapshot) {
-      final list = snapshot.docs
-          .map((doc) => AuditLogEntity.fromMap(doc.data()))
-          .toList();
-      list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      return list;
-    });
+          final list = snapshot.docs
+              .map((doc) => AuditLogEntity.fromMap(doc.data()))
+              .toList();
+          list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+          return list;
+        });
   }
 }

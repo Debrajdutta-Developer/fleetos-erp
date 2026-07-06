@@ -8,9 +8,11 @@ enum ConnectionStatus { online, offline }
 /// A service to monitor internet connectivity.
 class ConnectivityService {
   final Connectivity _connectivity;
-  final StreamController<ConnectionStatus> _controller = StreamController<ConnectionStatus>.broadcast();
+  final StreamController<ConnectionStatus> _controller =
+      StreamController<ConnectionStatus>.broadcast();
 
-  ConnectivityService({Connectivity? connectivity}) : _connectivity = connectivity ?? Connectivity() {
+  ConnectivityService({Connectivity? connectivity})
+    : _connectivity = connectivity ?? Connectivity() {
     _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       _controller.add(_mapResultToStatus(result));
     });

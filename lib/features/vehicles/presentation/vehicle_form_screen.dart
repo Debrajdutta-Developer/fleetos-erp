@@ -99,12 +99,26 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final existingUser = ref.read(vehiclesStreamProvider).valueOrNull?.firstWhere(
+    final existingUser = ref
+        .read(vehiclesStreamProvider)
+        .valueOrNull
+        ?.firstWhere(
           (v) => v.id == widget.vehicleId,
           orElse: () => const VehicleEntity(
-            id: '', vin: '', licensePlate: '', make: '', model: '', year: 0, status: '', fuelType: '', odometer: 0,
-            insuranceExpiry: null as dynamic, pucExpiry: null as dynamic, fitnessExpiry: null as dynamic,
-            createdAt: null as dynamic, updatedAt: null as dynamic
+            id: '',
+            vin: '',
+            licensePlate: '',
+            make: '',
+            model: '',
+            year: 0,
+            status: '',
+            fuelType: '',
+            odometer: 0,
+            insuranceExpiry: null as dynamic,
+            pucExpiry: null as dynamic,
+            fitnessExpiry: null as dynamic,
+            createdAt: null as dynamic,
+            updatedAt: null as dynamic,
           ),
         );
 
@@ -128,7 +142,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success = await ref.read(vehicleFormControllerProvider.notifier).saveVehicle(vehicle);
+    final success = await ref
+        .read(vehicleFormControllerProvider.notifier)
+        .saveVehicle(vehicle);
 
     if (success && mounted) {
       context.pop();
@@ -151,7 +167,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.vehicleId == null ? 'Onboard Vehicle' : 'Edit Specifications'),
+        title: Text(
+          widget.vehicleId == null ? 'Onboard Vehicle' : 'Edit Specifications',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -167,7 +185,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                   decoration: BoxDecoration(
                     color: colorScheme.error.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: colorScheme.error.withOpacity(0.2)),
+                    border: Border.all(
+                      color: colorScheme.error.withOpacity(0.2),
+                    ),
                   ),
                   child: Text(
                     formState.errorMessage!,
@@ -188,7 +208,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       labelText: 'License Plate',
                       hintText: 'NY-884-AB',
                       prefixIcon: Icons.badge_outlined,
-                      validator: (val) => val == null || val.isEmpty ? 'License plate is required' : null,
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'License plate is required'
+                          : null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -199,8 +221,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       hintText: '17 Characters',
                       prefixIcon: Icons.fingerprint_rounded,
                       validator: (val) {
-                        if (val == null || val.isEmpty) return 'VIN is required';
-                        if (val.length != 17) return 'VIN must be exactly 17 characters';
+                        if (val == null || val.isEmpty)
+                          return 'VIN is required';
+                        if (val.length != 17)
+                          return 'VIN must be exactly 17 characters';
                         return null;
                       },
                     ),
@@ -216,7 +240,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       labelText: 'Manufacturer / Make',
                       hintText: 'Volvo',
                       prefixIcon: Icons.construction_outlined,
-                      validator: (val) => val == null || val.isEmpty ? 'Make is required' : null,
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Make is required'
+                          : null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -226,7 +252,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       labelText: 'Model',
                       hintText: 'VNL 860',
                       prefixIcon: Icons.local_shipping_outlined,
-                      validator: (val) => val == null || val.isEmpty ? 'Model is required' : null,
+                      validator: (val) => val == null || val.isEmpty
+                          ? 'Model is required'
+                          : null,
                     ),
                   ),
                 ],
@@ -244,7 +272,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       validator: (val) {
                         if (val == null || val.isEmpty) return 'Required';
                         final year = int.tryParse(val);
-                        if (year == null || year < 1980 || year > DateTime.now().year + 1) return 'Invalid year';
+                        if (year == null ||
+                            year < 1980 ||
+                            year > DateTime.now().year + 1)
+                          return 'Invalid year';
                         return null;
                       },
                     ),
@@ -282,7 +313,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                         prefixIcon: Icon(Icons.info_outline_rounded, size: 20),
                       ),
                       items: _statuses.map((s) {
-                        return DropdownMenuItem(value: s, child: Text(s.toUpperCase()));
+                        return DropdownMenuItem(
+                          value: s,
+                          child: Text(s.toUpperCase()),
+                        );
                       }).toList(),
                       onChanged: (val) {
                         if (val != null) setState(() => _status = val);
@@ -295,10 +329,16 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       value: _fuelType,
                       decoration: const InputDecoration(
                         labelText: 'Fuel Category',
-                        prefixIcon: Icon(Icons.local_gas_station_outlined, size: 20),
+                        prefixIcon: Icon(
+                          Icons.local_gas_station_outlined,
+                          size: 20,
+                        ),
                       ),
                       items: _fuelTypes.map((f) {
-                        return DropdownMenuItem(value: f, child: Text(f.toUpperCase()));
+                        return DropdownMenuItem(
+                          value: f,
+                          child: Text(f.toUpperCase()),
+                        );
                       }).toList(),
                       onChanged: (val) {
                         if (val != null) setState(() => _fuelType = val);
@@ -310,7 +350,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
               const SizedBox(height: 24),
 
               // Section: Compliance Expiration Dates
-              _buildSectionHeader(theme, 'Statutory Compliance Expiration Calendars'),
+              _buildSectionHeader(
+                theme,
+                'Statutory Compliance Expiration Calendars',
+              ),
               const SizedBox(height: 16),
               _buildDateSelector(
                 label: 'Last Service Date',
@@ -318,7 +361,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 formatter: dateFormat,
                 onTap: () => _pickDate(
                   initialDate: _lastServiceDate ?? DateTime.now(),
-                  onDateSelected: (date) => setState(() => _lastServiceDate = date),
+                  onDateSelected: (date) =>
+                      setState(() => _lastServiceDate = date),
                 ),
               ),
               const SizedBox(height: 16),
@@ -328,7 +372,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 formatter: dateFormat,
                 onTap: () => _pickDate(
                   initialDate: _insuranceExpiry,
-                  onDateSelected: (date) => setState(() => _insuranceExpiry = date),
+                  onDateSelected: (date) =>
+                      setState(() => _insuranceExpiry = date),
                 ),
               ),
               const SizedBox(height: 16),
@@ -348,7 +393,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 formatter: dateFormat,
                 onTap: () => _pickDate(
                   initialDate: _fitnessExpiry,
-                  onDateSelected: (date) => setState(() => _fitnessExpiry = date),
+                  onDateSelected: (date) =>
+                      setState(() => _fitnessExpiry = date),
                 ),
               ),
               const SizedBox(height: 40),
@@ -390,7 +436,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+      title: Text(
+        label,
+        style: const TextStyle(fontSize: 13, color: Colors.grey),
+      ),
       subtitle: Text(
         selectedDate != null ? formatter.format(selectedDate) : 'Not Recorded',
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

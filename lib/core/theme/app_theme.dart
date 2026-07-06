@@ -42,16 +42,26 @@ class AppTheme {
         foregroundColor: Color(0xFF0F172A),
         elevation: 0,
         centerTitle: false,
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1)),
       ),
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.semibold, color: Color(0xFF0F172A)),
+        displayLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF0F172A),
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.semibold,
+          color: Color(0xFF0F172A),
+        ),
         bodyLarge: TextStyle(fontSize: 16, color: Color(0xFF334155)),
         bodyMedium: TextStyle(fontSize: 14, color: Color(0xFF475569)),
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF1E3A8A)),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF1E3A8A),
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -116,16 +126,26 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF334155), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: Color(0xFF334155), width: 1)),
       ),
       textTheme: const TextTheme(
-        displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-        titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.semibold, color: Colors.white),
+        displayLarge: TextStyle(
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.semibold,
+          color: Colors.white,
+        ),
         bodyLarge: TextStyle(fontSize: 16, color: Color(0xFFCBD5E1)),
         bodyMedium: TextStyle(fontSize: 14, color: Color(0xFF94A3B8)),
-        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: primaryDark),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: primaryDark,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

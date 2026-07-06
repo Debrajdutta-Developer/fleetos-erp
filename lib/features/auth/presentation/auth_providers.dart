@@ -46,12 +46,10 @@ class AuthController extends StateNotifier<AuthState> {
   final AuthRepository _repository;
   final Ref _ref;
 
-  AuthController({
-    required AuthRepository repository,
-    required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const AuthState());
+  AuthController({required AuthRepository repository, required Ref ref})
+    : _repository = repository,
+      _ref = ref,
+      super(const AuthState());
 
   /// Log in action handler.
   Future<bool> signIn(String email, String password) async {
@@ -61,10 +59,10 @@ class AuthController extends StateNotifier<AuthState> {
         email: email,
         password: password,
       );
-      
+
       // Update global current user cache
       _ref.read(currentUserProvider.notifier).state = user;
-      
+
       state = const AuthState();
       return true;
     } catch (e) {
@@ -82,7 +80,7 @@ class AuthController extends StateNotifier<AuthState> {
         password: password,
         displayName: displayName,
       );
-      
+
       // Update global current user cache
       _ref.read(currentUserProvider.notifier).state = user;
 
@@ -121,7 +119,10 @@ class AuthController extends StateNotifier<AuthState> {
         onCodeSent(verificationId);
       },
       onError: (error) {
-        state = state.copyWith(isLoading: false, errorMessage: error.toString());
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: error.toString(),
+        );
       },
     );
   }
@@ -157,11 +158,12 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
-
 }
 
 /// Provider exposing our reactive AuthController.
-final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
-  final repository = ref.watch(authRepositoryProvider);
-  return AuthController(repository: repository, ref: ref);
-});
+final authControllerProvider = StateNotifierProvider<AuthController, AuthState>(
+  (ref) {
+    final repository = ref.watch(authRepositoryProvider);
+    return AuthController(repository: repository, ref: ref);
+  },
+);

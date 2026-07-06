@@ -6,12 +6,7 @@ class LoadingWidget extends StatelessWidget {
   final Color? color;
   final String? message;
 
-  const LoadingWidget({
-    super.key,
-    this.size = 40.0,
-    this.color,
-    this.message,
-  });
+  const LoadingWidget({super.key, this.size = 40.0, this.color, this.message});
 
   /// Full-screen loader modal/scaffold with blur background.
   static Widget fullScreen({String? message}) {
@@ -71,8 +66,10 @@ class LoadingWidget extends StatelessWidget {
             message!,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
-                ),
+              color: Theme.of(
+                context,
+              ).colorScheme.onBackground.withOpacity(0.7),
+            ),
           ),
         ],
       ],

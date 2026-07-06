@@ -19,10 +19,10 @@ class AuthRepositoryImpl implements AuthRepository {
     FirebaseFirestore? firestore,
     required LocalStorageService localStorage,
     required ConnectivityService connectivity,
-  })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance,
-        _localStorage = localStorage,
-        _connectivity = connectivity;
+  }) : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       _localStorage = localStorage,
+       _connectivity = connectivity;
 
   @override
   Stream<UserEntity?> get authStateChanges {
@@ -43,7 +43,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final cachedJson = _localStorage.getCachedOfflineUserData();
       if (cachedJson != null) {
         try {
-          return UserEntity.fromMap(jsonDecode(cachedJson) as Map<String, dynamic>);
+          return UserEntity.fromMap(
+            jsonDecode(cachedJson) as Map<String, dynamic>,
+          );
         } catch (_) {
           return null;
         }
@@ -59,8 +61,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final isConnected = await _connectivity.checkConnection() == ConnectionStatus.online;
-      
+      final isConnected =
+          await _connectivity.checkConnection() == ConnectionStatus.online;
+
       // If offline, check if we have cached details matching the email, but since Firebase Auth
       // requires network for credentials validation, we fail unless Firebase has local cache persistence active.
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
@@ -73,7 +76,10 @@ class AuthRepositoryImpl implements AuthRepository {
         throw const AuthFailure('Failed to sign in. User is null.');
       }
 
-      final userEntity = await _getUserFromFirestoreOrCache(fbUser.uid, forceRemote: isConnected);
+      final userEntity = await _getUserFromFirestoreOrCache(
+        fbUser.uid,
+        forceRemote: isConnected,
+      );
       return userEntity;
     } on fb.FirebaseException catch (e) {
       throw AuthFailure.fromFirebaseException(e.code, e.message);
@@ -110,7 +116,10 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       // Save user to Firestore. Firestore local cache handles offline queue if device is offline.
-      await _firestore.collection('users').doc(fbUser.uid).set(userEntity.toMap());
+      await _firestore
+          .collection('users')
+          .doc(fbUser.uid)
+          .set(userEntity.toMap());
 
       // Save in SharedPreferences for fast offline bootstrap
       await _localStorage.cacheOfflineUserData(jsonEncode(userEntity.toMap()));
@@ -129,7 +138,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // In production Flutter, use: import 'package:google_sign_in/google_sign_in.dart';
       // To ensure pure compile-safety without adding platform dependencies during initial checks,
       // we mock/implement the credential setup using a clean interface wrapper.
-      throw const AuthFailure('Google Sign-In requires active Google Play configurations.', code: 'play-services-missing');
+      throw const AuthFailure(
+        'Google Sign-In requires active Google Play configurations.',
+        code: 'play-services-missing',
+      );
     } on fb.FirebaseException catch (e) {
       throw AuthFailure.fromFirebaseException(e.code, e.message);
     } catch (e) {
@@ -148,7 +160,9 @@ class AuthRepositoryImpl implements AuthRepository {
         phoneNumber: phoneNumber,
         verificationCompleted: (fb.PhoneAuthCredential credential) async {
           // Automatic SMS code resolution on supported Android devices
-          final userCredential = await _firebaseAuth.signInWithCredential(credential);
+          final userCredential = await _firebaseAuth.signInWithCredential(
+            credential,
+          );
           if (userCredential.user != null) {
             await _getUserFromFirestoreOrCache(userCredential.user!.uid);
           }
@@ -178,14 +192,20 @@ class AuthRepositoryImpl implements AuthRepository {
         verificationId: verificationId,
         smsCode: smsCode,
       );
-      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
       final fbUser = userCredential.user;
       if (fbUser == null) {
         throw const AuthFailure('Failed to sign in. User is null.');
       }
 
-      final isConnected = await _connectivity.checkConnection() == ConnectionStatus.online;
-      return await _getUserFromFirestoreOrCache(fbUser.uid, forceRemote: isConnected);
+      final isConnected =
+          await _connectivity.checkConnection() == ConnectionStatus.online;
+      return await _getUserFromFirestoreOrCache(
+        fbUser.uid,
+        forceRemote: isConnected,
+      );
     } on fb.FirebaseException catch (e) {
       throw AuthFailure.fromFirebaseException(e.code, e.message);
     } catch (e) {
@@ -200,9 +220,11 @@ class AuthRepositoryImpl implements AuthRepository {
     await _localStorage.clearCachedCompanyId();
   }
 
-
   @override
-  Future<void> updateUserCompanyAssociation(String uid, String companyId) async {
+  Future<void> updateUserCompanyAssociation(
+    String uid,
+    String companyId,
+  ) async {
     try {
       // 1. Update remote Firestore
       await _firestore.collection('users').doc(uid).update({
@@ -213,7 +235,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final currentUser = await getCurrentUser();
       if (currentUser != null) {
         final updatedUser = currentUser.copyWith(companyId: companyId);
-        await _localStorage.cacheOfflineUserData(jsonEncode(updatedUser.toMap()));
+        await _localStorage.cacheOfflineUserData(
+          jsonEncode(updatedUser.toMap()),
+        );
         await _localStorage.cacheUserCompanyId(companyId);
       }
     } catch (e) {
@@ -222,7 +246,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   /// Internal utility to fetch users, checking local Cache first or Remote DB.
-  Future<UserEntity> _getUserFromFirestoreOrCache(String uid, {bool forceRemote = false}) async {
+  Future<UserEntity> _getUserFromFirestoreOrCache(
+    String uid, {
+    bool forceRemote = false,
+  }) async {
     try {
       if (!forceRemote) {
         // Look inside memory/shared preferences cache first
@@ -251,7 +278,9 @@ class AuthRepositoryImpl implements AuthRepository {
           createdAt: DateTime.now(),
         );
         await _firestore.collection('users').doc(uid).set(fallbackUser.toMap());
-        await _localStorage.cacheOfflineUserData(jsonEncode(fallbackUser.toMap()));
+        await _localStorage.cacheOfflineUserData(
+          jsonEncode(fallbackUser.toMap()),
+        );
         return fallbackUser;
       }
 
@@ -266,7 +295,9 @@ class AuthRepositoryImpl implements AuthRepository {
       // Offline safety fallback
       final cachedJson = _localStorage.getCachedOfflineUserData();
       if (cachedJson != null) {
-        return UserEntity.fromMap(jsonDecode(cachedJson) as Map<String, dynamic>);
+        return UserEntity.fromMap(
+          jsonDecode(cachedJson) as Map<String, dynamic>,
+        );
       }
       rethrow;
     }

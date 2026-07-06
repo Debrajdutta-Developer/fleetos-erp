@@ -1,17 +1,17 @@
 /// Represents a registered Company/Tenant in the multi-tenant FleetOS ERP database.
 class CompanyEntity {
-  final String id;                // Unique companyId
-  final String name;              // Company Name
-  final String ownerName;         // Owner Name
-  final String ownerUid;          // Linked Authenticated User UID as Owner
-  final String? gstNumber;        // GST Number (optional)
-  final String? panNumber;        // PAN Number (optional)
-  final String phone;             // Company Phone
-  final String email;             // Company Email
-  final String address;           // Company Address
-  final String logoUrl;           // Company Brand Logo
-  final String defaultCurrency;   // Default Currency (e.g., USD, INR)
-  final String timeZone;          // Preferred Time Zone (e.g., UTC, IST)
+  final String id; // Unique companyId
+  final String name; // Company Name
+  final String ownerName; // Owner Name
+  final String ownerUid; // Linked Authenticated User UID as Owner
+  final String? gstNumber; // GST Number (optional)
+  final String? panNumber; // PAN Number (optional)
+  final String phone; // Company Phone
+  final String email; // Company Email
+  final String address; // Company Address
+  final String logoUrl; // Company Brand Logo
+  final String defaultCurrency; // Default Currency (e.g., USD, INR)
+  final String timeZone; // Preferred Time Zone (e.g., UTC, IST)
   final DateTime createdAt;
   final bool isSetupComplete;
 
@@ -67,8 +67,8 @@ class CompanyEntity {
       logoUrl: map['logoUrl'] as String? ?? '',
       defaultCurrency: map['defaultCurrency'] as String? ?? 'USD',
       timeZone: map['timeZone'] as String? ?? 'UTC',
-      createdAt: map['createdAt'] != null 
-          ? DateTime.parse(map['createdAt'] as String) 
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),
       isSetupComplete: map['isSetupComplete'] as bool? ?? false,
     );

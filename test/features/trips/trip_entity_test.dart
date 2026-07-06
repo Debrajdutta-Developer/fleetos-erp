@@ -26,8 +26,8 @@ void main() {
           'status': 'scheduled',
           'changedAt': '2026-07-06T12:00:00.000',
           'changedBy': 'Operator Bob',
-          'notes': 'Initial trip creation'
-        }
+          'notes': 'Initial trip creation',
+        },
       ],
       'createdAt': '2026-07-06T12:00:00.000',
       'updatedAt': '2026-07-06T12:00:00.000',

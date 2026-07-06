@@ -65,10 +65,7 @@ void main() {
     });
 
     test('should copyWith updating specified parameters correctly', () {
-      final updated = tTxEntity.copyWith(
-        amount: 300.00,
-        paymentMode: 'bank',
-      );
+      final updated = tTxEntity.copyWith(amount: 300.00, paymentMode: 'bank');
       expect(updated.amount, 300.00);
       expect(updated.paymentMode, 'bank');
       expect(updated.id, tTxEntity.id); // Stays unchanged

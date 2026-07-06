@@ -2,7 +2,8 @@ class FinanceTransactionEntity {
   final String id;
   final String companyId;
   final String type; // income, expense
-  final String category; // driver_salary, advance_salary, diesel, toll, repair, tyre, insurance, miscellaneous, income
+  final String
+  category; // driver_salary, advance_salary, diesel, toll, repair, tyre, insurance, miscellaneous, income
   final double amount;
   final String paymentMode; // cash, bank, upi
   final String? referenceNumber;

@@ -12,7 +12,11 @@ abstract class TripRepository {
   Future<TripEntity?> getTripById(String companyId, String tripId);
 
   /// Create a new trip.
-  Future<TripEntity> createTrip(String companyId, TripEntity trip, AuditLogEntity initialAuditLog);
+  Future<TripEntity> createTrip(
+    String companyId,
+    TripEntity trip,
+    AuditLogEntity initialAuditLog,
+  );
 
   /// Update trip status and record status history change & audit log
   Future<void> updateTripStatus(
@@ -25,8 +29,15 @@ abstract class TripRepository {
   });
 
   /// Soft deletes trip record by setting deletedAt
-  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog);
+  Future<void> deleteTrip(
+    String companyId,
+    String tripId,
+    AuditLogEntity deleteAuditLog,
+  );
 
   /// Fetch audit logs for a trip (or general audit logs)
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId);
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+    String companyId,
+    String tripId,
+  );
 }

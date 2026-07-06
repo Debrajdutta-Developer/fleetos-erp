@@ -110,7 +110,9 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
     final amount = double.tryParse(_amountController.text.trim()) ?? 0.0;
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Validation Error: Amount must be greater than zero.')),
+        const SnackBar(
+          content: Text('Validation Error: Amount must be greater than zero.'),
+        ),
       );
       return;
     }
@@ -122,12 +124,16 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
       category: _selectedCategory,
       amount: amount,
       paymentMode: _selectedPaymentMode,
-      referenceNumber: _referenceController.text.trim().isEmpty ? null : _referenceController.text.trim(),
+      referenceNumber: _referenceController.text.trim().isEmpty
+          ? null
+          : _referenceController.text.trim(),
       tripId: _selectedTripId,
       tripNumber: _selectedTripNumber,
       vehicleId: _selectedVehicleId,
       vehicleLicensePlate: _selectedVehiclePlate,
-      notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      notes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
       transactionDate: _selectedDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -153,7 +159,9 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text(state.errorMessage ?? 'An error occurred during verification.'),
+          content: Text(
+            state.errorMessage ?? 'An error occurred during verification.',
+          ),
         ),
       );
     }
@@ -167,7 +175,9 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
     final tripsAsync = ref.watch(tripsStreamProvider);
     final vehiclesAsync = ref.watch(vehiclesStreamProvider);
 
-    final activeCategories = _selectedType == 'income' ? _incomeCategories : _expenseCategories;
+    final activeCategories = _selectedType == 'income'
+        ? _incomeCategories
+        : _expenseCategories;
 
     // Reset selected category if it is not valid for current transaction type selection
     if (!activeCategories.any((c) => c['value'] == _selectedCategory)) {
@@ -176,7 +186,11 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.transactionId == null ? 'Record Transaction' : 'Edit Financial Record'),
+        title: Text(
+          widget.transactionId == null
+              ? 'Record Transaction'
+              : 'Edit Financial Record',
+        ),
       ),
       body: formState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -207,11 +221,17 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.payments_outlined, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.payments_outlined,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Transaction Metadata',
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -226,12 +246,18 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                           ButtonSegment<String>(
                                             value: 'expense',
                                             label: Text('EXPENSE'),
-                                            icon: Icon(Icons.trending_down_rounded, color: Colors.red),
+                                            icon: Icon(
+                                              Icons.trending_down_rounded,
+                                              color: Colors.red,
+                                            ),
                                           ),
                                           ButtonSegment<String>(
                                             value: 'income',
                                             label: Text('INCOME'),
-                                            icon: Icon(Icons.trending_up_rounded, color: Colors.green),
+                                            icon: Icon(
+                                              Icons.trending_up_rounded,
+                                              color: Colors.green,
+                                            ),
                                           ),
                                         ],
                                         selected: {_selectedType},
@@ -273,7 +299,10 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                   hintText: '0.00',
                                   labelText: 'Transaction Amount (\$)',
                                   prefixIcon: Icons.attach_money_rounded,
-                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
                                   validator: (val) {
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Amount is a mandatory field.';
@@ -300,11 +329,17 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.account_balance_outlined, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.account_balance_outlined,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: 8),
                                     Text(
                                       'Settlement & Allocation',
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -324,12 +359,17 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                         }).toList(),
                                         onChanged: (val) {
                                           if (val != null) {
-                                            setState(() => _selectedPaymentMode = val);
+                                            setState(
+                                              () => _selectedPaymentMode = val,
+                                            );
                                           }
                                         },
                                         decoration: const InputDecoration(
                                           labelText: 'Payment Mode',
-                                          prefixIcon: Icon(Icons.account_balance_wallet_outlined),
+                                          prefixIcon: Icon(
+                                            Icons
+                                                .account_balance_wallet_outlined,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -340,11 +380,17 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                         child: InputDecorator(
                                           decoration: const InputDecoration(
                                             labelText: 'Transaction Date',
-                                            prefixIcon: Icon(Icons.calendar_month_outlined),
+                                            prefixIcon: Icon(
+                                              Icons.calendar_month_outlined,
+                                            ),
                                           ),
                                           child: Text(
-                                            DateFormat('dd MMM yyyy').format(_selectedDate),
-                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                            DateFormat(
+                                              'dd MMM yyyy',
+                                            ).format(_selectedDate),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -356,7 +402,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                 // Reference Number
                                 CustomTextField(
                                   controller: _referenceController,
-                                  hintText: 'Txn reference, Check #, UPI Transaction ID',
+                                  hintText:
+                                      'Txn reference, Check #, UPI Transaction ID',
                                   labelText: 'Reference Number (Optional)',
                                   prefixIcon: Icons.receipt_long_outlined,
                                 ),
@@ -364,12 +411,20 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
 
                                 // Trip Linkage (Optional)
                                 tripsAsync.when(
-                                  loading: () => const LinearProgressIndicator(),
-                                  error: (err, st) => Text('Error loading trips: $err'),
+                                  loading: () =>
+                                      const LinearProgressIndicator(),
+                                  error: (err, st) =>
+                                      Text('Error loading trips: $err'),
                                   data: (trips) {
-                                    final activeTrips = trips.where((t) => t.deletedAt == null).toList();
+                                    final activeTrips = trips
+                                        .where((t) => t.deletedAt == null)
+                                        .toList();
                                     return DropdownButtonFormField<String?>(
-                                      value: _selectedTripId != null && activeTrips.any((t) => t.id == _selectedTripId)
+                                      value:
+                                          _selectedTripId != null &&
+                                              activeTrips.any(
+                                                (t) => t.id == _selectedTripId,
+                                              )
                                           ? _selectedTripId
                                           : null,
                                       hint: const Text('Do not link to a trip'),
@@ -378,23 +433,32 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                           value: null,
                                           child: Text('Not Associated to Trip'),
                                         ),
-                                        ...activeTrips.map((t) => DropdownMenuItem<String?>(
-                                              value: t.id,
-                                              child: Text('Trip to ${t.deliveryLocation} (${t.customerName})'),
-                                            )),
+                                        ...activeTrips.map(
+                                          (t) => DropdownMenuItem<String?>(
+                                            value: t.id,
+                                            child: Text(
+                                              'Trip to ${t.deliveryLocation} (${t.customerName})',
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                       onChanged: (val) {
                                         setState(() {
                                           _selectedTripId = val;
                                           if (val != null) {
-                                            _selectedTripNumber = activeTrips.firstWhere((t) => t.id == val).id.substring(0, 8).toUpperCase();
+                                            _selectedTripNumber = activeTrips
+                                                .firstWhere((t) => t.id == val)
+                                                .id
+                                                .substring(0, 8)
+                                                .toUpperCase();
                                           } else {
                                             _selectedTripNumber = null;
                                           }
                                         });
                                       },
                                       decoration: const InputDecoration(
-                                        labelText: 'Associated Trip Allocation (Optional)',
+                                        labelText:
+                                            'Associated Trip Allocation (Optional)',
                                         prefixIcon: Icon(Icons.route_outlined),
                                       ),
                                     );
@@ -404,38 +468,63 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
 
                                 // Vehicle Linkage (Optional)
                                 vehiclesAsync.when(
-                                  loading: () => const LinearProgressIndicator(),
-                                  error: (err, st) => Text('Error loading vehicles: $err'),
+                                  loading: () =>
+                                      const LinearProgressIndicator(),
+                                  error: (err, st) =>
+                                      Text('Error loading vehicles: $err'),
                                   data: (vehicles) {
-                                    final activeVehicles = vehicles.where((v) => v.deletedAt == null).toList();
+                                    final activeVehicles = vehicles
+                                        .where((v) => v.deletedAt == null)
+                                        .toList();
                                     return DropdownButtonFormField<String?>(
-                                      value: _selectedVehicleId != null && activeVehicles.any((v) => v.id == _selectedVehicleId)
+                                      value:
+                                          _selectedVehicleId != null &&
+                                              activeVehicles.any(
+                                                (v) =>
+                                                    v.id == _selectedVehicleId,
+                                              )
                                           ? _selectedVehicleId
                                           : null,
-                                      hint: const Text('Do not link to a vehicle'),
+                                      hint: const Text(
+                                        'Do not link to a vehicle',
+                                      ),
                                       items: [
                                         const DropdownMenuItem<String?>(
                                           value: null,
-                                          child: Text('Not Associated to Vehicle'),
+                                          child: Text(
+                                            'Not Associated to Vehicle',
+                                          ),
                                         ),
-                                        ...activeVehicles.map((v) => DropdownMenuItem<String?>(
-                                              value: v.id,
-                                              child: Text('${v.licensePlate} (${v.make} ${v.model})'),
-                                            )),
+                                        ...activeVehicles.map(
+                                          (v) => DropdownMenuItem<String?>(
+                                            value: v.id,
+                                            child: Text(
+                                              '${v.licensePlate} (${v.make} ${v.model})',
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                       onChanged: (val) {
                                         setState(() {
                                           _selectedVehicleId = val;
                                           if (val != null) {
-                                            _selectedVehiclePlate = activeVehicles.firstWhere((v) => v.id == val).licensePlate;
+                                            _selectedVehiclePlate =
+                                                activeVehicles
+                                                    .firstWhere(
+                                                      (v) => v.id == val,
+                                                    )
+                                                    .licensePlate;
                                           } else {
                                             _selectedVehiclePlate = null;
                                           }
                                         });
                                       },
                                       decoration: const InputDecoration(
-                                        labelText: 'Associated Vehicle Allocation (Optional)',
-                                        prefixIcon: Icon(Icons.local_shipping_outlined),
+                                        labelText:
+                                            'Associated Vehicle Allocation (Optional)',
+                                        prefixIcon: Icon(
+                                          Icons.local_shipping_outlined,
+                                        ),
                                       ),
                                     );
                                   },
@@ -445,7 +534,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                 // Notes
                                 CustomTextField(
                                   controller: _notesController,
-                                  hintText: 'Enter additional details regarding this finance ledger ledger record...',
+                                  hintText:
+                                      'Enter additional details regarding this finance ledger ledger record...',
                                   labelText: 'Audit & Description Notes',
                                   prefixIcon: Icons.description_outlined,
                                   maxLines: 2,
@@ -466,7 +556,9 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                             ),
                             const SizedBox(width: 16),
                             CustomButton(
-                              text: widget.transactionId == null ? 'RECORD LEDGER' : 'SAVE CHANGES',
+                              text: widget.transactionId == null
+                                  ? 'RECORD LEDGER'
+                                  : 'SAVE CHANGES',
                               icon: Icons.check_circle_outline_rounded,
                               width: 200,
                               onPressed: _submitForm,

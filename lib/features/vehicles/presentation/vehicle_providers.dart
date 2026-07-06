@@ -11,7 +11,9 @@ final vehicleRepositoryProvider = Provider<VehicleRepository>((ref) {
 });
 
 /// StreamProvider listening to real-time active fleet changes.
-final vehiclesStreamProvider = StreamProvider.autoDispose<List<VehicleEntity>>((ref) {
+final vehiclesStreamProvider = StreamProvider.autoDispose<List<VehicleEntity>>((
+  ref,
+) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(vehicleRepositoryProvider).watchVehicles(user!.companyId!);
@@ -50,9 +52,9 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
   VehicleFormController({
     required VehicleRepository repository,
     required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const VehicleFormState());
+  }) : _repository = repository,
+       _ref = ref,
+       super(const VehicleFormState());
 
   /// Create new vehicle asset
   Future<bool> saveVehicle(VehicleEntity vehicle) async {
@@ -104,10 +106,12 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
 
 /// Provider for VehicleFormController.
 final vehicleFormControllerProvider =
-    StateNotifierProvider.autoDispose<VehicleFormController, VehicleFormState>((ref) {
-  final repository = ref.watch(vehicleRepositoryProvider);
-  return VehicleFormController(repository: repository, ref: ref);
-});
+    StateNotifierProvider.autoDispose<VehicleFormController, VehicleFormState>((
+      ref,
+    ) {
+      final repository = ref.watch(vehicleRepositoryProvider);
+      return VehicleFormController(repository: repository, ref: ref);
+    });
 
 /// Controller overseeing Vehicle List actions, searches, filters, and deletes.
 class VehicleListController extends StateNotifier<AsyncValue<void>> {
@@ -117,9 +121,9 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
   VehicleListController({
     required VehicleRepository repository,
     required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const AsyncValue.data(null));
+  }) : _repository = repository,
+       _ref = ref,
+       super(const AsyncValue.data(null));
 
   /// Soft deletes vehicle record by setting deletedAt
   Future<bool> deleteVehicle(String vehicleId) async {
@@ -138,13 +142,22 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
   }
 
   /// Link or unlink primary driver to vehicle
-  Future<bool> assignDriver(String vehicleId, String? driverId, String? driverName) async {
+  Future<bool> assignDriver(
+    String vehicleId,
+    String? driverId,
+    String? driverName,
+  ) async {
     state = const AsyncValue.loading();
     try {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null) throw Exception('No company authenticated.');
 
-      await _repository.assignDriver(user!.companyId!, vehicleId, driverId, driverName);
+      await _repository.assignDriver(
+        user!.companyId!,
+        vehicleId,
+        driverId,
+        driverName,
+      );
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {
@@ -156,10 +169,12 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
 
 /// Provider for VehicleListController.
 final vehicleListControllerProvider =
-    StateNotifierProvider.autoDispose<VehicleListController, AsyncValue<void>>((ref) {
-  final repository = ref.watch(vehicleRepositoryProvider);
-  return VehicleListController(repository: repository, ref: ref);
-});
+    StateNotifierProvider.autoDispose<VehicleListController, AsyncValue<void>>((
+      ref,
+    ) {
+      final repository = ref.watch(vehicleRepositoryProvider);
+      return VehicleListController(repository: repository, ref: ref);
+    });
 
 /// Compliance Helper utility functions to check expiry states.
 class VehicleComplianceHelper {

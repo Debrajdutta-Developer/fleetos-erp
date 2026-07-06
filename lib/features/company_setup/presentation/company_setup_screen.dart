@@ -19,17 +19,17 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Profile Controllers
-  final _nameController = TextEditingController();       // Company Name
-  final _ownerNameController = TextEditingController();  // Owner Name
+  final _nameController = TextEditingController(); // Company Name
+  final _ownerNameController = TextEditingController(); // Owner Name
 
   // Financial Info Controllers
-  final _gstNumberController = TextEditingController();  // GST Number (optional)
-  final _panNumberController = TextEditingController();  // PAN Number (optional)
+  final _gstNumberController = TextEditingController(); // GST Number (optional)
+  final _panNumberController = TextEditingController(); // PAN Number (optional)
 
   // Contact Controllers
-  final _phoneController = TextEditingController();      // Company Phone
-  final _emailController = TextEditingController();      // Company Email
-  final _addressController = TextEditingController();    // Company Address
+  final _phoneController = TextEditingController(); // Company Phone
+  final _emailController = TextEditingController(); // Company Email
+  final _addressController = TextEditingController(); // Company Address
 
   // Locale settings
   String _selectedCurrency = 'USD';
@@ -39,7 +39,14 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
   bool _mockLogoSelected = false;
 
   final List<String> _currencies = ['USD', 'INR', 'EUR', 'GBP', 'AED', 'SGD'];
-  final List<String> _timeZones = ['UTC', 'IST (UTC+5:30)', 'EST (UTC-5)', 'GMT (UTC+0)', 'SGT (UTC+8)', 'AEST (UTC+10)'];
+  final List<String> _timeZones = [
+    'UTC',
+    'IST (UTC+5:30)',
+    'EST (UTC-5)',
+    'GMT (UTC+0)',
+    'SGT (UTC+8)',
+    'AEST (UTC+10)',
+  ];
 
   @override
   void dispose() {
@@ -56,9 +63,9 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
   Future<void> _pickMockLogo() async {
     setState(() {
       _mockLogoSelected = true;
-      _logoFile = null; 
+      _logoFile = null;
     });
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Mock company logo profile selected successfully!'),
@@ -75,8 +82,12 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
     final success = await setupController.registerCompany(
       name: _nameController.text.trim(),
       ownerName: _ownerNameController.text.trim(),
-      gstNumber: _gstNumberController.text.trim().isEmpty ? null : _gstNumberController.text.trim().toUpperCase(),
-      panNumber: _panNumberController.text.trim().isEmpty ? null : _panNumberController.text.trim().toUpperCase(),
+      gstNumber: _gstNumberController.text.trim().isEmpty
+          ? null
+          : _gstNumberController.text.trim().toUpperCase(),
+      panNumber: _panNumberController.text.trim().isEmpty
+          ? null
+          : _panNumberController.text.trim().toUpperCase(),
       phone: _phoneController.text.trim(),
       email: _emailController.text.trim(),
       address: _addressController.text.trim(),
@@ -104,10 +115,7 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
       appBar: AppBar(
         title: const Text('Tenant Onboarding'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.help_outline), onPressed: () {}),
         ],
       ),
       body: Center(
@@ -155,11 +163,16 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                           decoration: BoxDecoration(
                             color: colorScheme.error.withOpacity(0.08),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: colorScheme.error.withOpacity(0.2)),
+                            border: Border.all(
+                              color: colorScheme.error.withOpacity(0.2),
+                            ),
                           ),
                           child: Text(
                             state.errorMessage!,
-                            style: TextStyle(color: colorScheme.error, fontSize: 13),
+                            style: TextStyle(
+                              color: colorScheme.error,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 24),
@@ -173,9 +186,12 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                               onTap: _pickMockLogo,
                               child: CircleAvatar(
                                 radius: 48,
-                                backgroundColor: colorScheme.primary.withOpacity(0.08),
+                                backgroundColor: colorScheme.primary
+                                    .withOpacity(0.08),
                                 backgroundImage: _mockLogoSelected
-                                    ? const NetworkImage('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=200')
+                                    ? const NetworkImage(
+                                        'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=200',
+                                      )
                                     : null,
                                 child: !_mockLogoSelected
                                     ? Icon(
@@ -196,7 +212,9 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                             Text(
                               'Supports PNG, JPG (Max 5MB)',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onBackground.withOpacity(0.4),
+                                color: colorScheme.onBackground.withOpacity(
+                                  0.4,
+                                ),
                                 fontSize: 11,
                               ),
                             ),
@@ -213,7 +231,9 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                         labelText: 'Company Legal Name',
                         hintText: 'Globex Logistics Corp',
                         prefixIcon: Icons.business_outlined,
-                        validator: (val) => val == null || val.isEmpty ? 'Company name is required' : null,
+                        validator: (val) => val == null || val.isEmpty
+                            ? 'Company name is required'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       CustomTextField(
@@ -221,7 +241,9 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                         labelText: 'Owner / Legal Representative Name',
                         hintText: 'John Doe',
                         prefixIcon: Icons.person_outline_rounded,
-                        validator: (val) => val == null || val.isEmpty ? 'Owner name is required' : null,
+                        validator: (val) => val == null || val.isEmpty
+                            ? 'Owner name is required'
+                            : null,
                       ),
                       const SizedBox(height: 24),
 
@@ -234,7 +256,9 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                         hintText: '+1 (555) 0199',
                         keyboardType: TextInputType.phone,
                         prefixIcon: Icons.phone_outlined,
-                        validator: (val) => val == null || val.isEmpty ? 'Company phone is required' : null,
+                        validator: (val) => val == null || val.isEmpty
+                            ? 'Company phone is required'
+                            : null,
                       ),
                       const SizedBox(height: 16),
                       CustomTextField(
@@ -244,9 +268,11 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                         keyboardType: TextInputType.emailAddress,
                         prefixIcon: Icons.email_outlined,
                         validator: (val) {
-                          if (val == null || val.isEmpty) return 'Company email is required';
+                          if (val == null || val.isEmpty)
+                            return 'Company email is required';
                           final emailReg = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                          if (!emailReg.hasMatch(val)) return 'Invalid email format';
+                          if (!emailReg.hasMatch(val))
+                            return 'Invalid email format';
                           return null;
                         },
                       ),
@@ -257,12 +283,17 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                         hintText: '100 Logistics Blvd, Suite 400',
                         prefixIcon: Icons.location_on_outlined,
                         maxLines: 2,
-                        validator: (val) => val == null || val.isEmpty ? 'Address is required' : null,
+                        validator: (val) => val == null || val.isEmpty
+                            ? 'Address is required'
+                            : null,
                       ),
                       const SizedBox(height: 24),
 
                       // Section 3: Financial Mappings
-                      _buildSectionHeader(theme, 'Financial & Tax Registration'),
+                      _buildSectionHeader(
+                        theme,
+                        'Financial & Tax Registration',
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -304,7 +335,10 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                       const SizedBox(height: 24),
 
                       // Section 4: Localization Settings
-                      _buildSectionHeader(theme, 'Localization & Regional Defaults'),
+                      _buildSectionHeader(
+                        theme,
+                        'Localization & Regional Defaults',
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [

@@ -44,9 +44,9 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
   CompanySetupController({
     required CompanyRepository repository,
     required Ref ref,
-  })  : _repository = repository,
-        _ref = ref,
-        super(const CompanySetupState());
+  }) : _repository = repository,
+       _ref = ref,
+       super(const CompanySetupState());
 
   /// Triggers company profile registration inside Firestore
   Future<bool> registerCompany({
@@ -65,7 +65,9 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
     try {
       final currentUser = _ref.read(currentUserProvider);
       if (currentUser == null) {
-        throw Exception('User authentication context is missing. Log in again.');
+        throw Exception(
+          'User authentication context is missing. Log in again.',
+        );
       }
 
       // 1. Create company record
@@ -103,6 +105,6 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
 /// Provider exposing our reactive CompanySetupController.
 final companySetupControllerProvider =
     StateNotifierProvider<CompanySetupController, CompanySetupState>((ref) {
-  final repository = ref.watch(companyRepositoryProvider);
-  return CompanySetupController(repository: repository, ref: ref);
-});
+      final repository = ref.watch(companyRepositoryProvider);
+      return CompanySetupController(repository: repository, ref: ref);
+    });

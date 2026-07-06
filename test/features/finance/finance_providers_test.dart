@@ -19,12 +19,17 @@ class MockFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async {
+  Future<List<FinanceTransactionEntity>> getTransactions(
+    String companyId,
+  ) async {
     return transactions;
   }
 
   @override
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async {
+  Future<FinanceTransactionEntity?> getTransactionById(
+    String companyId,
+    String transactionId,
+  ) async {
     try {
       return transactions.firstWhere((t) => t.id == transactionId);
     } catch (_) {
@@ -105,51 +110,58 @@ void main() {
       ];
     });
 
-    test('should dynamically generate ledger with correct running balances', () {
-      final repository = MockFinanceRepository(transactions: tTxs);
-      final container = ProviderContainer(
-        overrides: [
-          currentUserProvider.overrideWith((ref) => UserEntity(
+    test(
+      'should dynamically generate ledger with correct running balances',
+      () {
+        final repository = MockFinanceRepository(transactions: tTxs);
+        final container = ProviderContainer(
+          overrides: [
+            currentUserProvider.overrideWith(
+              (ref) => UserEntity(
                 uid: 'user_1',
                 email: 'test@company.com',
                 displayName: 'Operator John',
                 role: 'admin',
                 companyId: 'comp_1',
                 createdAt: DateTime.now(),
-              )),
-          financeRepositoryProvider.overrideWithValue(repository),
-        ],
-      );
+              ),
+            ),
+            financeRepositoryProvider.overrideWithValue(repository),
+          ],
+        );
 
-      // Force stream read
-      container.read(financeTransactionsStreamProvider);
-      
-      final ledger = container.read(ledgerProvider);
+        // Force stream read
+        container.read(financeTransactionsStreamProvider);
 
-      // Entries should be sorted newest first: tx_3, tx_2, tx_1
-      expect(ledger.length, 3);
-      expect(ledger[0].transaction.id, 'tx_3');
-      expect(ledger[0].runningBalance, 1500.0); // 5000 - 1500 - 2000 = 1500
+        final ledger = container.read(ledgerProvider);
 
-      expect(ledger[1].transaction.id, 'tx_2');
-      expect(ledger[1].runningBalance, 3500.0); // 5000 - 1500 = 3500
+        // Entries should be sorted newest first: tx_3, tx_2, tx_1
+        expect(ledger.length, 3);
+        expect(ledger[0].transaction.id, 'tx_3');
+        expect(ledger[0].runningBalance, 1500.0); // 5000 - 1500 - 2000 = 1500
 
-      expect(ledger[2].transaction.id, 'tx_1');
-      expect(ledger[2].runningBalance, 5000.0); // Initial income
-    });
+        expect(ledger[1].transaction.id, 'tx_2');
+        expect(ledger[1].runningBalance, 3500.0); // 5000 - 1500 = 3500
+
+        expect(ledger[2].transaction.id, 'tx_1');
+        expect(ledger[2].runningBalance, 5000.0); // Initial income
+      },
+    );
 
     test('should dynamically calculate Profit/Loss statement', () {
       final repository = MockFinanceRepository(transactions: tTxs);
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => UserEntity(
-                uid: 'user_1',
-                email: 'test@company.com',
-                displayName: 'Operator John',
-                role: 'admin',
-                companyId: 'comp_1',
-                createdAt: DateTime.now(),
-              )),
+          currentUserProvider.overrideWith(
+            (ref) => UserEntity(
+              uid: 'user_1',
+              email: 'test@company.com',
+              displayName: 'Operator John',
+              role: 'admin',
+              companyId: 'comp_1',
+              createdAt: DateTime.now(),
+            ),
+          ),
           financeRepositoryProvider.overrideWithValue(repository),
         ],
       );
@@ -169,14 +181,16 @@ void main() {
       final repository = MockFinanceRepository(transactions: []);
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => UserEntity(
-                uid: 'user_1',
-                email: 'test@company.com',
-                displayName: 'Operator John',
-                role: 'admin',
-                companyId: 'comp_1',
-                createdAt: DateTime.now(),
-              )),
+          currentUserProvider.overrideWith(
+            (ref) => UserEntity(
+              uid: 'user_1',
+              email: 'test@company.com',
+              displayName: 'Operator John',
+              role: 'admin',
+              companyId: 'comp_1',
+              createdAt: DateTime.now(),
+            ),
+          ),
           financeRepositoryProvider.overrideWithValue(repository),
         ],
       );
@@ -203,29 +217,40 @@ void main() {
       expect(repository.auditLogs[0].userName, 'Operator John');
     });
 
-    test('should soft-delete transaction and write delete audit log successfully', () async {
-      final repository = MockFinanceRepository(transactions: tTxs);
-      final container = ProviderContainer(
-        overrides: [
-          currentUserProvider.overrideWith((ref) => UserEntity(
+    test(
+      'should soft-delete transaction and write delete audit log successfully',
+      () async {
+        final repository = MockFinanceRepository(transactions: tTxs);
+        final container = ProviderContainer(
+          overrides: [
+            currentUserProvider.overrideWith(
+              (ref) => UserEntity(
                 uid: 'user_1',
                 email: 'test@company.com',
                 displayName: 'Operator John',
                 role: 'admin',
                 companyId: 'comp_1',
                 createdAt: DateTime.now(),
-              )),
-          financeRepositoryProvider.overrideWithValue(repository),
-        ],
-      );
+              ),
+            ),
+            financeRepositoryProvider.overrideWithValue(repository),
+          ],
+        );
 
-      final controller = container.read(financeListControllerProvider.notifier);
-      final success = await controller.deleteTransaction('tx_2', 'diesel', 1500.0);
+        final controller = container.read(
+          financeListControllerProvider.notifier,
+        );
+        final success = await controller.deleteTransaction(
+          'tx_2',
+          'diesel',
+          1500.0,
+        );
 
-      expect(success, true);
-      expect(repository.transactions[1].deletedAt, isNotNull);
-      expect(repository.auditLogs.length, 1);
-      expect(repository.auditLogs[0].action, 'transaction_deleted');
-    });
+        expect(success, true);
+        expect(repository.transactions[1].deletedAt, isNotNull);
+        expect(repository.auditLogs.length, 1);
+        expect(repository.auditLogs[0].action, 'transaction_deleted');
+      },
+    );
   });
 }

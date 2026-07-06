@@ -27,7 +27,7 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
     'inTransit',
     'delivered',
     'completed',
-    'cancelled'
+    'cancelled',
   ];
 
   Color _getStatusColor(String status) {
@@ -79,7 +79,8 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
         ],
       ),
       body: tripsAsync.when(
-        loading: () => LoadingWidget.fullScreen(message: 'Syncing logistics ledger...'),
+        loading: () =>
+            LoadingWidget.fullScreen(message: 'Syncing logistics ledger...'),
         error: (err, stack) => Center(
           child: EmptyStateWidget(
             title: 'Trip Synced Connection Failed',
@@ -91,9 +92,12 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
         ),
         data: (trips) {
           final filteredTrips = trips.where((t) {
-            final matchesStatus = _statusFilter == 'ALL' || t.status.toLowerCase() == _statusFilter.toLowerCase();
+            final matchesStatus =
+                _statusFilter == 'ALL' ||
+                t.status.toLowerCase() == _statusFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
-            final matchesQuery = t.vehicleLicensePlate.toLowerCase().contains(query) ||
+            final matchesQuery =
+                t.vehicleLicensePlate.toLowerCase().contains(query) ||
                 t.driverName.toLowerCase().contains(query) ||
                 t.customerName.toLowerCase().contains(query) ||
                 t.pickupLocation.toLowerCase().contains(query) ||
@@ -113,10 +117,16 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
+                        onChanged: (val) => setState(
+                          () => _searchQuery = val.trim().toLowerCase(),
+                        ),
                         decoration: InputDecoration(
-                          hintText: 'Search by Customer, Vehicle, Driver, Route...',
-                          prefixIcon: Icon(Icons.search_outlined, color: colorScheme.onSurface.withOpacity(0.5)),
+                          hintText:
+                              'Search by Customer, Vehicle, Driver, Route...',
+                          prefixIcon: Icon(
+                            Icons.search_outlined,
+                            color: colorScheme.onSurface.withOpacity(0.5),
+                          ),
                         ),
                       ),
                     ),
@@ -146,7 +156,8 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
                           label: Text(display.toUpperCase()),
                           selected: isSelected,
                           onSelected: (selected) {
-                            if (selected) setState(() => _statusFilter = filter);
+                            if (selected)
+                              setState(() => _statusFilter = filter);
                           },
                         ),
                       );
@@ -160,24 +171,34 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
                   child: filteredTrips.isEmpty
                       ? EmptyStateWidget(
                           title: 'No Trips Found',
-                          description: _searchQuery.isEmpty 
-                              ? 'No trips scheduled inside your company tenant.' 
+                          description: _searchQuery.isEmpty
+                              ? 'No trips scheduled inside your company tenant.'
                               : 'No matches found. Try broadening your query.',
                           icon: Icons.route_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Schedule First Trip' : null,
-                          onActionPressed: _searchQuery.isEmpty ? () => context.push('/trips/new') : null,
+                          actionText: _searchQuery.isEmpty
+                              ? 'Schedule First Trip'
+                              : null,
+                          onActionPressed: _searchQuery.isEmpty
+                              ? () => context.push('/trips/new')
+                              : null,
                         )
                       : GridView.builder(
                           itemCount: filteredTrips.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                            childAspectRatio: 1.45,
-                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: isDesktop
+                                    ? 3
+                                    : (screenWidth > 600 ? 2 : 1),
+                                crossAxisSpacing: 16,
+                                mainAxisSpacing: 16,
+                                childAspectRatio: 1.45,
+                              ),
                           itemBuilder: (context, index) {
                             final trip = filteredTrips[index];
-                            return _TripCard(trip: trip, statusColor: _getStatusColor(trip.status));
+                            return _TripCard(
+                              trip: trip,
+                              statusColor: _getStatusColor(trip.status),
+                            );
                           },
                         ),
                 ),
@@ -267,14 +288,21 @@ class _TripCard extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.circle_outlined, color: Colors.green, size: 14),
+                      const Icon(
+                        Icons.circle_outlined,
+                        color: Colors.green,
+                        size: 14,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           trip.pickupLocation,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -289,14 +317,21 @@ class _TripCard extends ConsumerWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, color: Colors.red, size: 14),
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: Colors.red,
+                        size: 14,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           trip.deliveryLocation,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ],
@@ -319,7 +354,10 @@ class _TripCard extends ConsumerWidget {
                             trip.vehicleLicensePlate,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 8),

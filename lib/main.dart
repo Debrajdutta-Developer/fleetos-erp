@@ -22,7 +22,7 @@ void main() async {
   // 3. Initialize Firebase Services & Offline Persistence Settings
   try {
     await FirebaseService.initialize();
-    
+
     // Setup background push notification listeners and get token
     final firebaseService = FirebaseService();
     await firebaseService.setupPushNotifications();

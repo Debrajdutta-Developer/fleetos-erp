@@ -11,8 +11,8 @@ class TripRepositoryImpl implements TripRepository {
   final Uuid _uuid;
 
   TripRepositoryImpl({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance,
-        _uuid = const Uuid();
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _uuid = const Uuid();
 
   @override
   Stream<List<TripEntity>> watchTrips(String companyId) {
@@ -23,13 +23,13 @@ class TripRepositoryImpl implements TripRepository {
         .where('deletedAt', isNull: true)
         .snapshots()
         .map((snapshot) {
-      final list = snapshot.docs
-          .map((doc) => TripEntity.fromMap(doc.data()))
-          .toList();
-      // Sort in-memory to ensure correct sorting offline/online
-      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      return list;
-    });
+          final list = snapshot.docs
+              .map((doc) => TripEntity.fromMap(doc.data()))
+              .toList();
+          // Sort in-memory to ensure correct sorting offline/online
+          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return list;
+        });
   }
 
   @override
@@ -76,7 +76,9 @@ class TripRepositoryImpl implements TripRepository {
   ) async {
     try {
       final tripId = trip.id.isEmpty ? _uuid.v4() : trip.id;
-      final auditLogId = initialAuditLog.id.isEmpty ? _uuid.v4() : initialAuditLog.id;
+      final auditLogId = initialAuditLog.id.isEmpty
+          ? _uuid.v4()
+          : initialAuditLog.id;
 
       final now = DateTime.now();
       final initialHistory = TripStatusHistory(
@@ -107,7 +109,7 @@ class TripRepositoryImpl implements TripRepository {
       );
 
       final batch = _firestore.batch();
-      
+
       final tripRef = _firestore
           .collection('companies')
           .doc(companyId)
@@ -151,7 +153,10 @@ class TripRepositoryImpl implements TripRepository {
 
       final doc = await tripRef.get();
       if (!doc.exists) {
-        throw const ServerFailure('Trip document not found.', code: 'not-found');
+        throw const ServerFailure(
+          'Trip document not found.',
+          code: 'not-found',
+        );
       }
 
       final trip = TripEntity.fromMap(doc.data()!);
@@ -164,7 +169,8 @@ class TripRepositoryImpl implements TripRepository {
         notes: notes,
       );
 
-      final updatedHistory = List<TripStatusHistory>.from(trip.statusHistory)..add(newHistory);
+      final updatedHistory = List<TripStatusHistory>.from(trip.statusHistory)
+        ..add(newHistory);
       final updatedTrip = trip.copyWith(
         status: newStatus,
         statusHistory: updatedHistory,
@@ -216,7 +222,9 @@ class TripRepositoryImpl implements TripRepository {
           .collection('trips')
           .doc(tripId);
 
-      final auditLogId = deleteAuditLog.id.isEmpty ? _uuid.v4() : deleteAuditLog.id;
+      final auditLogId = deleteAuditLog.id.isEmpty
+          ? _uuid.v4()
+          : deleteAuditLog.id;
       final auditRef = _firestore
           .collection('companies')
           .doc(companyId)
@@ -251,7 +259,10 @@ class TripRepositoryImpl implements TripRepository {
   }
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) {
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+    String companyId,
+    String tripId,
+  ) {
     return _firestore
         .collection('companies')
         .doc(companyId)
@@ -260,11 +271,11 @@ class TripRepositoryImpl implements TripRepository {
         .where('entityId', isEqualTo: tripId)
         .snapshots()
         .map((snapshot) {
-      final list = snapshot.docs
-          .map((doc) => AuditLogEntity.fromMap(doc.data()))
-          .toList();
-      list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      return list;
-    });
+          final list = snapshot.docs
+              .map((doc) => AuditLogEntity.fromMap(doc.data()))
+              .toList();
+          list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+          return list;
+        });
   }
 }

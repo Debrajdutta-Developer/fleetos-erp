@@ -23,8 +23,8 @@ class TripStatusHistory {
   factory TripStatusHistory.fromMap(Map<String, dynamic> map) {
     return TripStatusHistory(
       status: map['status'] as String? ?? 'scheduled',
-      changedAt: map['changedAt'] != null 
-          ? DateTime.parse(map['changedAt'] as String) 
+      changedAt: map['changedAt'] != null
+          ? DateTime.parse(map['changedAt'] as String)
           : DateTime.now(),
       changedBy: map['changedBy'] as String? ?? 'System',
       notes: map['notes'] as String?,

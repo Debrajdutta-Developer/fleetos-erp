@@ -43,7 +43,10 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
     return DateFormat('dd MMM yyyy, hh:mm a').format(dt.toLocal());
   }
 
-  Future<void> _handleStatusTransition(TripEntity trip, String nextStatus) async {
+  Future<void> _handleStatusTransition(
+    TripEntity trip,
+    String nextStatus,
+  ) async {
     final noteController = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
@@ -53,7 +56,9 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Are you sure you want to transition this trip status to $nextStatus?'),
+            Text(
+              'Are you sure you want to transition this trip status to $nextStatus?',
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: noteController,
@@ -81,7 +86,7 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
       final success = await ref
           .read(tripListControllerProvider.notifier)
           .updateStatus(trip.id, nextStatus, notes: noteController.text.trim());
-      
+
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Trip status updated to $nextStatus.')),
@@ -95,7 +100,9 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Soft-Delete Trip Record'),
-        content: const Text('Are you sure you want to delete this trip record? The operation is non-destructive but will remove the trip from active logs.'),
+        content: const Text(
+          'Are you sure you want to delete this trip record? The operation is non-destructive but will remove the trip from active logs.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -114,7 +121,9 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
     );
 
     if (confirmed == true && mounted) {
-      final success = await ref.read(tripListControllerProvider.notifier).deleteTrip(trip.id);
+      final success = await ref
+          .read(tripListControllerProvider.notifier)
+          .deleteTrip(trip.id);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Trip record soft-deleted.')),
@@ -129,13 +138,17 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final tripAsync = ref.watch(tripDetailsStreamProvider(widget.tripId));
-    final auditLogsAsync = ref.watch(tripAuditLogsStreamProvider(widget.tripId));
+    final auditLogsAsync = ref.watch(
+      tripAuditLogsStreamProvider(widget.tripId),
+    );
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth > 992;
 
     return tripAsync.when(
-      loading: () => Scaffold(body: LoadingWidget.fullScreen(message: 'Loading trip ledger...')),
+      loading: () => Scaffold(
+        body: LoadingWidget.fullScreen(message: 'Loading trip ledger...'),
+      ),
       error: (err, st) => Scaffold(
         appBar: AppBar(),
         body: Center(
@@ -153,7 +166,8 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
             body: const Center(
               child: EmptyStateWidget(
                 title: 'Trip Record Missing',
-                description: 'The requested trip record does not exist or has been soft-deleted.',
+                description:
+                    'The requested trip record does not exist or has been soft-deleted.',
                 icon: Icons.search_off_rounded,
               ),
             ),
@@ -186,7 +200,10 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
               color: statusColor.withOpacity(0.04),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: statusColor.withOpacity(0.2), width: 1.5),
+                side: BorderSide(
+                  color: statusColor.withOpacity(0.2),
+                  width: 1.5,
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -221,19 +238,29 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: ElevatedButton(
-                              onPressed: () => _handleStatusTransition(trip, next),
+                              onPressed: () =>
+                                  _handleStatusTransition(trip, next),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isCancel ? Colors.red : colorScheme.primary,
+                                backgroundColor: isCancel
+                                    ? Colors.red
+                                    : colorScheme.primary,
                                 foregroundColor: Colors.white,
                               ),
-                              child: Text(next == 'inTransit' ? 'IN TRANSIT' : next.toUpperCase()),
+                              child: Text(
+                                next == 'inTransit'
+                                    ? 'IN TRANSIT'
+                                    : next.toUpperCase(),
+                              ),
                             ),
                           );
                         }).toList(),
                       )
                     else
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, py: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          py: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: statusColor.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(8),
@@ -260,27 +287,52 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Route & Cargo Details', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Route & Cargo Details',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const Divider(height: 24),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.circle_outlined, color: Colors.green, size: 20),
+                        const Icon(
+                          Icons.circle_outlined,
+                          color: Colors.green,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Pickup Location', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Pickup Location',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 2),
-                              Text(trip.pickupLocation, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              Text(
+                                trip.pickupLocation,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 9.0, top: 4, bottom: 4),
+                      padding: const EdgeInsets.only(
+                        left: 9.0,
+                        top: 4,
+                        bottom: 4,
+                      ),
                       child: Container(
                         width: 2,
                         height: 20,
@@ -290,15 +342,31 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.location_on_outlined, color: Colors.red, size: 20),
+                        const Icon(
+                          Icons.location_on_outlined,
+                          color: Colors.red,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Delivery Location', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Delivery Location',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 2),
-                              Text(trip.deliveryLocation, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                              Text(
+                                trip.deliveryLocation,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -311,9 +379,21 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Cargo Type', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Cargo Type',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text(trip.cargoType, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(
+                                trip.cargoType,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -321,9 +401,21 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Coal Qty (tons)', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Coal Qty (tons)',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text('${trip.coalQuantity.toStringAsFixed(1)} T', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(
+                                '${trip.coalQuantity.toStringAsFixed(1)} T',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -331,9 +423,21 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Freight Amount', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Freight Amount',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text('\$${trip.freightAmount.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(
+                                '\$${trip.freightAmount.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -341,9 +445,22 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Advance Payment', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Advance Payment',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text('\$${trip.advancePayment.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: colorScheme.secondary)),
+                              Text(
+                                '\$${trip.advancePayment.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: colorScheme.secondary,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -351,9 +468,21 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Permit Expense', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              Text(
+                                'Permit Expense',
+                                style: TextStyle(
+                                  color: colorScheme.onSurface.withOpacity(0.4),
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text('\$${trip.permitExpense.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(
+                                '\$${trip.permitExpense.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -372,25 +501,41 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Assigned Resources', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Assigned Resources',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const Divider(height: 24),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(
                         backgroundColor: colorScheme.primary.withOpacity(0.08),
-                        child: Icon(Icons.local_shipping, color: colorScheme.primary),
+                        child: Icon(
+                          Icons.local_shipping,
+                          color: colorScheme.primary,
+                        ),
                       ),
-                      title: Text(trip.vehicleLicensePlate, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        trip.vehicleLicensePlate,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: const Text('Assigned Corporate Vehicle'),
                     ),
                     const Divider(),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(
-                        backgroundColor: colorScheme.secondary.withOpacity(0.08),
+                        backgroundColor: colorScheme.secondary.withOpacity(
+                          0.08,
+                        ),
                         child: Icon(Icons.person, color: colorScheme.secondary),
                       ),
-                      title: Text(trip.driverName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        trip.driverName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: const Text('Assigned Operator/Driver'),
                     ),
                     const Divider(),
@@ -400,7 +545,10 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                         backgroundColor: Colors.blue.withOpacity(0.08),
                         child: const Icon(Icons.business, color: Colors.blue),
                       ),
-                      title: Text(trip.customerName, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(
+                        trip.customerName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       subtitle: const Text('Billed Corporate Customer'),
                     ),
                   ],
@@ -417,9 +565,14 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Status Update Log Timeline', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Text(
+                  'Status Update Log Timeline',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const Divider(height: 24),
-                
+
                 // Status History list representation
                 ListView.builder(
                   shrinkWrap: true,
@@ -433,10 +586,7 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                       children: [
                         Column(
                           children: [
-                            CircleAvatar(
-                              radius: 8,
-                              backgroundColor: histColor,
-                            ),
+                            CircleAvatar(radius: 8, backgroundColor: histColor),
                             if (index != trip.statusHistory.length - 1)
                               Container(
                                 width: 2,
@@ -451,7 +601,8 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     hist.status.toUpperCase(),
@@ -464,7 +615,9 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                                   Text(
                                     _formatDateTime(hist.changedAt),
                                     style: TextStyle(
-                                      color: colorScheme.onSurface.withOpacity(0.4),
+                                      color: colorScheme.onSurface.withOpacity(
+                                        0.4,
+                                      ),
                                       fontSize: 10,
                                     ),
                                   ),
@@ -472,14 +625,19 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                               ),
                               Text(
                                 'Changed by: ${hist.changedBy}',
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                               if (hist.notes != null && hist.notes!.isNotEmpty)
                                 Text(
                                   'Notes: ${hist.notes}',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: colorScheme.onSurface.withOpacity(0.6),
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.6,
+                                    ),
                                   ),
                                 ),
                               const SizedBox(height: 12),
@@ -490,26 +648,46 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                     );
                   },
                 ),
-                
+
                 const Divider(height: 32),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Enterprise Audit Logs', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                    const Icon(Icons.security, size: 18, color: Colors.blueGrey),
+                    Text(
+                      'Enterprise Audit Logs',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.security,
+                      size: 18,
+                      color: Colors.blueGrey,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Real-time Audit logs feed from stream
                 auditLogsAsync.when(
-                  loading: () => const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator())),
-                  error: (e, s) => Text('Error loading audits: $e', style: const TextStyle(color: Colors.red, fontSize: 12)),
+                  loading: () => const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                  error: (e, s) => Text(
+                    'Error loading audits: $e',
+                    style: const TextStyle(color: Colors.red, fontSize: 12),
+                  ),
                   data: (logs) {
                     if (logs.isEmpty) {
                       return Text(
                         'No system audits reported yet.',
-                        style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.4),
+                          fontSize: 12,
+                        ),
                       );
                     }
                     return ListView.separated(
@@ -527,20 +705,36 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                               children: [
                                 Text(
                                   log.action.toUpperCase(),
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.blueGrey),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                    color: Colors.blueGrey,
+                                  ),
                                 ),
                                 Text(
                                   _formatDateTime(log.timestamp),
-                                  style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 9),
+                                  style: TextStyle(
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.4,
+                                    ),
+                                    fontSize: 9,
+                                  ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 2),
-                            Text(log.description, style: const TextStyle(fontSize: 12)),
+                            Text(
+                              log.description,
+                              style: const TextStyle(fontSize: 12),
+                            ),
                             const SizedBox(height: 2),
                             Text(
                               'By: ${log.userName} (UID: ${log.userId.substring(0, 5)}...)',
-                              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.5), fontSize: 10, fontStyle: FontStyle.italic),
+                              style: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.5),
+                                fontSize: 10,
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ],
                         );
@@ -555,10 +749,15 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('Trip #${trip.id.substring(0, 8).toUpperCase()} Ledger'),
+            title: Text(
+              'Trip #${trip.id.substring(0, 8).toUpperCase()} Ledger',
+            ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.delete_outline_rounded, color: Colors.red),
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.red,
+                ),
                 onPressed: () => _handleDeleteTrip(trip),
                 tooltip: 'Soft-Delete Trip',
               ),

@@ -16,7 +16,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Email controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -101,7 +101,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleGoogleSignIn() async {
-    final success = await ref.read(authControllerProvider.notifier).signInWithGoogle();
+    final success = await ref
+        .read(authControllerProvider.notifier)
+        .signInWithGoogle();
     if (success && mounted) {
       final user = ref.read(currentUserProvider);
       if (user?.companyId == null || user!.companyId!.isEmpty) {
@@ -169,7 +171,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 48),
                       Row(
                         children: [
-                          Icon(Icons.shield_outlined, color: colorScheme.secondary, size: 20),
+                          Icon(
+                            Icons.shield_outlined,
+                            color: colorScheme.secondary,
+                            size: 20,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             'Secured with AES 256-bit standards',
@@ -192,7 +198,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Center(
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 460),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 32,
+                ),
                 child: SingleChildScrollView(
                   child: Form(
                     key: _formKey,
@@ -203,7 +212,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         if (!isDesktop) ...[
                           Row(
                             children: [
-                              Icon(Icons.local_shipping_rounded, color: colorScheme.primary, size: 32),
+                              Icon(
+                                Icons.local_shipping_rounded,
+                                color: colorScheme.primary,
+                                size: 32,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'FleetOS',
@@ -219,7 +232,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Text(
                           _usePhoneAuth
                               ? 'SMS OTP verification'
-                              : (_isSignUp ? 'Create Corporate Account' : 'Welcome Operator'),
+                              : (_isSignUp
+                                    ? 'Create Corporate Account'
+                                    : 'Welcome Operator'),
                           style: theme.textTheme.displayLarge?.copyWith(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -229,9 +244,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Text(
                           _usePhoneAuth
                               ? 'Secure login via phone authentication.'
-                              : (_isSignUp 
-                                  ? 'Get started with FleetOS ERP' 
-                                  : 'Log in to access your dashboard and fleet diagnostics.'),
+                              : (_isSignUp
+                                    ? 'Get started with FleetOS ERP'
+                                    : 'Log in to access your dashboard and fleet diagnostics.'),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onBackground.withOpacity(0.5),
                           ),
@@ -246,16 +261,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             decoration: BoxDecoration(
                               color: colorScheme.error.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: colorScheme.error.withOpacity(0.2)),
+                              border: Border.all(
+                                color: colorScheme.error.withOpacity(0.2),
+                              ),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 20),
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  color: colorScheme.error,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     authState.errorMessage!,
-                                    style: TextStyle(color: colorScheme.error, fontSize: 13),
+                                    style: TextStyle(
+                                      color: colorScheme.error,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -274,8 +298,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             keyboardType: TextInputType.phone,
                             prefixIcon: Icons.phone_outlined,
                             validator: (val) {
-                              if (val == null || val.isEmpty) return 'Phone number is required';
-                              if (!val.startsWith('+')) return 'Must include country code (e.g. +1)';
+                              if (val == null || val.isEmpty)
+                                return 'Phone number is required';
+                              if (!val.startsWith('+'))
+                                return 'Must include country code (e.g. +1)';
                               return null;
                             },
                           ),
@@ -289,13 +315,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               prefixIcon: Icons.pin_outlined,
                               textInputAction: TextInputAction.done,
                               validator: (val) {
-                                if (val == null || val.isEmpty) return 'Code is required';
-                                if (val.length < 6) return 'Code must be 6 digits';
+                                if (val == null || val.isEmpty)
+                                  return 'Code is required';
+                                if (val.length < 6)
+                                  return 'Code must be 6 digits';
                                 return null;
                               },
                             ),
                           ],
-                        ] 
+                        ]
                         // Render standard Email inputs
                         else ...[
                           if (_isSignUp) ...[
@@ -304,7 +332,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               labelText: 'Full Name',
                               hintText: 'John Doe',
                               prefixIcon: Icons.person_outline_rounded,
-                              validator: (val) => val == null || val.isEmpty ? 'Name is required' : null,
+                              validator: (val) => val == null || val.isEmpty
+                                  ? 'Name is required'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -316,9 +346,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             prefixIcon: Icons.email_outlined,
                             validator: (val) {
-                              if (val == null || val.isEmpty) return 'Email is required';
+                              if (val == null || val.isEmpty)
+                                return 'Email is required';
                               final emailReg = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                              if (!emailReg.hasMatch(val)) return 'Invalid email format';
+                              if (!emailReg.hasMatch(val))
+                                return 'Invalid email format';
                               return null;
                             },
                           ),
@@ -331,8 +363,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             textInputAction: TextInputAction.done,
                             prefixIcon: Icons.lock_outline_rounded,
                             validator: (val) {
-                              if (val == null || val.isEmpty) return 'Password is required';
-                              if (val.length < 6) return 'Password must be at least 6 characters';
+                              if (val == null || val.isEmpty)
+                                return 'Password is required';
+                              if (val.length < 6)
+                                return 'Password must be at least 6 characters';
                               return null;
                             },
                           ),
@@ -343,7 +377,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         CustomButton(
                           text: _usePhoneAuth
                               ? (_codeSent ? 'VERIFY SMS OTP' : 'SEND OTP CODE')
-                              : (_isSignUp ? 'REGISTER COMPANY ADMIN' : 'INITIALIZE HANDSHAKE'),
+                              : (_isSignUp
+                                    ? 'REGISTER COMPANY ADMIN'
+                                    : 'INITIALIZE HANDSHAKE'),
                           isLoading: authState.isLoading,
                           onPressed: _submitForm,
                         ),
@@ -354,13 +390,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           children: [
                             const Expanded(child: Divider()),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Text(
                                 'OR SECURE SINGLE SIGN-ON',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: colorScheme.onBackground.withOpacity(0.4),
+                                  color: colorScheme.onBackground.withOpacity(
+                                    0.4,
+                                  ),
                                   letterSpacing: 1.2,
                                 ),
                               ),
@@ -394,7 +434,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 });
                               },
                               child: Text(
-                                _usePhoneAuth ? 'Verify via Email' : 'Verify via SMS OTP',
+                                _usePhoneAuth
+                                    ? 'Verify via Email'
+                                    : 'Verify via SMS OTP',
                                 style: theme.textTheme.labelLarge,
                               ),
                             ),

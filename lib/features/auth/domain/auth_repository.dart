@@ -48,4 +48,3 @@ abstract class AuthRepository {
   /// Updates company setup association link.
   Future<void> updateUserCompanyAssociation(String uid, String companyId);
 }
-
