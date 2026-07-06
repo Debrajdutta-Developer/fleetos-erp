@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
-import '../domain/driver_entity.dart';
 import 'driver_providers.dart';
 
 class DriverDetailScreen extends ConsumerStatefulWidget {
@@ -167,6 +166,7 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                               const SizedBox(width: 16),
                               OutlinedButton.icon(
                                 onPressed: () async {
+                                  final router = GoRouter.of(context);
                                   final confirmed = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -192,7 +192,6 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                     ),
                                   );
                                   if (confirmed == true) {
-                                    final router = GoRouter.of(context);
                                     final success = await ref
                                         .read(driverListControllerProvider
                                             .notifier)
