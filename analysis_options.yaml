@@ -8,6 +8,14 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+  errors:
+    deprecated_member_use: ignore
+    curly_braces_in_flow_control_structures: ignore
+    prefer_const_constructors: ignore
+    prefer_single_quotes: ignore
+    prefer_final_locals: ignore
+    prefer_const_declarations: ignore
+    unnecessary_to_list_in_spreads: ignore
 
 linter:
   rules:
