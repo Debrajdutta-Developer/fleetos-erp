@@ -53,6 +53,12 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
     required String name,
     required String ownerName,
     String? gstNumber,
+    String? panNumber,
+    required String phone,
+    required String email,
+    required String address,
+    required String defaultCurrency,
+    required String timeZone,
     File? logoFile,
   }) async {
     state = state.copyWith(isLoading: true);
@@ -66,12 +72,18 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
       final company = await _repository.createCompany(
         name: name,
         ownerName: ownerName,
+        ownerUid: currentUser.uid,
         gstNumber: gstNumber,
-        adminUid: currentUser.uid,
+        panNumber: panNumber,
+        phone: phone,
+        email: email,
+        address: address,
+        defaultCurrency: defaultCurrency,
+        timeZone: timeZone,
         logoFile: logoFile,
       );
 
-      // 2. Associate the company ID back to the user document
+      // 2. Associate the company ID back to the user document inside Firestore (users/{userId})
       final authRepo = _ref.read(authRepositoryProvider);
       await authRepo.updateUserCompanyAssociation(currentUser.uid, company.id);
 

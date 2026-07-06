@@ -8,8 +8,14 @@ abstract class CompanyRepository {
   Future<CompanyEntity> createCompany({
     required String name,
     required String ownerName,
+    required String ownerUid,
     String? gstNumber,
-    required String adminUid,
+    String? panNumber,
+    required String phone,
+    required String email,
+    required String address,
+    required String defaultCurrency,
+    required String timeZone,
     File? logoFile,
   });
 

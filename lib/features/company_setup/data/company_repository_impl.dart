@@ -27,8 +27,14 @@ class CompanyRepositoryImpl implements CompanyRepository {
   Future<CompanyEntity> createCompany({
     required String name,
     required String ownerName,
+    required String ownerUid,
     String? gstNumber,
-    required String adminUid,
+    String? panNumber,
+    required String phone,
+    required String email,
+    required String address,
+    required String defaultCurrency,
+    required String timeZone,
     File? logoFile,
   }) async {
     try {
@@ -45,9 +51,15 @@ class CompanyRepositoryImpl implements CompanyRepository {
         id: companyId,
         name: name,
         ownerName: ownerName,
+        ownerUid: ownerUid,
         gstNumber: gstNumber,
+        panNumber: panNumber,
+        phone: phone,
+        email: email,
+        address: address,
         logoUrl: logoUrl,
-        adminUid: adminUid,
+        defaultCurrency: defaultCurrency,
+        timeZone: timeZone,
         createdAt: DateTime.now(),
         isSetupComplete: true,
       );
