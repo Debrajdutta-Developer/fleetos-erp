@@ -98,8 +98,6 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
     final transactionsAsync = ref.watch(financeTransactionsStreamProvider);
     final ledgerEntries = ref.watch(ledgerProvider);
 
-    final double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Financial Ledgers'),
