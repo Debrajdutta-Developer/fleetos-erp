@@ -352,7 +352,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
                 _SidebarNavItem(icon: Icons.people_outline_rounded, label: 'Driver Portal'),
                 _SidebarNavItem(icon: Icons.inventory_2_outlined, label: 'Storage & Hubs'),
-                _SidebarNavItem(icon: Icons.receipt_long_outlined, label: 'Billing System'),
+                _SidebarNavItem(
+                  icon: Icons.account_balance_outlined,
+                  label: 'Finance & Ledger',
+                  onTap: () => context.push('/finance'),
+                ),
                 _SidebarNavItem(icon: Icons.settings_outlined, label: 'ERP Settings'),
               ],
             ),
@@ -458,6 +462,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/trips');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.account_balance_outlined),
+                    title: const Text('Finance & Ledger'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/finance');
                     },
                   ),
                   const ListTile(

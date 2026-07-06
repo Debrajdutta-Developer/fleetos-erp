@@ -13,6 +13,9 @@ import '../../features/vehicles/presentation/vehicle_form_screen.dart';
 import '../../features/trips/presentation/trip_list_screen.dart';
 import '../../features/trips/presentation/trip_detail_screen.dart';
 import '../../features/trips/presentation/trip_form_screen.dart';
+import '../../features/finance/presentation/finance_list_screen.dart';
+import '../../features/finance/presentation/finance_form_screen.dart';
+import '../../features/finance/presentation/profit_loss_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -99,6 +102,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return TripFormScreen(tripId: id);
+        },
+      ),
+      GoRoute(
+        path: '/finance',
+        builder: (context, state) => const FinanceListScreen(),
+      ),
+      GoRoute(
+        path: '/finance/new',
+        builder: (context, state) => const FinanceFormScreen(),
+      ),
+      GoRoute(
+        path: '/finance/reports',
+        builder: (context, state) => const ProfitLossScreen(),
+      ),
+      GoRoute(
+        path: '/finance/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return FinanceFormScreen(transactionId: id);
         },
       ),
     ],
