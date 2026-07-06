@@ -23,12 +23,11 @@ class AppTheme {
         seedColor: primaryLight,
         primary: primaryLight,
         secondary: secondaryLight,
-        background: const Color(0xFFF8FAFC), // Slate White
         surface: Colors.white,
         error: const Color(0xFFEF4444),
       ),
       scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         color: Colors.white,
         elevation: 1,
         margin: EdgeInsets.zero,
@@ -42,7 +41,6 @@ class AppTheme {
         foregroundColor: Color(0xFF0F172A),
         elevation: 0,
         centerTitle: false,
-        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1)),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -52,7 +50,7 @@ class AppTheme {
         ),
         titleLarge: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.semibold,
+          fontWeight: FontWeight.w600,
           color: Color(0xFF0F172A),
         ),
         bodyLarge: TextStyle(fontSize: 16, color: Color(0xFF334155)),
@@ -107,12 +105,11 @@ class AppTheme {
         seedColor: primaryDark,
         primary: primaryDark,
         secondary: secondaryDark,
-        background: bgDark,
         surface: surfaceDark,
         error: const Color(0xFFF87171),
       ),
       scaffoldBackgroundColor: bgDark,
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         color: surfaceDark,
         elevation: 0,
         margin: EdgeInsets.zero,
@@ -126,7 +123,6 @@ class AppTheme {
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
-        border: Border(bottom: BorderSide(color: Color(0xFF334155), width: 1)),
       ),
       textTheme: const TextTheme(
         displayLarge: TextStyle(
@@ -136,7 +132,7 @@ class AppTheme {
         ),
         titleLarge: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.semibold,
+          fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
         bodyLarge: TextStyle(fontSize: 16, color: Color(0xFFCBD5E1)),

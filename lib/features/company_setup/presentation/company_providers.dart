@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../../core/services/local_storage_service.dart';
 import '../data/company_repository_impl.dart';
 import '../domain/company_repository.dart';
 
