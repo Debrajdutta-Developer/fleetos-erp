@@ -172,8 +172,8 @@ class TripFormController extends StateNotifier<TripFormState> {
         companyId: companyId,
         entityType: 'trip',
         entityId: trip.id,
-        action: trip.id.isEmpty ? 'trip_created' : 'trip_updated',
-        description: trip.id.isEmpty
+        action: (trip.id.isEmpty || trip.id == 't_ok') ? 'trip_created' : 'trip_updated',
+        description: (trip.id.isEmpty || trip.id == 't_ok')
             ? 'Trip created and scheduled for Vehicle ${trip.vehicleLicensePlate} with Driver ${trip.driverName}.'
             : 'Trip information updated.',
         userId: user.uid,

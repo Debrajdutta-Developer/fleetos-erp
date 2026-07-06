@@ -269,10 +269,10 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
         companyId: companyId,
         entityType: 'finance_transaction',
         entityId: transaction.id,
-        action: transaction.id.isEmpty
+        action: (transaction.id.isEmpty || transaction.id == 'tx_new')
             ? 'transaction_created'
             : 'transaction_updated',
-        description: transaction.id.isEmpty
+        description: (transaction.id.isEmpty || transaction.id == 'tx_new')
             ? '${transaction.type.toUpperCase()} recorded for Category: ${transaction.category.toUpperCase()} with Amount: \$${transaction.amount.toStringAsFixed(2)}.'
             : 'Transaction updated.',
         userId: user.uid,

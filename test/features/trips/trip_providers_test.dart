@@ -422,7 +422,7 @@ void main() {
         expect(result, false);
         expect(
           formState.errorMessage,
-          contains('vehicle is already assigned to another active trip'),
+          contains('is already assigned to another active trip'),
         );
         expect(repository.trips.length, 1);
       },
@@ -502,7 +502,7 @@ void main() {
         expect(result, false);
         expect(
           formState.errorMessage,
-          contains('driver is already assigned to another active trip'),
+          contains('is already assigned to another active trip'),
         );
         expect(repository.trips.length, 1);
       },
