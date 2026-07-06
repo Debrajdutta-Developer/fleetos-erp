@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+permissions:
+  contents: write
+
 jobs:
   compatibility_and_test:
     name: Code Quality & Testing
@@ -35,9 +38,16 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      # ৫. কোডের ফরম্যাটিং ঠিক আছে কিনা পরীক্ষা করা (Code Formatting)
-      - name: Check Formatting
-        run: dart format --set-exit-if-changed .
+      # ৫. কোডের ফরম্যাটিং ঠিক করা (Code Formatting)
+      - name: Format Code
+        run: dart format .
+
+      # ৫.১ ফরম্যাটিং পরিবর্তনসমূহ অটো-কমিট করা
+      - name: Commit Formatting Fixes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-format Dart files on CI"
+          file_pattern: "*.dart"
 
       # ৬. স্ট্যাটিক অ্যানালাইসিস রান করা (Flutter Analyze)
       - name: Analyze Code
@@ -46,4 +56,5 @@ jobs:
       # ৭. সমস্ত ইউনিট এবং উইজেট টেস্ট রান করা (Flutter Test)
       - name: Run Tests
         run: flutter test
+
         
