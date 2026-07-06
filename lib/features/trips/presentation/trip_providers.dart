@@ -5,6 +5,10 @@ import '../data/trip_repository_impl.dart';
 import '../domain/trip_entity.dart';
 import '../domain/audit_log_entity.dart';
 import '../domain/trip_repository.dart';
+import '../../vehicles/presentation/vehicle_providers.dart';
+import '../../finance/presentation/finance_providers.dart';
+import '../../finance/domain/finance_transaction_entity.dart';
+import '../../vehicles/domain/vehicle_entity.dart';
 
 /// Provider for TripRepository.
 final tripRepositoryProvider = Provider<TripRepository>((ref) {
@@ -223,15 +227,145 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
     try {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null) throw Exception('No company authenticated.');
+      final companyId = user.companyId!;
+
+      // Get the trip BEFORE updating so we have vehicleId and financial data
+      final trip = await _repository.getTripById(companyId, tripId);
+      if (trip == null) throw Exception('Trip not found.');
 
       await _repository.updateTripStatus(
-        user!.companyId!,
+        companyId,
         tripId,
         newStatus,
         user.uid,
         user.displayName.isEmpty ? 'Operator' : user.displayName,
         notes: notes,
       );
+
+      // --- Automatic vehicle status updates ---
+      if (newStatus == 'inTransit' || newStatus == 'in_transit') {
+        final vehicleRepo = _ref.read(vehicleRepositoryProvider);
+        final vehicles = await vehicleRepo.getVehicles(companyId);
+        final vehicleIdx = vehicles.indexWhere((v) => v.id == trip.vehicleId);
+        if (vehicleIdx != -1) {
+          await vehicleRepo.updateVehicle(
+            companyId,
+            vehicles[vehicleIdx].copyWith(status: 'inTransit'),
+          );
+        }
+      } else if (newStatus == 'completed' || newStatus == 'cancelled') {
+        final vehicleRepo = _ref.read(vehicleRepositoryProvider);
+        final vehicles = await vehicleRepo.getVehicles(companyId);
+        final vehicleIdx = vehicles.indexWhere((v) => v.id == trip.vehicleId);
+        if (vehicleIdx != -1) {
+          await vehicleRepo.updateVehicle(
+            companyId,
+            vehicles[vehicleIdx].copyWith(status: 'active'),
+          );
+        }
+
+        // --- Automatic finance transactions on trip completion ---
+        if (newStatus == 'completed') {
+          final financeRepo = _ref.read(financeRepositoryProvider);
+
+          // 1. Create Income transaction for freightAmount
+          final incomeTxId = 'tx_inc_$tripId';
+          final incomeTx = FinanceTransactionEntity(
+            id: incomeTxId,
+            companyId: companyId,
+            type: 'income',
+            category: 'income',
+            amount: trip.freightAmount,
+            paymentMode: 'bank',
+            tripId: trip.id,
+            tripNumber: trip.id,
+            vehicleId: trip.vehicleId,
+            vehicleLicensePlate: trip.vehicleLicensePlate,
+            notes: 'Automatically generated freight income on completion of Trip $tripId',
+            transactionDate: DateTime.now(),
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          final incomeAuditLog = AuditLogEntity(
+            id: '',
+            companyId: companyId,
+            entityType: 'finance_transaction',
+            entityId: incomeTxId,
+            action: 'transaction_created',
+            description: 'INCOME recorded for Category: INCOME with Amount: \$${trip.freightAmount.toStringAsFixed(2)}.',
+            userId: user.uid,
+            userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
+            timestamp: DateTime.now(),
+          );
+          await financeRepo.createTransaction(companyId, incomeTx, incomeAuditLog);
+
+          // 2. Create Expense transaction for advancePayment if > 0
+          if (trip.advancePayment > 0) {
+            final advTxId = 'tx_adv_$tripId';
+            final advTx = FinanceTransactionEntity(
+              id: advTxId,
+              companyId: companyId,
+              type: 'expense',
+              category: 'advance_salary',
+              amount: trip.advancePayment,
+              paymentMode: 'cash',
+              tripId: trip.id,
+              tripNumber: trip.id,
+              vehicleId: trip.vehicleId,
+              vehicleLicensePlate: trip.vehicleLicensePlate,
+              notes: 'Automatically generated advance salary on completion of Trip $tripId',
+              transactionDate: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            );
+            final advAuditLog = AuditLogEntity(
+              id: '',
+              companyId: companyId,
+              entityType: 'finance_transaction',
+              entityId: advTxId,
+              action: 'transaction_created',
+              description: 'EXPENSE recorded for Category: ADVANCE_SALARY with Amount: \$${trip.advancePayment.toStringAsFixed(2)}.',
+              userId: user.uid,
+              userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
+              timestamp: DateTime.now(),
+            );
+            await financeRepo.createTransaction(companyId, advTx, advAuditLog);
+          }
+
+          // 3. Create Expense transaction for permitExpense if > 0
+          if (trip.permitExpense > 0) {
+            final permitTxId = 'tx_permit_$tripId';
+            final permitTx = FinanceTransactionEntity(
+              id: permitTxId,
+              companyId: companyId,
+              type: 'expense',
+              category: 'miscellaneous',
+              amount: trip.permitExpense,
+              paymentMode: 'cash',
+              tripId: trip.id,
+              tripNumber: trip.id,
+              vehicleId: trip.vehicleId,
+              vehicleLicensePlate: trip.vehicleLicensePlate,
+              notes: 'Automatically generated permit expense on completion of Trip $tripId',
+              transactionDate: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            );
+            final permitAuditLog = AuditLogEntity(
+              id: '',
+              companyId: companyId,
+              entityType: 'finance_transaction',
+              entityId: permitTxId,
+              action: 'transaction_created',
+              description: 'EXPENSE recorded for Category: MISCELLANEOUS with Amount: \$${trip.permitExpense.toStringAsFixed(2)}.',
+              userId: user.uid,
+              userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
+              timestamp: DateTime.now(),
+            );
+            await financeRepo.createTransaction(companyId, permitTx, permitAuditLog);
+          }
+        }
+      }
 
       state = const AsyncValue.data(null);
       return true;

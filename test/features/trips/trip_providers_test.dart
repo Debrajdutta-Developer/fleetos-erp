@@ -7,6 +7,11 @@ import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
 import 'package:fleet_os_erp/features/trips/domain/audit_log_entity.dart';
 import 'package:fleet_os_erp/features/trips/domain/trip_repository.dart';
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
+import 'package:fleet_os_erp/features/vehicles/domain/vehicle_repository.dart';
+import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
+import 'package:fleet_os_erp/features/finance/domain/finance_repository.dart';
+import 'package:fleet_os_erp/features/finance/presentation/finance_providers.dart';
+import 'package:fleet_os_erp/features/finance/domain/finance_transaction_entity.dart';
 
 class MockTripRepository implements TripRepository {
   final List<TripEntity> trips;
@@ -79,6 +84,67 @@ class MockTripRepository implements TripRepository {
   ) {
     return Stream.value(auditLogs.where((l) => l.entityId == tripId).toList());
   }
+}
+
+class MockVehicleRepository implements VehicleRepository {
+  final List<VehicleEntity> vehicles;
+  MockVehicleRepository({required this.vehicles});
+
+  @override
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+
+  @override
+  Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
+
+  @override
+  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async {
+    vehicles.add(vehicle);
+    return vehicle;
+  }
+
+  @override
+  Future<void> updateVehicle(String companyId, VehicleEntity vehicle) async {
+    final idx = vehicles.indexWhere((v) => v.id == vehicle.id);
+    if (idx != -1) {
+      vehicles[idx] = vehicle;
+    }
+  }
+
+  @override
+  Future<void> deleteVehicle(String companyId, String vehicleId) async {}
+
+  @override
+  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+
+  @override
+  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, file) async => '';
+}
+
+class MockFinanceRepository implements FinanceRepository {
+  final List<FinanceTransactionEntity> transactions = [];
+  final List<AuditLogEntity> auditLogs = [];
+
+  @override
+  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) => Stream.value(transactions);
+
+  @override
+  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async => transactions;
+
+  @override
+  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async => null;
+
+  @override
+  Future<FinanceTransactionEntity> createTransaction(String companyId, FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
+    transactions.add(transaction);
+    auditLogs.add(auditLog);
+    return transaction;
+  }
+
+  @override
+  Future<void> deleteTransaction(String companyId, String transactionId, AuditLogEntity auditLog) async {}
+
+  @override
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value(auditLogs);
 }
 
 void main() {
@@ -564,6 +630,83 @@ void main() {
         expect(repository.auditLogs.length, 1);
         expect(repository.auditLogs[0].action, 'trip_created');
         expect(repository.auditLogs[0].userName, 'Operator John');
+      },
+    );
+
+    test(
+      'should update vehicle status and generate finance transactions when trip is completed',
+      () async {
+        final existingTrip = TripEntity(
+          id: 't_completeme',
+          companyId: 'comp_1',
+          vehicleId: 'v_valid',
+          vehicleLicensePlate: 'NY-884-OK',
+          driverId: 'driver_1',
+          driverName: 'Robert Jenkins',
+          customerId: 'cust_1',
+          customerName: 'Walmart',
+          pickupLocation: 'NY',
+          deliveryLocation: 'BOS',
+          cargoType: 'Coal',
+          coalQuantity: 20,
+          freightAmount: 1000.0,
+          advancePayment: 200.0,
+          permitExpense: 50.0,
+          status: 'inTransit',
+          statusHistory: [],
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        final tripRepository = MockTripRepository(trips: [existingTrip]);
+        final vehicleRepository = MockVehicleRepository(vehicles: [
+          tValidVehicle.copyWith(status: 'inTransit'),
+        ]);
+        final financeRepository = MockFinanceRepository();
+
+        final container = ProviderContainer(
+          overrides: [
+            currentUserProvider.overrideWith(
+              (ref) => UserEntity(
+                uid: 'user_1',
+                email: 'test@company.com',
+                displayName: 'Operator John',
+                role: 'admin',
+                companyId: 'comp_1',
+                createdAt: DateTime.now(),
+              ),
+            ),
+            tripRepositoryProvider.overrideWithValue(tripRepository),
+            vehicleRepositoryProvider.overrideWithValue(vehicleRepository),
+            financeRepositoryProvider.overrideWithValue(financeRepository),
+          ],
+        );
+
+        final controller = container.read(tripListControllerProvider.notifier);
+
+        final result = await controller.updateStatus('t_completeme', 'completed');
+        expect(result, true);
+
+        // 1. Verify vehicle status became active
+        expect(vehicleRepository.vehicles[0].status, 'active');
+
+        // 2. Verify finance transactions generated
+        expect(financeRepository.transactions.length, 3);
+
+        // Revenue (income)
+        final incomeTx = financeRepository.transactions.firstWhere((t) => t.type == 'income');
+        expect(incomeTx.amount, 1000.0);
+        expect(incomeTx.category, 'income');
+
+        // Advance Payment (expense)
+        final advTx = financeRepository.transactions.firstWhere((t) => t.category == 'advance_salary');
+        expect(advTx.amount, 200.0);
+        expect(advTx.type, 'expense');
+
+        // Permit (expense)
+        final permitTx = financeRepository.transactions.firstWhere((t) => t.category == 'miscellaneous');
+        expect(permitTx.amount, 50.0);
+        expect(permitTx.type, 'expense');
       },
     );
   });

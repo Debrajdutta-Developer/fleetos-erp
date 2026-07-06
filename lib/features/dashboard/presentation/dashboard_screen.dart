@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../company_setup/presentation/company_providers.dart';
 import '../../company_setup/domain/company_entity.dart';
+import 'dashboard_providers.dart';
 
 /// State notifier for global app theme configuration overrides.
 class ThemeController extends StateNotifier<ThemeMode> {
@@ -107,41 +108,55 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ? 'Loading company...'
         : (_company?.name ?? 'FleetOS Operator');
 
-    // Stats mock data
-    final stats = [
-      _StatCardData(
-        title: 'Active Fleet Count',
-        value: '42',
-        subtitle: 'Vehicles online',
-        icon: Icons.local_shipping_outlined,
-        trend: '+4% vs yesterday',
-        isPositive: true,
-      ),
-      _StatCardData(
-        title: 'Trips Scheduled',
-        value: '18',
-        subtitle: 'Dispatched today',
-        icon: Icons.route_outlined,
-        trend: 'Normal volume',
-        isPositive: true,
-      ),
-      _StatCardData(
-        title: 'Critical Diagnostics',
-        value: '02',
-        subtitle: 'Fault codes raised',
-        icon: Icons.warning_amber_rounded,
-        trend: 'Action needed',
-        isPositive: false,
-      ),
-      _StatCardData(
-        title: 'Active Cargo Volume',
-        value: '88%',
-        subtitle: 'Average payload capacity',
-        icon: Icons.inventory_2_outlined,
-        trend: '+12% peak efficiency',
-        isPositive: true,
-      ),
-    ];
+    final statsAsync = ref.watch(dashboardStatsProvider);
+    final stats = statsAsync.when(
+      data: (data) => [
+        _StatCardData(
+          title: 'Active Fleet Count',
+          value: data.activeFleetCount.toString(),
+          subtitle: 'Vehicles online',
+          icon: Icons.local_shipping_outlined,
+          trend: 'Live monitoring',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Trips Scheduled',
+          value: data.tripsScheduled.toString(),
+          subtitle: 'Dispatched today',
+          icon: Icons.route_outlined,
+          trend: 'Active routing',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Critical Diagnostics',
+          value: data.criticalDiagnosticsCount.toString().padLeft(2, '0'),
+          subtitle: 'Compliance warnings',
+          icon: Icons.warning_amber_rounded,
+          trend: data.criticalDiagnosticsCount > 0 ? 'Action needed' : 'All compliant',
+          isPositive: data.criticalDiagnosticsCount == 0,
+        ),
+        _StatCardData(
+          title: 'Active Cargo Volume',
+          value: '${data.averagePayloadCapacity.toStringAsFixed(0)}%',
+          subtitle: 'Average payload capacity',
+          icon: Icons.inventory_2_outlined,
+          trend: 'Capacity load',
+          isPositive: true,
+        ),
+      ],
+      loading: () => [
+        _StatCardData(title: 'Active Fleet Count', value: '...', subtitle: 'Loading...', icon: Icons.local_shipping_outlined, trend: '...', isPositive: true),
+        _StatCardData(title: 'Trips Scheduled', value: '...', subtitle: 'Loading...', icon: Icons.route_outlined, trend: '...', isPositive: true),
+        _StatCardData(title: 'Critical Diagnostics', value: '...', subtitle: 'Loading...', icon: Icons.warning_amber_rounded, trend: '...', isPositive: false),
+        _StatCardData(title: 'Active Cargo Volume', value: '...', subtitle: 'Loading...', icon: Icons.inventory_2_outlined, trend: '...', isPositive: true),
+      ],
+      error: (e, _) => [
+        _StatCardData(title: 'Active Fleet Count', value: 'ERR', subtitle: 'Error loading', icon: Icons.local_shipping_outlined, trend: '...', isPositive: false),
+        _StatCardData(title: 'Trips Scheduled', value: 'ERR', subtitle: 'Error loading', icon: Icons.route_outlined, trend: '...', isPositive: false),
+        _StatCardData(title: 'Critical Diagnostics', value: 'ERR', subtitle: 'Error loading', icon: Icons.warning_amber_rounded, trend: '...', isPositive: false),
+        _StatCardData(title: 'Active Cargo Volume', value: 'ERR', subtitle: 'Error loading', icon: Icons.inventory_2_outlined, trend: '...', isPositive: false),
+      ],
+    );
 
     final Widget dashboardBody = SingleChildScrollView(
       padding: const EdgeInsets.all(24),
