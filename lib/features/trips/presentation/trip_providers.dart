@@ -8,7 +8,6 @@ import '../domain/trip_repository.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../finance/presentation/finance_providers.dart';
 import '../../finance/domain/finance_transaction_entity.dart';
-import '../../vehicles/domain/vehicle_entity.dart';
 
 /// Provider for TripRepository.
 final tripRepositoryProvider = Provider<TripRepository>((ref) {
@@ -226,7 +225,9 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company authenticated.');
+      if (user == null || user.companyId == null) {
+        throw Exception('No company authenticated.');
+      }
       final companyId = user.companyId!;
 
       // Get the trip BEFORE updating so we have vehicleId and financial data
