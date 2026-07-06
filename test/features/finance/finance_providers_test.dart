@@ -112,7 +112,7 @@ void main() {
 
     test(
       'should dynamically generate ledger with correct running balances',
-      () {
+      () async {
         final repository = MockFinanceRepository(transactions: tTxs);
         final container = ProviderContainer(
           overrides: [
@@ -130,8 +130,8 @@ void main() {
           ],
         );
 
-        // Force stream read
-        container.read(financeTransactionsStreamProvider);
+        // Force stream read and wait for it to emit
+        await container.read(financeTransactionsStreamProvider.future);
 
         final ledger = container.read(ledgerProvider);
 
@@ -148,7 +148,7 @@ void main() {
       },
     );
 
-    test('should dynamically calculate Profit/Loss statement', () {
+    test('should dynamically calculate Profit/Loss statement', () async {
       final repository = MockFinanceRepository(transactions: tTxs);
       final container = ProviderContainer(
         overrides: [
@@ -166,7 +166,7 @@ void main() {
         ],
       );
 
-      container.read(financeTransactionsStreamProvider);
+      await container.read(financeTransactionsStreamProvider.future);
       final pl = container.read(profitLossProvider);
 
       expect(pl.totalIncome, 5000.0);
