@@ -16,6 +16,9 @@ import '../../features/trips/presentation/trip_form_screen.dart';
 import '../../features/finance/presentation/finance_list_screen.dart';
 import '../../features/finance/presentation/finance_form_screen.dart';
 import '../../features/finance/presentation/profit_loss_screen.dart';
+import '../../features/drivers/presentation/driver_list_screen.dart';
+import '../../features/drivers/presentation/driver_detail_screen.dart';
+import '../../features/drivers/presentation/driver_form_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -116,6 +119,28 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return FinanceFormScreen(transactionId: id);
+        },
+      ),
+      GoRoute(
+        path: '/drivers',
+        builder: (context, state) => const DriverListScreen(),
+      ),
+      GoRoute(
+        path: '/drivers/new',
+        builder: (context, state) => const DriverFormScreen(),
+      ),
+      GoRoute(
+        path: '/drivers/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return DriverDetailScreen(driverId: id);
+        },
+      ),
+      GoRoute(
+        path: '/drivers/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return DriverFormScreen(driverId: id);
         },
       ),
     ],

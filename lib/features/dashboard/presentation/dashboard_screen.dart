@@ -132,9 +132,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           value: data.criticalDiagnosticsCount.toString().padLeft(2, '0'),
           subtitle: 'Compliance warnings',
           icon: Icons.warning_amber_rounded,
-          trend: data.criticalDiagnosticsCount > 0
-              ? 'Action needed'
-              : 'All compliant',
+          trend: data.criticalDiagnosticsCount > 0 ? 'Action needed' : 'All compliant',
           isPositive: data.criticalDiagnosticsCount == 0,
         ),
         _StatCardData(
@@ -145,66 +143,38 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           trend: 'Capacity load',
           isPositive: true,
         ),
+        _StatCardData(
+          title: 'Available Drivers',
+          value: '${data.availableDriversCount}/${data.totalDriversCount}',
+          subtitle: 'Active roster ready',
+          icon: Icons.people_outline_rounded,
+          trend: 'Roster status',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'License Alerts',
+          value: data.expiredLicenseDriversCount.toString().padLeft(2, '0'),
+          subtitle: 'Expired licenses',
+          icon: Icons.badge_outlined,
+          trend: data.expiredLicenseDriversCount > 0 ? 'Action needed' : 'All compliant',
+          isPositive: data.expiredLicenseDriversCount == 0,
+        ),
       ],
       loading: () => [
-        _StatCardData(
-            title: 'Active Fleet Count',
-            value: '...',
-            subtitle: 'Loading...',
-            icon: Icons.local_shipping_outlined,
-            trend: '...',
-            isPositive: true),
-        _StatCardData(
-            title: 'Trips Scheduled',
-            value: '...',
-            subtitle: 'Loading...',
-            icon: Icons.route_outlined,
-            trend: '...',
-            isPositive: true),
-        _StatCardData(
-            title: 'Critical Diagnostics',
-            value: '...',
-            subtitle: 'Loading...',
-            icon: Icons.warning_amber_rounded,
-            trend: '...',
-            isPositive: false),
-        _StatCardData(
-            title: 'Active Cargo Volume',
-            value: '...',
-            subtitle: 'Loading...',
-            icon: Icons.inventory_2_outlined,
-            trend: '...',
-            isPositive: true),
+        _StatCardData(title: 'Active Fleet Count', value: '...', subtitle: 'Loading...', icon: Icons.local_shipping_outlined, trend: '...', isPositive: true),
+        _StatCardData(title: 'Trips Scheduled', value: '...', subtitle: 'Loading...', icon: Icons.route_outlined, trend: '...', isPositive: true),
+        _StatCardData(title: 'Critical Diagnostics', value: '...', subtitle: 'Loading...', icon: Icons.warning_amber_rounded, trend: '...', isPositive: false),
+        _StatCardData(title: 'Active Cargo Volume', value: '...', subtitle: 'Loading...', icon: Icons.inventory_2_outlined, trend: '...', isPositive: true),
+        _StatCardData(title: 'Available Drivers', value: '...', subtitle: 'Loading...', icon: Icons.people_outline_rounded, trend: '...', isPositive: true),
+        _StatCardData(title: 'License Alerts', value: '...', subtitle: 'Loading...', icon: Icons.badge_outlined, trend: '...', isPositive: true),
       ],
       error: (e, _) => [
-        _StatCardData(
-            title: 'Active Fleet Count',
-            value: 'ERR',
-            subtitle: 'Error loading',
-            icon: Icons.local_shipping_outlined,
-            trend: '...',
-            isPositive: false),
-        _StatCardData(
-            title: 'Trips Scheduled',
-            value: 'ERR',
-            subtitle: 'Error loading',
-            icon: Icons.route_outlined,
-            trend: '...',
-            isPositive: false),
-        _StatCardData(
-            title: 'Critical Diagnostics',
-            value: 'ERR',
-            subtitle: 'Error loading',
-            icon: Icons.warning_amber_rounded,
-            trend: '...',
-            isPositive: false),
-        _StatCardData(
-            title: 'Active Cargo Volume',
-            value: 'ERR',
-            subtitle: 'Error loading',
-            icon: Icons.inventory_2_outlined,
-            trend: '...',
-            isPositive: false),
+        _StatCardData(title: 'Active Fleet Count', value: 'ERR', subtitle: 'Error loading', icon: Icons.local_shipping_outlined, trend: '...', isPositive: false),
+        _StatCardData(title: 'Trips Scheduled', value: 'ERR', subtitle: 'Error loading', icon: Icons.route_outlined, trend: '...', isPositive: false),
+        _StatCardData(title: 'Critical Diagnostics', value: 'ERR', subtitle: 'Error loading', icon: Icons.warning_amber_rounded, trend: '...', isPositive: false),
+        _StatCardData(title: 'Active Cargo Volume', value: 'ERR', subtitle: 'Error loading', icon: Icons.inventory_2_outlined, trend: '...', isPositive: false),
+        _StatCardData(title: 'Available Drivers', value: 'ERR', subtitle: 'Error loading', icon: Icons.people_outline_rounded, trend: '...', isPositive: false),
+        _StatCardData(title: 'License Alerts', value: 'ERR', subtitle: 'Error loading', icon: Icons.badge_outlined, trend: '...', isPositive: false),
       ],
     );
 
@@ -467,6 +437,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 _SidebarNavItem(
                   icon: Icons.people_outline_rounded,
                   label: 'Driver Portal',
+                  onTap: () => context.push('/drivers'),
                 ),
                 _SidebarNavItem(
                   icon: Icons.inventory_2_outlined,
@@ -613,9 +584,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       context.push('/finance');
                     },
                   ),
-                  const ListTile(
-                    leading: Icon(Icons.people_outline_rounded),
-                    title: Text('Driver Portal'),
+                  ListTile(
+                    leading: const Icon(Icons.people_outline_rounded),
+                    title: const Text('Driver Portal'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/drivers');
+                    },
                   ),
                   const ListTile(
                     leading: Icon(Icons.settings_outlined),
