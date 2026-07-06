@@ -482,7 +482,8 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(4),

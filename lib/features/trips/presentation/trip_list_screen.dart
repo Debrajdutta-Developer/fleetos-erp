@@ -261,7 +261,8 @@ class _TripCard extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(20),
