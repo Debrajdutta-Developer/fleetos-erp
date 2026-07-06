@@ -345,7 +345,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   label: 'Fleet Management',
                   onTap: () => context.push('/vehicles'),
                 ),
-                _SidebarNavItem(icon: Icons.route_outlined, label: 'Routing Engine'),
+                _SidebarNavItem(
+                  icon: Icons.route_outlined,
+                  label: 'Trip Management',
+                  onTap: () => context.push('/trips'),
+                ),
                 _SidebarNavItem(icon: Icons.people_outline_rounded, label: 'Driver Portal'),
                 _SidebarNavItem(icon: Icons.inventory_2_outlined, label: 'Storage & Hubs'),
                 _SidebarNavItem(icon: Icons.receipt_long_outlined, label: 'Billing System'),
@@ -448,9 +452,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       context.push('/vehicles');
                     },
                   ),
-                  const ListTile(
-                    leading: Icon(Icons.route_outlined),
-                    title: Text('Routing Engine'),
+                  ListTile(
+                    leading: const Icon(Icons.route_outlined),
+                    title: const Text('Trip Management'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/trips');
+                    },
                   ),
                   const ListTile(
                     leading: Icon(Icons.people_outline_rounded),

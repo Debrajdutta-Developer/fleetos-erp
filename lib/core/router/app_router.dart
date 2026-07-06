@@ -10,6 +10,9 @@ import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/vehicles/presentation/vehicle_list_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
+import '../../features/trips/presentation/trip_list_screen.dart';
+import '../../features/trips/presentation/trip_detail_screen.dart';
+import '../../features/trips/presentation/trip_form_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -74,6 +77,28 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return VehicleFormScreen(vehicleId: id);
+        },
+      ),
+      GoRoute(
+        path: '/trips',
+        builder: (context, state) => const TripListScreen(),
+      ),
+      GoRoute(
+        path: '/trips/new',
+        builder: (context, state) => const TripFormScreen(),
+      ),
+      GoRoute(
+        path: '/trips/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return TripDetailScreen(tripId: id);
+        },
+      ),
+      GoRoute(
+        path: '/trips/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return TripFormScreen(tripId: id);
         },
       ),
     ],
