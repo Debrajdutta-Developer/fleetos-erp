@@ -42,8 +42,8 @@ class CustomButton extends StatelessWidget {
     final defaultTextColor = type == ButtonType.primary
         ? (isDark ? theme.colorScheme.onPrimary : Colors.white)
         : (type == ButtonType.secondary
-              ? theme.colorScheme.primary
-              : theme.colorScheme.primary);
+            ? theme.colorScheme.primary
+            : theme.colorScheme.primary);
 
     final finalBgColor = backgroundColor ?? defaultBgColor;
     final finalTextColor = textColor ?? defaultTextColor;

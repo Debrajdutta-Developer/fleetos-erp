@@ -19,10 +19,10 @@ class AuthRepositoryImpl implements AuthRepository {
     FirebaseFirestore? firestore,
     required LocalStorageService localStorage,
     required ConnectivityService connectivity,
-  }) : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-       _firestore = firestore ?? FirebaseFirestore.instance,
-       _localStorage = localStorage,
-       _connectivity = connectivity;
+  })  : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
+        _firestore = firestore ?? FirebaseFirestore.instance,
+        _localStorage = localStorage,
+        _connectivity = connectivity;
 
   @override
   Stream<UserEntity?> get authStateChanges {

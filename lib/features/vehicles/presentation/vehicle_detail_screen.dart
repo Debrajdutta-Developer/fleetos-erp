@@ -71,8 +71,8 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
       {'id': 'driver_3', 'name': 'Alex Mercer'},
     ];
 
-    final Map<String, String>?
-    selectedDriver = await showDialog<Map<String, String>?>(
+    final Map<String, String>? selectedDriver =
+        await showDialog<Map<String, String>?>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Assign Primary Driver'),
@@ -108,9 +108,8 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
 
     if (selectedDriver != null && mounted) {
       final id = selectedDriver['id']!.isEmpty ? null : selectedDriver['id'];
-      final name = selectedDriver['name']!.isEmpty
-          ? null
-          : selectedDriver['name'];
+      final name =
+          selectedDriver['name']!.isEmpty ? null : selectedDriver['name'];
 
       final success = await ref
           .read(vehicleListControllerProvider.notifier)
@@ -297,8 +296,8 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: colorScheme.primary
-                                        .withOpacity(0.12),
+                                    backgroundColor:
+                                        colorScheme.primary.withOpacity(0.12),
                                     child: Icon(
                                       Icons.person_outline_rounded,
                                       color: colorScheme.primary,
@@ -321,8 +320,8 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
                                         style: TextStyle(
                                           color:
                                               vehicle.assignedDriverName == null
-                                              ? Colors.amber
-                                              : Colors.green,
+                                                  ? Colors.amber
+                                                  : Colors.green,
                                         ),
                                       ),
                                     ],
@@ -458,12 +457,10 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
     required bool isWarning,
     required VoidCallback onUpload,
   }) {
-    final statusColor = isExpired
-        ? Colors.red
-        : (isWarning ? Colors.amber : Colors.green);
-    final statusText = isExpired
-        ? 'EXPIRED'
-        : (isWarning ? 'EXPIRING SOON' : 'VALID');
+    final statusColor =
+        isExpired ? Colors.red : (isWarning ? Colors.amber : Colors.green);
+    final statusText =
+        isExpired ? 'EXPIRED' : (isWarning ? 'EXPIRING SOON' : 'VALID');
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),

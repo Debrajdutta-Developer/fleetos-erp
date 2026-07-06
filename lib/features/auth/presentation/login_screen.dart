@@ -101,9 +101,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleGoogleSignIn() async {
-    final success = await ref
-        .read(authControllerProvider.notifier)
-        .signInWithGoogle();
+    final success =
+        await ref.read(authControllerProvider.notifier).signInWithGoogle();
     if (success && mounted) {
       final user = ref.read(currentUserProvider);
       if (user?.companyId == null || user!.companyId!.isEmpty) {
@@ -233,8 +232,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           _usePhoneAuth
                               ? 'SMS OTP verification'
                               : (_isSignUp
-                                    ? 'Create Corporate Account'
-                                    : 'Welcome Operator'),
+                                  ? 'Create Corporate Account'
+                                  : 'Welcome Operator'),
                           style: theme.textTheme.displayLarge?.copyWith(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -245,8 +244,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           _usePhoneAuth
                               ? 'Secure login via phone authentication.'
                               : (_isSignUp
-                                    ? 'Get started with FleetOS ERP'
-                                    : 'Log in to access your dashboard and fleet diagnostics.'),
+                                  ? 'Get started with FleetOS ERP'
+                                  : 'Log in to access your dashboard and fleet diagnostics.'),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onBackground.withOpacity(0.5),
                           ),
@@ -338,7 +337,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                             const SizedBox(height: 16),
                           ],
-
                           CustomTextField(
                             controller: _emailController,
                             labelText: 'Email Address',
@@ -355,7 +353,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-
                           CustomTextField(
                             controller: _passwordController,
                             labelText: 'Password',
@@ -378,8 +375,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           text: _usePhoneAuth
                               ? (_codeSent ? 'VERIFY SMS OTP' : 'SEND OTP CODE')
                               : (_isSignUp
-                                    ? 'REGISTER COMPANY ADMIN'
-                                    : 'INITIALIZE HANDSHAKE'),
+                                  ? 'REGISTER COMPANY ADMIN'
+                                  : 'INITIALIZE HANDSHAKE'),
                           isLoading: authState.isLoading,
                           onPressed: _submitForm,
                         ),

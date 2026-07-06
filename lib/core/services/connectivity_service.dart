@@ -12,7 +12,7 @@ class ConnectivityService {
       StreamController<ConnectionStatus>.broadcast();
 
   ConnectivityService({Connectivity? connectivity})
-    : _connectivity = connectivity ?? Connectivity() {
+      : _connectivity = connectivity ?? Connectivity() {
     _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
       _controller.add(_mapResultToStatus(result));
     });

@@ -186,8 +186,8 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                               onTap: _pickMockLogo,
                               child: CircleAvatar(
                                 radius: 48,
-                                backgroundColor: colorScheme.primary
-                                    .withOpacity(0.08),
+                                backgroundColor:
+                                    colorScheme.primary.withOpacity(0.08),
                                 backgroundImage: _mockLogoSelected
                                     ? const NetworkImage(
                                         'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=200',

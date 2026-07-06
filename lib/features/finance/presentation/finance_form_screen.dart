@@ -175,9 +175,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
     final tripsAsync = ref.watch(tripsStreamProvider);
     final vehiclesAsync = ref.watch(vehiclesStreamProvider);
 
-    final activeCategories = _selectedType == 'income'
-        ? _incomeCategories
-        : _expenseCategories;
+    final activeCategories =
+        _selectedType == 'income' ? _incomeCategories : _expenseCategories;
 
     // Reset selected category if it is not valid for current transaction type selection
     if (!activeCategories.any((c) => c['value'] == _selectedCategory)) {
@@ -228,10 +227,10 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'Transaction Metadata',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -301,8 +300,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                   prefixIcon: Icons.attach_money_rounded,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
+                                    decimal: true,
+                                  ),
                                   validator: (val) {
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Amount is a mandatory field.';
@@ -336,10 +335,10 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'Settlement & Allocation',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -420,8 +419,7 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                         .where((t) => t.deletedAt == null)
                                         .toList();
                                     return DropdownButtonFormField<String?>(
-                                      value:
-                                          _selectedTripId != null &&
+                                      value: _selectedTripId != null &&
                                               activeTrips.any(
                                                 (t) => t.id == _selectedTripId,
                                               )
@@ -477,8 +475,7 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                         .where((v) => v.deletedAt == null)
                                         .toList();
                                     return DropdownButtonFormField<String?>(
-                                      value:
-                                          _selectedVehicleId != null &&
+                                      value: _selectedVehicleId != null &&
                                               activeVehicles.any(
                                                 (v) =>
                                                     v.id == _selectedVehicleId,

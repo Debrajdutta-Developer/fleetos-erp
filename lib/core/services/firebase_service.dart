@@ -11,8 +11,8 @@ class FirebaseService {
   final FirebaseMessaging _messaging;
 
   FirebaseService({FirebaseFirestore? firestore, FirebaseMessaging? messaging})
-    : _firestore = firestore ?? FirebaseFirestore.instance,
-      _messaging = messaging ?? FirebaseMessaging.instance;
+      : _firestore = firestore ?? FirebaseFirestore.instance,
+        _messaging = messaging ?? FirebaseMessaging.instance;
 
   /// Initialize Firebase Core and setup Offline persistence.
   static Future<void> initialize() async {

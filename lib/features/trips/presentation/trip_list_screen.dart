@@ -92,17 +92,16 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
         ),
         data: (trips) {
           final filteredTrips = trips.where((t) {
-            final matchesStatus =
-                _statusFilter == 'ALL' ||
+            final matchesStatus = _statusFilter == 'ALL' ||
                 t.status.toLowerCase() == _statusFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
             final matchesQuery =
                 t.vehicleLicensePlate.toLowerCase().contains(query) ||
-                t.driverName.toLowerCase().contains(query) ||
-                t.customerName.toLowerCase().contains(query) ||
-                t.pickupLocation.toLowerCase().contains(query) ||
-                t.deliveryLocation.toLowerCase().contains(query) ||
-                t.cargoType.toLowerCase().contains(query);
+                    t.driverName.toLowerCase().contains(query) ||
+                    t.customerName.toLowerCase().contains(query) ||
+                    t.pickupLocation.toLowerCase().contains(query) ||
+                    t.deliveryLocation.toLowerCase().contains(query) ||
+                    t.cargoType.toLowerCase().contains(query);
             return matchesStatus && matchesQuery;
           }).toList();
 
@@ -186,13 +185,12 @@ class _TripListScreenState extends ConsumerState<TripListScreen> {
                           itemCount: filteredTrips.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: isDesktop
-                                    ? 3
-                                    : (screenWidth > 600 ? 2 : 1),
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: 1.45,
-                              ),
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 1.45,
+                          ),
                           itemBuilder: (context, index) {
                             final trip = filteredTrips[index];
                             return _TripCard(

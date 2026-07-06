@@ -118,7 +118,7 @@ class ServerFailure extends Failure {
 /// Connectivity and general network failures.
 class NetworkFailure extends Failure {
   const NetworkFailure({String message = 'No internet connection detected.'})
-    : super(message, code: 'no-connection');
+      : super(message, code: 'no-connection');
 }
 
 /// Local storage / Cache failures.

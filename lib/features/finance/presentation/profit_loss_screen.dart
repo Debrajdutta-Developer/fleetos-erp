@@ -57,9 +57,8 @@ class ProfitLossScreen extends ConsumerWidget {
               child: _MetricCard(
                 title: 'NET SURPLUS (PROFIT/LOSS)',
                 value: _formatCurrency(plReport.netProfit),
-                color: plReport.netProfit >= 0
-                    ? colorScheme.primary
-                    : Colors.red,
+                color:
+                    plReport.netProfit >= 0 ? colorScheme.primary : Colors.red,
                 icon: Icons.account_balance_rounded,
                 isLarge: true,
               ),

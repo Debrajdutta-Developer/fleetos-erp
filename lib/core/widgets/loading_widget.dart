@@ -66,10 +66,10 @@ class LoadingWidget extends StatelessWidget {
             message!,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(
-                context,
-              ).colorScheme.onBackground.withOpacity(0.7),
-            ),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onBackground.withOpacity(0.7),
+                ),
           ),
         ],
       ],

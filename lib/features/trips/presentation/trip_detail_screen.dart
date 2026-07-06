@@ -241,9 +241,8 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                               onPressed: () =>
                                   _handleStatusTransition(trip, next),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isCancel
-                                    ? Colors.red
-                                    : colorScheme.primary,
+                                backgroundColor:
+                                    isCancel ? Colors.red : colorScheme.primary,
                                 foregroundColor: Colors.white,
                               ),
                               child: Text(

@@ -5,7 +5,7 @@ class UserEntity {
   final String displayName;
   final String role;
   final String?
-  companyId; // Null indicates user has not completed onboarding/company setup
+      companyId; // Null indicates user has not completed onboarding/company setup
   final DateTime createdAt;
   final bool isActive;
 

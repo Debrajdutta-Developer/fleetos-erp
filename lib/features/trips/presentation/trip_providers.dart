@@ -19,33 +19,33 @@ final tripsStreamProvider = StreamProvider.autoDispose<List<TripEntity>>((ref) {
 });
 
 /// StreamProvider listening to a specific trip by ID.
-final tripDetailsStreamProvider = StreamProvider.family
-    .autoDispose<TripEntity?, String>((ref, tripId) {
-      final user = ref.watch(currentUserProvider);
-      if (user?.companyId == null) return Stream.value(null);
+final tripDetailsStreamProvider =
+    StreamProvider.family.autoDispose<TripEntity?, String>((ref, tripId) {
+  final user = ref.watch(currentUserProvider);
+  if (user?.companyId == null) return Stream.value(null);
 
-      // Return a stream that monitors all trips and filters down to the specified ID.
-      // This supports real-time reactivity for status transitions.
-      return ref.watch(tripRepositoryProvider).watchTrips(user!.companyId!).map(
-        (list) {
-          try {
-            return list.firstWhere((t) => t.id == tripId);
-          } catch (_) {
-            return null;
-          }
-        },
-      );
-    });
+  // Return a stream that monitors all trips and filters down to the specified ID.
+  // This supports real-time reactivity for status transitions.
+  return ref.watch(tripRepositoryProvider).watchTrips(user!.companyId!).map(
+    (list) {
+      try {
+        return list.firstWhere((t) => t.id == tripId);
+      } catch (_) {
+        return null;
+      }
+    },
+  );
+});
 
 /// StreamProvider listening to audit logs for a specific trip.
 final tripAuditLogsStreamProvider = StreamProvider.family
     .autoDispose<List<AuditLogEntity>, String>((ref, tripId) {
-      final user = ref.watch(currentUserProvider);
-      if (user?.companyId == null) return Stream.value([]);
-      return ref
-          .watch(tripRepositoryProvider)
-          .watchAuditLogsForTrip(user!.companyId!, tripId);
-    });
+  final user = ref.watch(currentUserProvider);
+  if (user?.companyId == null) return Stream.value([]);
+  return ref
+      .watch(tripRepositoryProvider)
+      .watchAuditLogsForTrip(user!.companyId!, tripId);
+});
 
 /// UI State for Trip Form operations.
 class TripFormState {
@@ -97,9 +97,9 @@ class TripFormController extends StateNotifier<TripFormState> {
   final Ref _ref;
 
   TripFormController({required TripRepository repository, required Ref ref})
-    : _repository = repository,
-      _ref = ref,
-      super(const TripFormState());
+      : _repository = repository,
+        _ref = ref,
+        super(const TripFormState());
 
   /// Create or update a trip with business rules validations
   Future<bool> saveTrip(
@@ -197,9 +197,9 @@ class TripFormController extends StateNotifier<TripFormState> {
 /// Provider for TripFormController.
 final tripFormControllerProvider =
     StateNotifierProvider.autoDispose<TripFormController, TripFormState>((ref) {
-      final repository = ref.watch(tripRepositoryProvider);
-      return TripFormController(repository: repository, ref: ref);
-    });
+  final repository = ref.watch(tripRepositoryProvider);
+  return TripFormController(repository: repository, ref: ref);
+});
 
 /// Controller overseeing Trip actions: status transitions and deletions.
 class TripListController extends StateNotifier<AsyncValue<void>> {
@@ -207,9 +207,9 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
   final Ref _ref;
 
   TripListController({required TripRepository repository, required Ref ref})
-    : _repository = repository,
-      _ref = ref,
-      super(const AsyncValue.data(null));
+      : _repository = repository,
+        _ref = ref,
+        super(const AsyncValue.data(null));
 
   /// Transition a trip status, updating status history and recording an audit log
   Future<bool> updateStatus(
@@ -271,8 +271,8 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
 /// Provider for TripListController.
 final tripListControllerProvider =
     StateNotifierProvider.autoDispose<TripListController, AsyncValue<void>>((
-      ref,
-    ) {
-      final repository = ref.watch(tripRepositoryProvider);
-      return TripListController(repository: repository, ref: ref);
-    });
+  ref,
+) {
+  final repository = ref.watch(tripRepositoryProvider);
+  return TripListController(repository: repository, ref: ref);
+});

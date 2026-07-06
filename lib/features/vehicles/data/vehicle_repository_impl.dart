@@ -15,9 +15,9 @@ class VehicleRepositoryImpl implements VehicleRepository {
   VehicleRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
-       _storage = storage ?? FirebaseStorage.instance,
-       _uuid = const Uuid();
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _storage = storage ?? FirebaseStorage.instance,
+        _uuid = const Uuid();
 
   @override
   Stream<List<VehicleEntity>> watchVehicles(String companyId) {
@@ -28,10 +28,10 @@ class VehicleRepositoryImpl implements VehicleRepository {
         .where('deletedAt', isNull: true)
         .snapshots()
         .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => VehicleEntity.fromMap(doc.data()))
-              .toList();
-        });
+      return snapshot.docs
+          .map((doc) => VehicleEntity.fromMap(doc.data()))
+          .toList();
+    });
   }
 
   @override
@@ -106,9 +106,9 @@ class VehicleRepositoryImpl implements VehicleRepository {
           .collection('vehicles')
           .doc(vehicleId)
           .update({
-            'deletedAt': DateTime.now().toIso8601String(),
-            'status': 'archived',
-          });
+        'deletedAt': DateTime.now().toIso8601String(),
+        'status': 'archived',
+      });
     } on FirebaseException catch (e) {
       throw ServerFailure.fromFirebaseException(e.code, e.message);
     } catch (e) {
@@ -130,10 +130,10 @@ class VehicleRepositoryImpl implements VehicleRepository {
           .collection('vehicles')
           .doc(vehicleId)
           .update({
-            'assignedDriverId': driverId,
-            'assignedDriverName': driverName,
-            'updatedAt': DateTime.now().toIso8601String(),
-          });
+        'assignedDriverId': driverId,
+        'assignedDriverName': driverName,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
     } on FirebaseException catch (e) {
       throw ServerFailure.fromFirebaseException(e.code, e.message);
     } catch (e) {

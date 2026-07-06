@@ -135,8 +135,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
       return;
     }
 
-    final initialDate =
-        _selectedVehiclePermitExpiry ??
+    final initialDate = _selectedVehiclePermitExpiry ??
         DateTime.now().add(const Duration(days: 30));
     final picked = await showDatePicker(
       context: context,
@@ -304,10 +303,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'Resource Deployments',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -328,10 +327,8 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         .toList();
 
                                     return DropdownButtonFormField<
-                                      VehicleEntity
-                                    >(
-                                      value:
-                                          _selectedVehicle != null &&
+                                        VehicleEntity>(
+                                      value: _selectedVehicle != null &&
                                               activeVehicles.any(
                                                 (v) =>
                                                     v.id ==
@@ -358,9 +355,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                           _selectedVehicle = vehicle;
                                           if (vehicle != null) {
                                             _selectedVehiclePermitExpiry =
-                                                VehiclePermitValidator.getPermitExpiry(
-                                                  vehicle.id,
-                                                );
+                                                VehiclePermitValidator
+                                                    .getPermitExpiry(
+                                              vehicle.id,
+                                            );
                                           } else {
                                             _selectedVehiclePermitExpiry = null;
                                           }
@@ -433,14 +431,16 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                                   'Vehicle Road Permit Expiry',
                                               date:
                                                   _selectedVehiclePermitExpiry ??
-                                                  DateTime.now().add(
-                                                    const Duration(days: 365),
-                                                  ),
+                                                      DateTime.now().add(
+                                                        const Duration(
+                                                            days: 365),
+                                                      ),
                                               isExpired:
                                                   _selectedVehiclePermitExpiry !=
-                                                      null &&
-                                                  _selectedVehiclePermitExpiry!
-                                                      .isBefore(DateTime.now()),
+                                                          null &&
+                                                      _selectedVehiclePermitExpiry!
+                                                          .isBefore(
+                                                              DateTime.now()),
                                             ),
                                             TextButton.icon(
                                               onPressed: _pickPermitExpiry,
@@ -463,10 +463,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Driver Dropdown
                                 DropdownButtonFormField<String>(
-                                  value:
-                                      _drivers.any(
-                                        (d) => d['id'] == _selectedDriverId,
-                                      )
+                                  value: _drivers.any(
+                                    (d) => d['id'] == _selectedDriverId,
+                                  )
                                       ? _selectedDriverId
                                       : null,
                                   hint: const Text('Assign Primary Driver'),
@@ -495,10 +494,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Customer Dropdown
                                 DropdownButtonFormField<String>(
-                                  value:
-                                      _customers.any(
-                                        (c) => c['id'] == _selectedCustomerId,
-                                      )
+                                  value: _customers.any(
+                                    (c) => c['id'] == _selectedCustomerId,
+                                  )
                                       ? _selectedCustomerId
                                       : null,
                                   hint: const Text('Assign Billed Customer'),
@@ -511,10 +509,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedCustomerId = id;
-                                      _selectedCustomerName = _customers
-                                          .firstWhere(
-                                            (c) => c['id'] == id,
-                                          )['name'];
+                                      _selectedCustomerName =
+                                          _customers.firstWhere(
+                                        (c) => c['id'] == id,
+                                      )['name'];
                                     });
                                   },
                                   decoration: const InputDecoration(
@@ -544,10 +542,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'Route Parameters',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -601,10 +599,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       'Cargo & Financial Parameters',
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -630,8 +628,8 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   prefixIcon: Icons.line_weight_outlined,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(
-                                        decimal: true,
-                                      ),
+                                    decimal: true,
+                                  ),
                                   validator: (val) {
                                     if (val == null || val.trim().isEmpty) {
                                       return 'Coal Quantity is a mandatory field.';
@@ -652,10 +650,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: r'Freight Charges ($)',
                                         prefixIcon: Icons.attach_money_outlined,
-                                        keyboardType:
-                                            const TextInputType.numberWithOptions(
-                                              decimal: true,
-                                            ),
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(
+                                          decimal: true,
+                                        ),
                                         validator: (val) {
                                           if (val == null ||
                                               val.trim().isEmpty) {
@@ -678,10 +676,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: r'Advance Payment ($)',
                                         prefixIcon: Icons.payments_outlined,
-                                        keyboardType:
-                                            const TextInputType.numberWithOptions(
-                                              decimal: true,
-                                            ),
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(
+                                          decimal: true,
+                                        ),
                                         validator: (val) {
                                           if (val == null ||
                                               val.trim().isEmpty) {
@@ -704,10 +702,10 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: r'Permit Expense ($)',
                                         prefixIcon: Icons.receipt_long_outlined,
-                                        keyboardType:
-                                            const TextInputType.numberWithOptions(
-                                              decimal: true,
-                                            ),
+                                        keyboardType: const TextInputType
+                                            .numberWithOptions(
+                                          decimal: true,
+                                        ),
                                         validator: (val) {
                                           if (val == null ||
                                               val.trim().isEmpty) {

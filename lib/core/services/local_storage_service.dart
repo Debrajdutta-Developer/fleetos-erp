@@ -10,8 +10,8 @@ class LocalStorageService {
   LocalStorageService({
     required SharedPreferences prefs,
     required FlutterSecureStorage secureStorage,
-  }) : _prefs = prefs,
-       _secureStorage = secureStorage;
+  })  : _prefs = prefs,
+        _secureStorage = secureStorage;
 
   // --- Shared Preferences Keys ---
   static const String _keyThemeMode = 'theme_mode';

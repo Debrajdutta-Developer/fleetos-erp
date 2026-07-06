@@ -129,15 +129,13 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
           // Filter ledger entries
           final filteredLedger = ledgerEntries.where((entry) {
             final tx = entry.transaction;
-            final matchesType =
-                _typeFilter == 'ALL' ||
+            final matchesType = _typeFilter == 'ALL' ||
                 tx.type.toLowerCase() == _typeFilter.toLowerCase();
-            final matchesCategory =
-                _categoryFilter == 'ALL' ||
+            final matchesCategory = _categoryFilter == 'ALL' ||
                 tx.category.toLowerCase() == _categoryFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
-            final matchesQuery =
-                (tx.notes?.toLowerCase().contains(query) ?? false) ||
+            final matchesQuery = (tx.notes?.toLowerCase().contains(query) ??
+                    false) ||
                 (tx.referenceNumber?.toLowerCase().contains(query) ?? false) ||
                 (tx.vehicleLicensePlate?.toLowerCase().contains(query) ??
                     false) ||
@@ -292,9 +290,8 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                       'dd MMM yyyy',
                                     ).format(tx.transactionDate);
                                     final color = _getCategoryColor(tx.type);
-                                    final sign = tx.type == 'income'
-                                        ? '+'
-                                        : '-';
+                                    final sign =
+                                        tx.type == 'income' ? '+' : '-';
 
                                     // Display allocation strings
                                     List<String> allocs = [];
@@ -434,8 +431,8 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                                 ),
                                                 onPressed: () =>
                                                     _handleDeleteTransaction(
-                                                      tx,
-                                                    ),
+                                                  tx,
+                                                ),
                                                 tooltip: 'Soft Delete',
                                               ),
                                             ],

@@ -99,28 +99,26 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final existingUser = ref
-        .read(vehiclesStreamProvider)
-        .valueOrNull
-        ?.firstWhere(
-          (v) => v.id == widget.vehicleId,
-          orElse: () => const VehicleEntity(
-            id: '',
-            vin: '',
-            licensePlate: '',
-            make: '',
-            model: '',
-            year: 0,
-            status: '',
-            fuelType: '',
-            odometer: 0,
-            insuranceExpiry: null as dynamic,
-            pucExpiry: null as dynamic,
-            fitnessExpiry: null as dynamic,
-            createdAt: null as dynamic,
-            updatedAt: null as dynamic,
-          ),
-        );
+    final existingUser =
+        ref.read(vehiclesStreamProvider).valueOrNull?.firstWhere(
+              (v) => v.id == widget.vehicleId,
+              orElse: () => const VehicleEntity(
+                id: '',
+                vin: '',
+                licensePlate: '',
+                make: '',
+                model: '',
+                year: 0,
+                status: '',
+                fuelType: '',
+                odometer: 0,
+                insuranceExpiry: null as dynamic,
+                pucExpiry: null as dynamic,
+                fitnessExpiry: null as dynamic,
+                createdAt: null as dynamic,
+                updatedAt: null as dynamic,
+              ),
+            );
 
     final vehicle = VehicleEntity(
       id: widget.vehicleId ?? '',

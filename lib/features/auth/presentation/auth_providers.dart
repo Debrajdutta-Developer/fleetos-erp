@@ -47,9 +47,9 @@ class AuthController extends StateNotifier<AuthState> {
   final Ref _ref;
 
   AuthController({required AuthRepository repository, required Ref ref})
-    : _repository = repository,
-      _ref = ref,
-      super(const AuthState());
+      : _repository = repository,
+        _ref = ref,
+        super(const AuthState());
 
   /// Log in action handler.
   Future<bool> signIn(String email, String password) async {

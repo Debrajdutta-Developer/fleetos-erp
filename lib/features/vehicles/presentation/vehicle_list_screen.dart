@@ -73,9 +73,9 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                 _statusFilter == 'All' || v.status == _statusFilter;
             final matchesQuery =
                 v.licensePlate.toLowerCase().contains(_searchQuery) ||
-                v.vin.toLowerCase().contains(_searchQuery) ||
-                v.make.toLowerCase().contains(_searchQuery) ||
-                v.model.toLowerCase().contains(_searchQuery);
+                    v.vin.toLowerCase().contains(_searchQuery) ||
+                    v.make.toLowerCase().contains(_searchQuery) ||
+                    v.model.toLowerCase().contains(_searchQuery);
             return matchesStatus && matchesQuery;
           }).toList();
 
@@ -146,9 +146,8 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                               ? 'Your company partition is clean. Register your first vehicle to get started.'
                               : 'No matches found. Try widening your search queries.',
                           icon: Icons.local_shipping_outlined,
-                          actionText: _searchQuery.isEmpty
-                              ? 'Onboard Vehicle'
-                              : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Onboard Vehicle' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/vehicles/new')
                               : null,
@@ -157,13 +156,12 @@ class _VehicleListScreenState extends ConsumerState<VehicleListScreen> {
                           itemCount: filteredVehicles.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: isDesktop
-                                    ? 3
-                                    : (screenWidth > 600 ? 2 : 1),
-                                crossAxisSpacing: 16,
-                                mainAxisSpacing: 16,
-                                childAspectRatio: 1.5,
-                              ),
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 1.5,
+                          ),
                           itemBuilder: (context, index) {
                             final vehicle = filteredVehicles[index];
                             return _VehicleCard(vehicle: vehicle);
@@ -190,8 +188,7 @@ class _VehicleCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     // Compliance color warnings
-    final hasIssues =
-        VehicleComplianceHelper.isInsuranceExpired(vehicle) ||
+    final hasIssues = VehicleComplianceHelper.isInsuranceExpired(vehicle) ||
         VehicleComplianceHelper.isPucExpired(vehicle) ||
         VehicleComplianceHelper.isFitnessExpired(vehicle);
 

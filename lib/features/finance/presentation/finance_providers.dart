@@ -13,22 +13,22 @@ final financeRepositoryProvider = Provider<FinanceRepository>((ref) {
 /// StreamProvider listening to real-time active transactions list.
 final financeTransactionsStreamProvider =
     StreamProvider.autoDispose<List<FinanceTransactionEntity>>((ref) {
-      final user = ref.watch(currentUserProvider);
-      if (user?.companyId == null) return Stream.value([]);
-      return ref
-          .watch(financeRepositoryProvider)
-          .watchTransactions(user!.companyId!);
-    });
+  final user = ref.watch(currentUserProvider);
+  if (user?.companyId == null) return Stream.value([]);
+  return ref
+      .watch(financeRepositoryProvider)
+      .watchTransactions(user!.companyId!);
+});
 
 /// StreamProvider listening to audit logs for finance transactions.
 final financeAuditLogsStreamProvider =
     StreamProvider.autoDispose<List<AuditLogEntity>>((ref) {
-      final user = ref.watch(currentUserProvider);
-      if (user?.companyId == null) return Stream.value([]);
-      return ref
-          .watch(financeRepositoryProvider)
-          .watchAuditLogsForFinance(user!.companyId!);
-    });
+  final user = ref.watch(currentUserProvider);
+  if (user?.companyId == null) return Stream.value([]);
+  return ref
+      .watch(financeRepositoryProvider)
+      .watchAuditLogsForFinance(user!.companyId!);
+});
 
 /// Ledger Entry Model containing a transaction and its running balance
 class LedgerEntry {
@@ -204,9 +204,9 @@ final financeSummaryProvider = Provider.autoDispose<FinanceSummary>((ref) {
   }
 
   final List<SummaryPeriod> yearly = [];
-  final allYearKeys =
-      (yearlyIncome.keys.toSet()..addAll(yearlyExpense.keys)).toList()
-        ..sort((a, b) => b.compareTo(a));
+  final allYearKeys = (yearlyIncome.keys.toSet()..addAll(yearlyExpense.keys))
+      .toList()
+    ..sort((a, b) => b.compareTo(a));
 
   for (final key in allYearKeys) {
     final inc = yearlyIncome[key] ?? 0.0;
@@ -252,9 +252,9 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
   FinanceFormController({
     required FinanceRepository repository,
     required Ref ref,
-  }) : _repository = repository,
-       _ref = ref,
-       super(const FinanceFormState());
+  })  : _repository = repository,
+        _ref = ref,
+        super(const FinanceFormState());
 
   /// Save (create/update) transaction with verification audits
   Future<bool> saveTransaction(FinanceTransactionEntity transaction) async {
@@ -295,11 +295,11 @@ class FinanceFormController extends StateNotifier<FinanceFormState> {
 /// Provider for FinanceFormController.
 final financeFormControllerProvider =
     StateNotifierProvider.autoDispose<FinanceFormController, FinanceFormState>((
-      ref,
-    ) {
-      final repository = ref.watch(financeRepositoryProvider);
-      return FinanceFormController(repository: repository, ref: ref);
-    });
+  ref,
+) {
+  final repository = ref.watch(financeRepositoryProvider);
+  return FinanceFormController(repository: repository, ref: ref);
+});
 
 /// Controller overseeing list actions (soft delete)
 class FinanceListController extends StateNotifier<AsyncValue<void>> {
@@ -309,9 +309,9 @@ class FinanceListController extends StateNotifier<AsyncValue<void>> {
   FinanceListController({
     required FinanceRepository repository,
     required Ref ref,
-  }) : _repository = repository,
-       _ref = ref,
-       super(const AsyncValue.data(null));
+  })  : _repository = repository,
+        _ref = ref,
+        super(const AsyncValue.data(null));
 
   /// Soft deletes a transaction, writing an audit log
   Future<bool> deleteTransaction(
@@ -354,8 +354,8 @@ class FinanceListController extends StateNotifier<AsyncValue<void>> {
 /// Provider for FinanceListController.
 final financeListControllerProvider =
     StateNotifierProvider.autoDispose<FinanceListController, AsyncValue<void>>((
-      ref,
-    ) {
-      final repository = ref.watch(financeRepositoryProvider);
-      return FinanceListController(repository: repository, ref: ref);
-    });
+  ref,
+) {
+  final repository = ref.watch(financeRepositoryProvider);
+  return FinanceListController(repository: repository, ref: ref);
+});

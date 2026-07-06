@@ -52,9 +52,9 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
   VehicleFormController({
     required VehicleRepository repository,
     required Ref ref,
-  }) : _repository = repository,
-       _ref = ref,
-       super(const VehicleFormState());
+  })  : _repository = repository,
+        _ref = ref,
+        super(const VehicleFormState());
 
   /// Create new vehicle asset
   Future<bool> saveVehicle(VehicleEntity vehicle) async {
@@ -107,11 +107,11 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
 /// Provider for VehicleFormController.
 final vehicleFormControllerProvider =
     StateNotifierProvider.autoDispose<VehicleFormController, VehicleFormState>((
-      ref,
-    ) {
-      final repository = ref.watch(vehicleRepositoryProvider);
-      return VehicleFormController(repository: repository, ref: ref);
-    });
+  ref,
+) {
+  final repository = ref.watch(vehicleRepositoryProvider);
+  return VehicleFormController(repository: repository, ref: ref);
+});
 
 /// Controller overseeing Vehicle List actions, searches, filters, and deletes.
 class VehicleListController extends StateNotifier<AsyncValue<void>> {
@@ -121,9 +121,9 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
   VehicleListController({
     required VehicleRepository repository,
     required Ref ref,
-  }) : _repository = repository,
-       _ref = ref,
-       super(const AsyncValue.data(null));
+  })  : _repository = repository,
+        _ref = ref,
+        super(const AsyncValue.data(null));
 
   /// Soft deletes vehicle record by setting deletedAt
   Future<bool> deleteVehicle(String vehicleId) async {
@@ -170,11 +170,11 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
 /// Provider for VehicleListController.
 final vehicleListControllerProvider =
     StateNotifierProvider.autoDispose<VehicleListController, AsyncValue<void>>((
-      ref,
-    ) {
-      final repository = ref.watch(vehicleRepositoryProvider);
-      return VehicleListController(repository: repository, ref: ref);
-    });
+  ref,
+) {
+  final repository = ref.watch(vehicleRepositoryProvider);
+  return VehicleListController(repository: repository, ref: ref);
+});
 
 /// Compliance Helper utility functions to check expiry states.
 class VehicleComplianceHelper {

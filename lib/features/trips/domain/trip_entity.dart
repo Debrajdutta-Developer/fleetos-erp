@@ -17,7 +17,7 @@ class TripEntity {
   final double advancePayment;
   final double permitExpense;
   final String
-  status; // scheduled, dispatched, loading, inTransit, delivered, completed, cancelled
+      status; // scheduled, dispatched, loading, inTransit, delivered, completed, cancelled
   final List<TripStatusHistory> statusHistory;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -91,12 +91,12 @@ class TripEntity {
       status: map['status'] as String? ?? 'scheduled',
       statusHistory: map['statusHistory'] != null
           ? (map['statusHistory'] as List)
-                .map(
-                  (x) => TripStatusHistory.fromMap(
-                    Map<String, dynamic>.from(x as Map),
-                  ),
-                )
-                .toList()
+              .map(
+                (x) => TripStatusHistory.fromMap(
+                  Map<String, dynamic>.from(x as Map),
+                ),
+              )
+              .toList()
           : [],
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
