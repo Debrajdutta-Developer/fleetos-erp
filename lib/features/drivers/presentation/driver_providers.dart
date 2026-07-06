@@ -191,7 +191,7 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      final drivers = _ref.read(driversStreamProvider).valueOrNull ?? [];
+      final drivers = await _repository.getDrivers(companyId);
       final driverIdx = drivers.indexWhere((d) => d.id == driverId);
       if (driverIdx == -1) throw Exception('Driver not found.');
       final driver = drivers[driverIdx];

@@ -5,6 +5,7 @@ import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
 import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
 import 'package:fleet_os_erp/features/dashboard/presentation/dashboard_providers.dart';
+import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart';
 
 void main() {
   group('Dashboard Stats Provider Tests', () {
@@ -113,12 +114,14 @@ void main() {
         overrides: [
           vehiclesStreamProvider.overrideWith((ref) => Stream.value(tVehicles)),
           tripsStreamProvider.overrideWith((ref) => Stream.value(tTrips)),
+          driversStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
 
       // Force resolution of the stream providers
       await container.read(vehiclesStreamProvider.future);
       await container.read(tripsStreamProvider.future);
+      await container.read(driversStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
