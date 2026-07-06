@@ -22,8 +22,6 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final driversAsync = ref.watch(driversStreamProvider);
-    final auditLogsAsync = ref.watch(tripAuditLogsStreamProvider(''); // passing dummy to let it read, or watch dummy
-
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth > 992;
 
