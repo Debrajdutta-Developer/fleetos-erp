@@ -297,7 +297,7 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                 CustomTextField(
                                   controller: _amountController,
                                   hintText: '0.00',
-                                  labelText: 'Transaction Amount (\$)',
+                                  labelText: r'Transaction Amount ($)',
                                   prefixIcon: Icons.attach_money_rounded,
                                   keyboardType:
                                       const TextInputType.numberWithOptions(

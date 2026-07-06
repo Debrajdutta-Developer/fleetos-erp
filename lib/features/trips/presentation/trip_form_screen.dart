@@ -650,7 +650,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                       child: CustomTextField(
                                         controller: _freightController,
                                         hintText: '0.00',
-                                        labelText: 'Freight Charges (\$)',
+                                        labelText: r'Freight Charges ($)',
                                         prefixIcon: Icons.attach_money_outlined,
                                         keyboardType:
                                             const TextInputType.numberWithOptions(
@@ -676,7 +676,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                       child: CustomTextField(
                                         controller: _advanceController,
                                         hintText: '0.00',
-                                        labelText: 'Advance Payment (\$)',
+                                        labelText: r'Advance Payment ($)',
                                         prefixIcon: Icons.payments_outlined,
                                         keyboardType:
                                             const TextInputType.numberWithOptions(
@@ -702,7 +702,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                       child: CustomTextField(
                                         controller: _permitExpenseController,
                                         hintText: '0.00',
-                                        labelText: 'Permit Expense (\$)',
+                                        labelText: r'Permit Expense ($)',
                                         prefixIcon: Icons.receipt_long_outlined,
                                         keyboardType:
                                             const TextInputType.numberWithOptions(
