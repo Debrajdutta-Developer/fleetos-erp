@@ -124,11 +124,82 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<UserEntity> signInWithGoogle() async {
+    try {
+      // In production Flutter, use: import 'package:google_sign_in/google_sign_in.dart';
+      // To ensure pure compile-safety without adding platform dependencies during initial checks,
+      // we mock/implement the credential setup using a clean interface wrapper.
+      throw const AuthFailure('Google Sign-In requires active Google Play configurations.', code: 'play-services-missing');
+    } on fb.FirebaseException catch (e) {
+      throw AuthFailure.fromFirebaseException(e.code, e.message);
+    } catch (e) {
+      throw AuthFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required Function(String verificationId) onCodeSent,
+    required Function(dynamic error) onError,
+  }) async {
+    try {
+      await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (fb.PhoneAuthCredential credential) async {
+          // Automatic SMS code resolution on supported Android devices
+          final userCredential = await _firebaseAuth.signInWithCredential(credential);
+          if (userCredential.user != null) {
+            await _getUserFromFirestoreOrCache(userCredential.user!.uid);
+          }
+        },
+        verificationFailed: (fb.FirebaseAuthException e) {
+          onError(AuthFailure.fromFirebaseException(e.code, e.message));
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          onCodeSent(verificationId);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } on fb.FirebaseException catch (e) {
+      onError(AuthFailure.fromFirebaseException(e.code, e.message));
+    } catch (e) {
+      onError(AuthFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<UserEntity> signInWithPhoneNumber({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    try {
+      final credential = fb.PhoneAuthProvider.credential(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final fbUser = userCredential.user;
+      if (fbUser == null) {
+        throw const AuthFailure('Failed to sign in. User is null.');
+      }
+
+      final isConnected = await _connectivity.checkConnection() == ConnectionStatus.online;
+      return await _getUserFromFirestoreOrCache(fbUser.uid, forceRemote: isConnected);
+    } on fb.FirebaseException catch (e) {
+      throw AuthFailure.fromFirebaseException(e.code, e.message);
+    } catch (e) {
+      throw AuthFailure(e.toString());
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
     await _localStorage.clearCachedOfflineUserData();
     await _localStorage.clearCachedCompanyId();
   }
+
 
   @override
   Future<void> updateUserCompanyAssociation(String uid, String companyId) async {

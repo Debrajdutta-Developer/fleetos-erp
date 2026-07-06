@@ -94,6 +94,58 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
+  /// Google Sign-In action handler.
+  Future<bool> signInWithGoogle() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final user = await _repository.signInWithGoogle();
+      _ref.read(currentUserProvider.notifier).state = user;
+      state = const AuthState();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      return false;
+    }
+  }
+
+  /// Phone number OTP code verification request.
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required Function(String verificationId) onCodeSent,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    await _repository.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      onCodeSent: (verificationId) {
+        state = const AuthState();
+        onCodeSent(verificationId);
+      },
+      onError: (error) {
+        state = state.copyWith(isLoading: false, errorMessage: error.toString());
+      },
+    );
+  }
+
+  /// Phone number OTP verification code authentication.
+  Future<bool> signInWithPhoneNumber({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final user = await _repository.signInWithPhoneNumber(
+        verificationId: verificationId,
+        smsCode: smsCode,
+      );
+      _ref.read(currentUserProvider.notifier).state = user;
+      state = const AuthState();
+      return true;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      return false;
+    }
+  }
+
   /// Sign out current session action.
   Future<void> signOut() async {
     state = state.copyWith(isLoading: true);
@@ -105,6 +157,7 @@ class AuthController extends StateNotifier<AuthState> {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
   }
+
 }
 
 /// Provider exposing our reactive AuthController.
