@@ -17,33 +17,24 @@ class CompanySetupScreen extends ConsumerStatefulWidget {
 
 class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _industryController = TextEditingController();
+  final _nameController = TextEditingController();       // Company Name
+  final _ownerNameController = TextEditingController();  // Owner Name
+  final _gstNumberController = TextEditingController();  // GST Number (optional)
 
-  String _selectedFleetSize = '1-10 vehicles';
   File? _logoFile;
   bool _mockLogoSelected = false;
-
-  final List<String> _fleetSizes = [
-    '1-10 vehicles',
-    '11-50 vehicles',
-    '51-200 vehicles',
-    '201-1000 vehicles',
-    '1000+ vehicles',
-  ];
 
   @override
   void dispose() {
     _nameController.dispose();
-    _industryController.dispose();
+    _ownerNameController.dispose();
+    _gstNumberController.dispose();
     super.dispose();
   }
 
   Future<void> _pickMockLogo() async {
-    // Simulate image picking for demonstration and testing purposes
     setState(() {
       _mockLogoSelected = true;
-      // In production, use file_picker or image_picker package
       _logoFile = null; 
     });
     
@@ -62,8 +53,10 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
 
     final success = await setupController.registerCompany(
       name: _nameController.text.trim(),
-      industry: _industryController.text.trim(),
-      fleetSize: _selectedFleetSize,
+      ownerName: _ownerNameController.text.trim(),
+      gstNumber: _gstNumberController.text.trim().isEmpty 
+          ? null 
+          : _gstNumberController.text.trim().toUpperCase(),
       logoFile: _logoFile,
     );
 
@@ -121,7 +114,7 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Create a dedicated partition for your company, customize fleet thresholds, and onboard logistics operators.',
+                        'Create a dedicated partition for your company, designate owners, configure tax mappings, and onboard logistics operators.',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onBackground.withOpacity(0.6),
                           height: 1.5,
@@ -198,37 +191,26 @@ class _CompanySetupScreenState extends ConsumerState<CompanySetupScreen> {
                       const SizedBox(height: 20),
 
                       CustomTextField(
-                        controller: _industryController,
-                        labelText: 'Industry Sector',
-                        hintText: 'Interstate Freight Shipping',
-                        prefixIcon: Icons.category_outlined,
-                        validator: (val) => val == null || val.isEmpty ? 'Industry sector is required' : null,
+                        controller: _ownerNameController,
+                        labelText: 'Owner / Legal Representative Name',
+                        hintText: 'John Doe',
+                        prefixIcon: Icons.person_outline_rounded,
+                        validator: (val) => val == null || val.isEmpty ? 'Owner name is required' : null,
                       ),
                       const SizedBox(height: 20),
 
-                      // Dropdown for Fleet Size
-                      DropdownButtonFormField<String>(
-                        value: _selectedFleetSize,
-                        decoration: InputDecoration(
-                          labelText: 'Estimated Fleet Volume',
-                          prefixIcon: Icon(
-                            Icons.local_shipping_outlined,
-                            size: 20,
-                            color: colorScheme.onSurface.withOpacity(0.5),
-                          ),
-                        ),
-                        items: _fleetSizes.map((String size) {
-                          return DropdownMenuItem<String>(
-                            value: size,
-                            child: Text(size),
-                          );
-                        }).toList(),
-                        onChanged: (String? val) {
-                          if (val != null) {
-                            setState(() {
-                              _selectedFleetSize = val;
-                            });
+                      CustomTextField(
+                        controller: _gstNumberController,
+                        labelText: 'GSTIN Number (Optional)',
+                        hintText: '29GGGGG1314R9Z6',
+                        prefixIcon: Icons.receipt_long_outlined,
+                        validator: (val) {
+                          if (val != null && val.isNotEmpty) {
+                            if (val.length != 15) {
+                              return 'GST number must be exactly 15 characters';
+                            }
                           }
+                          return null;
                         },
                       ),
                       const SizedBox(height: 32),

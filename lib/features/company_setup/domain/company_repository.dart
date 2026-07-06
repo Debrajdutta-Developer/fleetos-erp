@@ -7,8 +7,8 @@ abstract class CompanyRepository {
   /// Throws [ServerFailure] on failure.
   Future<CompanyEntity> createCompany({
     required String name,
-    required String industry,
-    required String fleetSize,
+    required String ownerName,
+    String? gstNumber,
     required String adminUid,
     File? logoFile,
   });
@@ -16,6 +16,6 @@ abstract class CompanyRepository {
   /// Retrieve company details.
   Future<CompanyEntity?> getCompany(String companyId);
 
-  /// Optional: Upload logo image to storage bucket and fetch URL.
+  /// Upload logo image to storage bucket and fetch URL.
   Future<String> uploadLogo(String companyId, File logoFile);
 }

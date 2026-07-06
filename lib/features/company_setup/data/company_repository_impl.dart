@@ -26,8 +26,8 @@ class CompanyRepositoryImpl implements CompanyRepository {
   @override
   Future<CompanyEntity> createCompany({
     required String name,
-    required String industry,
-    required String fleetSize,
+    required String ownerName,
+    String? gstNumber,
     required String adminUid,
     File? logoFile,
   }) async {
@@ -44,9 +44,9 @@ class CompanyRepositoryImpl implements CompanyRepository {
       final company = CompanyEntity(
         id: companyId,
         name: name,
+        ownerName: ownerName,
+        gstNumber: gstNumber,
         logoUrl: logoUrl,
-        industry: industry,
-        fleetSize: fleetSize,
         adminUid: adminUid,
         createdAt: DateTime.now(),
         isSetupComplete: true,

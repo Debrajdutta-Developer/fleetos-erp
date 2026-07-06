@@ -1,10 +1,10 @@
 /// Represents a registered Company/Tenant in the multi-tenant FleetOS ERP database.
 class CompanyEntity {
   final String id;
-  final String name;
+  final String name;      // Company Name
+  final String ownerName; // Owner Name
+  final String? gstNumber; // GST Number (optional)
   final String logoUrl;
-  final String industry;
-  final String fleetSize;
   final String adminUid;
   final DateTime createdAt;
   final bool isSetupComplete;
@@ -12,9 +12,9 @@ class CompanyEntity {
   const CompanyEntity({
     required this.id,
     required this.name,
+    required this.ownerName,
+    this.gstNumber,
     this.logoUrl = '',
-    required this.industry,
-    required this.fleetSize,
     required this.adminUid,
     required this.createdAt,
     this.isSetupComplete = false,
@@ -25,9 +25,9 @@ class CompanyEntity {
     return {
       'id': id,
       'name': name,
+      'ownerName': ownerName,
+      'gstNumber': gstNumber,
       'logoUrl': logoUrl,
-      'industry': industry,
-      'fleetSize': fleetSize,
       'adminUid': adminUid,
       'createdAt': createdAt.toIso8601String(),
       'isSetupComplete': isSetupComplete,
@@ -39,9 +39,9 @@ class CompanyEntity {
     return CompanyEntity(
       id: map['id'] as String,
       name: map['name'] as String,
+      ownerName: map['ownerName'] as String? ?? '',
+      gstNumber: map['gstNumber'] as String?,
       logoUrl: map['logoUrl'] as String? ?? '',
-      industry: map['industry'] as String,
-      fleetSize: map['fleetSize'] as String,
       adminUid: map['adminUid'] as String,
       createdAt: map['createdAt'] != null 
           ? DateTime.parse(map['createdAt'] as String) 
@@ -54,9 +54,9 @@ class CompanyEntity {
   CompanyEntity copyWith({
     String? id,
     String? name,
+    String? ownerName,
+    String? gstNumber,
     String? logoUrl,
-    String? industry,
-    String? fleetSize,
     String? adminUid,
     DateTime? createdAt,
     bool? isSetupComplete,
@@ -64,9 +64,9 @@ class CompanyEntity {
     return CompanyEntity(
       id: id ?? this.id,
       name: name ?? this.name,
+      ownerName: ownerName ?? this.ownerName,
+      gstNumber: gstNumber ?? this.gstNumber,
       logoUrl: logoUrl ?? this.logoUrl,
-      industry: industry ?? this.industry,
-      fleetSize: fleetSize ?? this.fleetSize,
       adminUid: adminUid ?? this.adminUid,
       createdAt: createdAt ?? this.createdAt,
       isSetupComplete: isSetupComplete ?? this.isSetupComplete,

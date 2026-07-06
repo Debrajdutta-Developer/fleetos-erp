@@ -51,8 +51,8 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
   /// Triggers company profile registration inside Firestore
   Future<bool> registerCompany({
     required String name,
-    required String industry,
-    required String fleetSize,
+    required String ownerName,
+    String? gstNumber,
     File? logoFile,
   }) async {
     state = state.copyWith(isLoading: true);
@@ -65,8 +65,8 @@ class CompanySetupController extends StateNotifier<CompanySetupState> {
       // 1. Create company record
       final company = await _repository.createCompany(
         name: name,
-        industry: industry,
-        fleetSize: fleetSize,
+        ownerName: ownerName,
+        gstNumber: gstNumber,
         adminUid: currentUser.uid,
         logoFile: logoFile,
       );
