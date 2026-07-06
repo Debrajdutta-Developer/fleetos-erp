@@ -1,0 +1,658 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../auth/presentation/auth_providers.dart';
+import '../../company_setup/presentation/company_providers.dart';
+import '../../company_setup/domain/company_entity.dart';
+
+/// State notifier for global app theme configuration overrides.
+class ThemeController extends StateNotifier<ThemeMode> {
+  ThemeController() : super(ThemeMode.system);
+
+  void toggleTheme() {
+    state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  }
+}
+
+/// Global provider for managing Light/Dark theme configuration overrides.
+final themeModeProvider = StateNotifierProvider<ThemeController, ThemeMode>((ref) {
+  return ThemeController();
+});
+
+/// Enterprise Command Center Dashboard featuring responsive panel shells and layouts.
+class DashboardScreen extends ConsumerStatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  CompanyEntity? _company;
+  bool _loadingCompany = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCompanyDetails();
+  }
+
+  Future<void> _fetchCompanyDetails() async {
+    final user = ref.read(currentUserProvider);
+    if (user?.companyId != null) {
+      final repo = ref.read(companyRepositoryProvider);
+      final company = await repo.getCompany(user!.companyId!);
+      if (mounted) {
+        setState(() {
+          _company = company;
+          _loadingCompany = false;
+        });
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _loadingCompany = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Session Teardown'),
+        content: const Text('Are you sure you want to log out? This will terminate your secure session key.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await ref.read(authControllerProvider.notifier).signOut();
+      if (mounted) {
+        context.go('/login');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final currentUser = ref.watch(currentUserProvider);
+    final themeMode = ref.watch(themeModeProvider);
+
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isDesktop = screenWidth > 992;
+
+    // Loading details
+    final companyName = _loadingCompany 
+        ? 'Loading company...' 
+        : (_company?.name ?? 'FleetOS Operator');
+
+    // Stats mock data
+    final stats = [
+      _StatCardData(title: 'Active Fleet Count', value: '42', subtitle: 'Vehicles online', icon: Icons.local_shipping_outlined, trend: '+4% vs yesterday', isPositive: true),
+      _StatCardData(title: 'Trips Scheduled', value: '18', subtitle: 'Dispatched today', icon: Icons.route_outlined, trend: 'Normal volume', isPositive: true),
+      _StatCardData(title: 'Critical Diagnostics', value: '02', subtitle: 'Fault codes raised', icon: Icons.warning_amber_rounded, trend: 'Action needed', isPositive: false),
+      _StatCardData(title: 'Active Cargo Volume', value: '88%', subtitle: 'Average payload capacity', icon: Icons.inventory_2_outlined, trend: '+12% peak efficiency', isPositive: true),
+    ];
+
+    final Widget dashboardBody = SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Greeting & Header row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back, ${currentUser?.displayName ?? "Operator"}',
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Enterprise Tenant: $companyName',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+              IconButton(
+                icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+                tooltip: 'Toggle Theme',
+                onPressed: () {
+                  ref.read(themeModeProvider.notifier).toggleTheme();
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+
+          // Overview Stats Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: stats.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isDesktop ? 4 : (screenWidth > 600 ? 2 : 1),
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.6,
+            ),
+            itemBuilder: (context, index) {
+              final stat = stats[index];
+              return _StatCard(data: stat);
+            },
+          ),
+          const SizedBox(height: 32),
+
+          // Main Layout Content Section
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    // System Performance Chart card representation
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Fleet Utilization Analytics',
+                                  style: theme.textTheme.titleLarge,
+                                ),
+                                DropdownButton<String>(
+                                  value: 'This Week',
+                                  underline: const SizedBox(),
+                                  items: const [
+                                    DropdownMenuItem(value: 'This Week', child: Text('This Week')),
+                                    DropdownMenuItem(value: 'Last Month', child: Text('Last Month')),
+                                  ],
+                                  onChanged: (_) {},
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 32),
+                            // Simulated graphic/chart element
+                            Container(
+                              height: 240,
+                              decoration: BoxDecoration(
+                                color: colorScheme.primary.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: colorScheme.primary.withOpacity(0.08)),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.analytics_outlined,
+                                      size: 48,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    const Text('Interactive Analytics Graph Placeholder'),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Available in Fleet Modules integration.',
+                                      style: TextStyle(
+                                        color: colorScheme.onBackground.withOpacity(0.4),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (isDesktop) ...[
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 1,
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Active Diagnostics Feed',
+                            style: theme.textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 16),
+                          _ActivityItem(
+                            icon: Icons.flash_on,
+                            color: Colors.amber,
+                            title: 'Route Warning Engine',
+                            time: '2 mins ago',
+                            subtitle: 'Vehicle F-201 reported traffic deviation.',
+                          ),
+                          const Divider(height: 24),
+                          _ActivityItem(
+                            icon: Icons.check_circle_outline_rounded,
+                            color: Colors.green,
+                            title: 'Maintenance Sync',
+                            time: '1 hour ago',
+                            subtitle: 'Truck T-88 service log uploaded to database.',
+                          ),
+                          const Divider(height: 24),
+                          _ActivityItem(
+                            icon: Icons.error_outline_rounded,
+                            color: Colors.red,
+                            title: 'Fuel Drop Threshold',
+                            time: '4 hours ago',
+                            subtitle: 'Van V-302 sudden fuel drop detected.',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+
+    // Sidebar navigation content for desktop
+    final Widget sidebar = Container(
+      width: 260,
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(
+          right: BorderSide(color: theme.dividerColor.withOpacity(0.08)),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Sidebar header (Brand logo)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.local_shipping_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'FleetOS ERP',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // Navigation items list
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              children: [
+                _SidebarNavItem(icon: Icons.dashboard_rounded, label: 'Control Center', isSelected: true),
+                _SidebarNavItem(icon: Icons.local_shipping_outlined, label: 'Fleet Management'),
+                _SidebarNavItem(icon: Icons.route_outlined, label: 'Routing Engine'),
+                _SidebarNavItem(icon: Icons.people_outline_rounded, label: 'Driver Portal'),
+                _SidebarNavItem(icon: Icons.inventory_2_outlined, label: 'Storage & Hubs'),
+                _SidebarNavItem(icon: Icons.receipt_long_outlined, label: 'Billing System'),
+                _SidebarNavItem(icon: Icons.settings_outlined, label: 'ERP Settings'),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // User profile drawer link at bottom of sidebar
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: colorScheme.primary.withOpacity(0.12),
+                  child: Text(
+                    (currentUser?.displayName ?? 'O').substring(0, 1).toUpperCase(),
+                    style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentUser?.displayName ?? 'Operator',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                      ),
+                      Text(
+                        currentUser?.role.toUpperCase() ?? 'ADMIN',
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: colorScheme.onBackground.withOpacity(0.4),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout_rounded, size: 20),
+                  onPressed: _handleLogout,
+                  tooltip: 'Secure Sign Out',
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return Scaffold(
+      appBar: !isDesktop
+          ? AppBar(
+              title: Text(companyName),
+              actions: [
+                IconButton(
+                  icon: Icon(themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
+                  onPressed: () {
+                    ref.read(themeModeProvider.notifier).toggleTheme();
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout_rounded),
+                  onPressed: _handleLogout,
+                ),
+              ],
+            )
+          : null,
+      drawer: !isDesktop
+          ? Drawer(
+              child: Column(
+                children: [
+                  UserAccountsDrawerHeader(
+                    accountName: Text(currentUser?.displayName ?? 'Operator'),
+                    accountEmail: Text(currentUser?.email ?? ''),
+                    currentAccountPicture: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        (currentUser?.displayName ?? 'O').substring(0, 1).toUpperCase(),
+                        style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 24),
+                      ),
+                    ),
+                    decoration: BoxDecoration(color: colorScheme.primary),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.dashboard_rounded),
+                    title: const Text('Control Center'),
+                    selected: true,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                  const ListTile(
+                    leading: Icon(Icons.local_shipping_outlined),
+                    title: Text('Fleet Management'),
+                  ),
+                  const ListTile(
+                    leading: Icon(Icons.route_outlined),
+                    title: Text('Routing Engine'),
+                  ),
+                  const ListTile(
+                    leading: Icon(Icons.people_outline_rounded),
+                    title: Text('Driver Portal'),
+                  ),
+                  const ListTile(
+                    leading: Icon(Icons.settings_outlined),
+                    title: Text('Settings'),
+                  ),
+                ],
+              ),
+            )
+          : null,
+      body: Row(
+        children: [
+          if (isDesktop) sidebar,
+          Expanded(child: dashboardBody),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatCardData {
+  final String title;
+  final String value;
+  final String subtitle;
+  final IconData icon;
+  final String trend;
+  final bool isPositive;
+
+  const _StatCardData({
+    required this.title,
+    required this.value,
+    required this.subtitle,
+    required this.icon,
+    required this.trend,
+    required this.isPositive,
+  });
+}
+
+class _StatCard extends StatelessWidget {
+  final _StatCardData data;
+
+  const _StatCard({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  data.title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.5),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Icon(data.icon, color: colorScheme.primary, size: 20),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.value,
+                  style: theme.textTheme.displayLarge?.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  data.subtitle,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 12,
+                    color: colorScheme.onSurface.withOpacity(0.4),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(
+                  data.isPositive ? Icons.trending_up : Icons.trending_down,
+                  color: data.isPositive ? Colors.green : Colors.red,
+                  size: 14,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  data.trend,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: data.isPositive ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarNavItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+
+  const _SidebarNavItem({
+    required this.icon,
+    required this.label,
+    this.isSelected = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      decoration: BoxDecoration(
+        color: isSelected ? colorScheme.primary.withOpacity(0.08) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        visualDensity: const VisualDensity(vertical: -2),
+        leading: Icon(
+          icon,
+          color: isSelected ? colorScheme.primary : colorScheme.onSurface.withOpacity(0.6),
+          size: 20,
+        ),
+        title: Text(
+          label,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 14,
+          ),
+        ),
+        onTap: () {},
+      ),
+    );
+  }
+}
+
+class _ActivityItem extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String time;
+  final String subtitle;
+
+  const _ActivityItem({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.time,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: color, size: 16),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  Text(
+                    time,
+                    style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.4), fontSize: 11),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(color: theme.colorScheme.onBackground.withOpacity(0.6), fontSize: 12, height: 1.3),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
