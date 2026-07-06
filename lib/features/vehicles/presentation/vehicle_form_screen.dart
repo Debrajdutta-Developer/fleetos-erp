@@ -83,7 +83,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
 
   Future<void> _pickDate({
     required DateTime initialDate,
-    required Function(DateTime date) onDateSelected,
+    required void Function(DateTime date) onDateSelected,
   }) async {
     final picked = await showDatePicker(
       context: context,
@@ -102,7 +102,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     final existingUser =
         ref.read(vehiclesStreamProvider).valueOrNull?.firstWhere(
               (v) => v.id == widget.vehicleId,
-              orElse: () => const VehicleEntity(
+              orElse: () => VehicleEntity(
                 id: '',
                 vin: '',
                 licensePlate: '',
@@ -112,11 +112,11 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 status: '',
                 fuelType: '',
                 odometer: 0,
-                insuranceExpiry: null as dynamic,
-                pucExpiry: null as dynamic,
-                fitnessExpiry: null as dynamic,
-                createdAt: null as dynamic,
-                updatedAt: null as dynamic,
+                insuranceExpiry: DateTime(1970),
+                pucExpiry: DateTime(1970),
+                fitnessExpiry: DateTime(1970),
+                createdAt: DateTime(1970),
+                updatedAt: DateTime(1970),
               ),
             );
 

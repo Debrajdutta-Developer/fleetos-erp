@@ -99,7 +99,6 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
     final ledgerEntries = ref.watch(ledgerProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isDesktop = screenWidth > 992;
 
     return Scaffold(
       appBar: AppBar(

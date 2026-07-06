@@ -152,8 +152,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
-    required Function(String verificationId) onCodeSent,
-    required Function(dynamic error) onError,
+    required void Function(String verificationId) onCodeSent,
+    required void Function(dynamic error) onError,
   }) async {
     try {
       await _firebaseAuth.verifyPhoneNumber(

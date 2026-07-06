@@ -258,7 +258,7 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          py: 8,
+                          vertical: 8,
                         ),
                         decoration: BoxDecoration(
                           color: statusColor.withOpacity(0.12),

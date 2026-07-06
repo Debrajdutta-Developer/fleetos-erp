@@ -109,7 +109,7 @@ class AuthController extends StateNotifier<AuthState> {
   /// Phone number OTP code verification request.
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
-    required Function(String verificationId) onCodeSent,
+    required void Function(String verificationId) onCodeSent,
   }) async {
     state = state.copyWith(isLoading: true);
     await _repository.verifyPhoneNumber(

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -185,7 +184,7 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
         data: (vehicles) {
           final vehicle = vehicles.firstWhere(
             (v) => v.id == widget.vehicleId,
-            orElse: () => const VehicleEntity(
+            orElse: () => VehicleEntity(
               id: '',
               vin: '',
               licensePlate: '',
@@ -195,11 +194,11 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
               status: '',
               fuelType: '',
               odometer: 0,
-              insuranceExpiry: null as dynamic,
-              pucExpiry: null as dynamic,
-              fitnessExpiry: null as dynamic,
-              createdAt: null as dynamic,
-              updatedAt: null as dynamic,
+              insuranceExpiry: DateTime(1970),
+              pucExpiry: DateTime(1970),
+              fitnessExpiry: DateTime(1970),
+              createdAt: DateTime(1970),
+              updatedAt: DateTime(1970),
             ),
           );
 
@@ -483,7 +482,7 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, py: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(4),

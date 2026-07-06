@@ -31,8 +31,8 @@ abstract class AuthRepository {
   /// Triggered as part of Phone number authentication.
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
-    required Function(String verificationId) onCodeSent,
-    required Function(dynamic error) onError,
+    required void Function(String verificationId) onCodeSent,
+    required void Function(dynamic error) onError,
   });
 
   /// Authenticate user using the verification ID and OTP code.
