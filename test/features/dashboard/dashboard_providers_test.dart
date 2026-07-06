@@ -107,7 +107,8 @@ void main() {
       ),
     ];
 
-    test('should correctly compute all live stats metrics from streams', () async {
+    test('should correctly compute all live stats metrics from streams',
+        () async {
       final container = ProviderContainer(
         overrides: [
           vehiclesStreamProvider.overrideWith((ref) => Stream.value(tVehicles)),

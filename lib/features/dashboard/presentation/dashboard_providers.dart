@@ -18,7 +18,8 @@ class DashboardStats {
   });
 }
 
-final dashboardStatsProvider = Provider.autoDispose<AsyncValue<DashboardStats>>((ref) {
+final dashboardStatsProvider =
+    Provider.autoDispose<AsyncValue<DashboardStats>>((ref) {
   final vehiclesAsync = ref.watch(vehiclesStreamProvider);
   final tripsAsync = ref.watch(tripsStreamProvider);
 
@@ -40,7 +41,9 @@ final dashboardStatsProvider = Provider.autoDispose<AsyncValue<DashboardStats>>(
   final activeFleetCount = vehicles.where((v) => v.status == 'active').length;
 
   // 2. Trips Scheduled
-  final tripsScheduled = trips.where((t) => t.status == 'scheduled' || t.status == 'planned').length;
+  final tripsScheduled = trips
+      .where((t) => t.status == 'scheduled' || t.status == 'planned')
+      .length;
 
   // 3. Critical Diagnostics (Vehicles with expired compliance)
   final criticalDiagnosticsCount = vehicles.where((v) {
@@ -50,10 +53,13 @@ final dashboardStatsProvider = Provider.autoDispose<AsyncValue<DashboardStats>>(
   }).length;
 
   // 4. Active Cargo Volume / Average payload capacity
-  final activeTrips = trips.where((t) => t.status != 'completed' && t.status != 'cancelled');
+  final activeTrips =
+      trips.where((t) => t.status != 'completed' && t.status != 'cancelled');
   double averagePayloadCapacity = 0.0;
   if (activeTrips.isNotEmpty) {
-    final totalCoal = activeTrips.map((t) => t.coalQuantity).fold<double>(0.0, (sum, val) => sum + val);
+    final totalCoal = activeTrips
+        .map((t) => t.coalQuantity)
+        .fold<double>(0.0, (sum, val) => sum + val);
     // Assume standard payload capacity of 25.0 tons per vehicle
     averagePayloadCapacity = (totalCoal / (activeTrips.length * 25.0)) * 100;
     if (averagePayloadCapacity > 100.0) averagePayloadCapacity = 100.0;

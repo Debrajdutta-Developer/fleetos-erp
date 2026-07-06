@@ -281,7 +281,8 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
             tripNumber: trip.id,
             vehicleId: trip.vehicleId,
             vehicleLicensePlate: trip.vehicleLicensePlate,
-            notes: 'Automatically generated freight income on completion of Trip $tripId',
+            notes:
+                'Automatically generated freight income on completion of Trip $tripId',
             transactionDate: DateTime.now(),
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
@@ -292,12 +293,14 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
             entityType: 'finance_transaction',
             entityId: incomeTxId,
             action: 'transaction_created',
-            description: 'INCOME recorded for Category: INCOME with Amount: \$${trip.freightAmount.toStringAsFixed(2)}.',
+            description:
+                'INCOME recorded for Category: INCOME with Amount: \$${trip.freightAmount.toStringAsFixed(2)}.',
             userId: user.uid,
             userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
             timestamp: DateTime.now(),
           );
-          await financeRepo.createTransaction(companyId, incomeTx, incomeAuditLog);
+          await financeRepo.createTransaction(
+              companyId, incomeTx, incomeAuditLog);
 
           // 2. Create Expense transaction for advancePayment if > 0
           if (trip.advancePayment > 0) {
@@ -313,7 +316,8 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
               tripNumber: trip.id,
               vehicleId: trip.vehicleId,
               vehicleLicensePlate: trip.vehicleLicensePlate,
-              notes: 'Automatically generated advance salary on completion of Trip $tripId',
+              notes:
+                  'Automatically generated advance salary on completion of Trip $tripId',
               transactionDate: DateTime.now(),
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
@@ -324,9 +328,11 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
               entityType: 'finance_transaction',
               entityId: advTxId,
               action: 'transaction_created',
-              description: 'EXPENSE recorded for Category: ADVANCE_SALARY with Amount: \$${trip.advancePayment.toStringAsFixed(2)}.',
+              description:
+                  'EXPENSE recorded for Category: ADVANCE_SALARY with Amount: \$${trip.advancePayment.toStringAsFixed(2)}.',
               userId: user.uid,
-              userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
+              userName:
+                  user.displayName.isEmpty ? 'Operator' : user.displayName,
               timestamp: DateTime.now(),
             );
             await financeRepo.createTransaction(companyId, advTx, advAuditLog);
@@ -346,7 +352,8 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
               tripNumber: trip.id,
               vehicleId: trip.vehicleId,
               vehicleLicensePlate: trip.vehicleLicensePlate,
-              notes: 'Automatically generated permit expense on completion of Trip $tripId',
+              notes:
+                  'Automatically generated permit expense on completion of Trip $tripId',
               transactionDate: DateTime.now(),
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
@@ -357,12 +364,15 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
               entityType: 'finance_transaction',
               entityId: permitTxId,
               action: 'transaction_created',
-              description: 'EXPENSE recorded for Category: MISCELLANEOUS with Amount: \$${trip.permitExpense.toStringAsFixed(2)}.',
+              description:
+                  'EXPENSE recorded for Category: MISCELLANEOUS with Amount: \$${trip.permitExpense.toStringAsFixed(2)}.',
               userId: user.uid,
-              userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
+              userName:
+                  user.displayName.isEmpty ? 'Operator' : user.displayName,
               timestamp: DateTime.now(),
             );
-            await financeRepo.createTransaction(companyId, permitTx, permitAuditLog);
+            await financeRepo.createTransaction(
+                companyId, permitTx, permitAuditLog);
           }
         }
       }

@@ -91,13 +91,15 @@ class MockVehicleRepository implements VehicleRepository {
   MockVehicleRepository({required this.vehicles});
 
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value(vehicles);
 
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
 
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async {
+  Future<VehicleEntity> createVehicle(
+      String companyId, VehicleEntity vehicle) async {
     vehicles.add(vehicle);
     return vehicle;
   }
@@ -114,10 +116,13 @@ class MockVehicleRepository implements VehicleRepository {
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
 
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {}
 
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, file) async => '';
+  Future<String> uploadComplianceDocument(
+          String companyId, String vehicleId, String docType, file) async =>
+      '';
 }
 
 class MockFinanceRepository implements FinanceRepository {
@@ -125,26 +130,34 @@ class MockFinanceRepository implements FinanceRepository {
   final List<AuditLogEntity> auditLogs = [];
 
   @override
-  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) => Stream.value(transactions);
+  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) =>
+      Stream.value(transactions);
 
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async => transactions;
+  Future<List<FinanceTransactionEntity>> getTransactions(
+          String companyId) async =>
+      transactions;
 
   @override
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async => null;
+  Future<FinanceTransactionEntity?> getTransactionById(
+          String companyId, String transactionId) async =>
+      null;
 
   @override
-  Future<FinanceTransactionEntity> createTransaction(String companyId, FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
+  Future<FinanceTransactionEntity> createTransaction(String companyId,
+      FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
     transactions.add(transaction);
     auditLogs.add(auditLog);
     return transaction;
   }
 
   @override
-  Future<void> deleteTransaction(String companyId, String transactionId, AuditLogEntity auditLog) async {}
+  Future<void> deleteTransaction(
+      String companyId, String transactionId, AuditLogEntity auditLog) async {}
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) =>
+      Stream.value(auditLogs);
 }
 
 void main() {
@@ -684,7 +697,8 @@ void main() {
 
         final controller = container.read(tripListControllerProvider.notifier);
 
-        final result = await controller.updateStatus('t_completeme', 'completed');
+        final result =
+            await controller.updateStatus('t_completeme', 'completed');
         expect(result, true);
 
         // 1. Verify vehicle status became active
@@ -694,17 +708,20 @@ void main() {
         expect(financeRepository.transactions.length, 3);
 
         // Revenue (income)
-        final incomeTx = financeRepository.transactions.firstWhere((t) => t.type == 'income');
+        final incomeTx = financeRepository.transactions
+            .firstWhere((t) => t.type == 'income');
         expect(incomeTx.amount, 1000.0);
         expect(incomeTx.category, 'income');
 
         // Advance Payment (expense)
-        final advTx = financeRepository.transactions.firstWhere((t) => t.category == 'advance_salary');
+        final advTx = financeRepository.transactions
+            .firstWhere((t) => t.category == 'advance_salary');
         expect(advTx.amount, 200.0);
         expect(advTx.type, 'expense');
 
         // Permit (expense)
-        final permitTx = financeRepository.transactions.firstWhere((t) => t.category == 'miscellaneous');
+        final permitTx = financeRepository.transactions
+            .firstWhere((t) => t.category == 'miscellaneous');
         expect(permitTx.amount, 50.0);
         expect(permitTx.type, 'expense');
       },
