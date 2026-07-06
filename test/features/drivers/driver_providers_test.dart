@@ -18,7 +18,8 @@ class MockDriverRepository implements DriverRepository {
   MockDriverRepository({required this.drivers});
 
   @override
-  Stream<List<DriverEntity>> watchDrivers(String companyId) => Stream.value(drivers);
+  Stream<List<DriverEntity>> watchDrivers(String companyId) =>
+      Stream.value(drivers);
 
   @override
   Future<List<DriverEntity>> getDrivers(String companyId) async => drivers;
@@ -33,7 +34,8 @@ class MockDriverRepository implements DriverRepository {
   }
 
   @override
-  Future<DriverEntity> createDriver(String companyId, DriverEntity driver) async {
+  Future<DriverEntity> createDriver(
+      String companyId, DriverEntity driver) async {
     drivers.add(driver);
     return driver;
   }
@@ -55,7 +57,8 @@ class MockDriverRepository implements DriverRepository {
   }
 
   @override
-  Future<void> updateDriverStatus(String companyId, String driverId, String status) async {
+  Future<void> updateDriverStatus(
+      String companyId, String driverId, String status) async {
     final idx = drivers.indexWhere((d) => d.id == driverId);
     if (idx != -1) {
       drivers[idx] = drivers[idx].copyWith(status: status);
@@ -84,13 +87,16 @@ class MockVehicleRepository implements VehicleRepository {
   MockVehicleRepository({required this.vehicles});
 
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value(vehicles);
 
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
 
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async => vehicle;
+  Future<VehicleEntity> createVehicle(
+          String companyId, VehicleEntity vehicle) async =>
+      vehicle;
 
   @override
   Future<void> updateVehicle(String companyId, VehicleEntity vehicle) async {}
@@ -115,7 +121,9 @@ class MockVehicleRepository implements VehicleRepository {
   }
 
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, file) async => '';
+  Future<String> uploadComplianceDocument(
+          String companyId, String vehicleId, String docType, file) async =>
+      '';
 }
 
 class MockTripRepository implements TripRepository {
@@ -128,22 +136,29 @@ class MockTripRepository implements TripRepository {
   Future<List<TripEntity>> getTrips(String companyId) async => [];
 
   @override
-  Future<TripEntity?> getTripById(String companyId, String tripId) async => null;
+  Future<TripEntity?> getTripById(String companyId, String tripId) async =>
+      null;
 
   @override
-  Future<TripEntity> createTrip(String companyId, TripEntity trip, AuditLogEntity initialAuditLog) async {
+  Future<TripEntity> createTrip(
+      String companyId, TripEntity trip, AuditLogEntity initialAuditLog) async {
     auditLogs.add(initialAuditLog);
     return trip;
   }
 
   @override
-  Future<void> updateTripStatus(String companyId, String tripId, String newStatus, String cbId, String cbName, {String? notes}) async {}
+  Future<void> updateTripStatus(String companyId, String tripId,
+      String newStatus, String cbId, String cbName,
+      {String? notes}) async {}
 
   @override
-  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
+  Future<void> deleteTrip(
+      String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) => Stream.value([]);
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+          String companyId, String tripId) =>
+      Stream.value([]);
 }
 
 void main() {
@@ -229,7 +244,8 @@ void main() {
       expect(tripRepo.auditLogs[0].action, 'driver_created');
     });
 
-    test('should update driver status and write audit logs successfully', () async {
+    test('should update driver status and write audit logs successfully',
+        () async {
       final driverRepo = MockDriverRepository(drivers: tDrivers);
       final tripRepo = MockTripRepository();
 
@@ -259,7 +275,9 @@ void main() {
       expect(tripRepo.auditLogs[0].action, 'driver_status_changed');
     });
 
-    test('should handle bidirectional vehicle assignment and update vehicle links', () async {
+    test(
+        'should handle bidirectional vehicle assignment and update vehicle links',
+        () async {
       final driverRepo = MockDriverRepository(drivers: tDrivers);
       final vehicleRepo = MockVehicleRepository(vehicles: tVehicles);
       final tripRepo = MockTripRepository();
@@ -284,7 +302,8 @@ void main() {
       );
 
       final controller = container.read(driverListControllerProvider.notifier);
-      final result = await controller.assignVehicle('driver_1', 'vehicle_1', 'PLATE_1');
+      final result =
+          await controller.assignVehicle('driver_1', 'vehicle_1', 'PLATE_1');
 
       expect(result, true);
       // Link in Driver Repo

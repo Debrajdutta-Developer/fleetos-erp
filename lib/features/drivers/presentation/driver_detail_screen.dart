@@ -38,7 +38,8 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
             return Center(
               child: EmptyStateWidget(
                 title: 'Driver Record Not Found',
-                description: 'The requested driver might have been suspended or deleted.',
+                description:
+                    'The requested driver might have been suspended or deleted.',
                 icon: Icons.person_off_rounded,
                 actionText: 'Back to Roster',
                 onActionPressed: () => context.pop(),
@@ -75,7 +76,8 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                 children: [
                                   Text(
                                     driver.fullName,
-                                    style: theme.textTheme.displayLarge?.copyWith(
+                                    style:
+                                        theme.textTheme.displayLarge?.copyWith(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -84,21 +86,26 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                   Text(
                                     'Phone: ${driver.phone}',
                                     style: theme.textTheme.bodyLarge?.copyWith(
-                                      color: colorScheme.onSurface.withOpacity(0.6),
+                                      color: colorScheme.onSurface
+                                          .withOpacity(0.6),
                                     ),
                                   ),
                                 ],
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: (statusColors[driver.status] ?? Colors.grey).withOpacity(0.12),
+                                  color: (statusColors[driver.status] ??
+                                          Colors.grey)
+                                      .withOpacity(0.12),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
                                   driver.status.toUpperCase(),
                                   style: TextStyle(
-                                    color: statusColors[driver.status] ?? Colors.grey,
+                                    color: statusColors[driver.status] ??
+                                        Colors.grey,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -106,18 +113,28 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                             ],
                           ),
                           const Divider(height: 48),
-                          Text('License Compliance metrics', style: theme.textTheme.titleMedium),
+                          Text('License Compliance metrics',
+                              style: theme.textTheme.titleMedium),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _MetricTile(label: 'License Number', value: driver.licenseNumber),
+                              _MetricTile(
+                                  label: 'License Number',
+                                  value: driver.licenseNumber),
                               _MetricTile(
                                 label: 'License Expiry',
-                                value: driver.licenseExpiry.toLocal().toString().split(' ')[0],
-                                isAlert: driver.licenseExpiry.isBefore(DateTime.now()),
+                                value: driver.licenseExpiry
+                                    .toLocal()
+                                    .toString()
+                                    .split(' ')[0],
+                                isAlert: driver.licenseExpiry
+                                    .isBefore(DateTime.now()),
                               ),
-                              _MetricTile(label: 'Safety Score', value: '${driver.safetyScore.toStringAsFixed(0)}%'),
+                              _MetricTile(
+                                  label: 'Safety Score',
+                                  value:
+                                      '${driver.safetyScore.toStringAsFixed(0)}%'),
                             ],
                           ),
                           const SizedBox(height: 32),
@@ -125,13 +142,16 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                             Card(
                               color: colorScheme.primary.withOpacity(0.06),
                               child: ListTile(
-                                leading: const Icon(Icons.local_shipping_rounded),
+                                leading:
+                                    const Icon(Icons.local_shipping_rounded),
                                 title: const Text('Linked Primary Vehicle'),
-                                subtitle: Text(driver.assignedVehicleLicensePlate!),
+                                subtitle:
+                                    Text(driver.assignedVehicleLicensePlate!),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.link_off_rounded),
                                   onPressed: () => ref
-                                      .read(driverListControllerProvider.notifier)
+                                      .read(
+                                          driverListControllerProvider.notifier)
                                       .assignVehicle(driver.id, null, null),
                                   tooltip: 'Unlink Vehicle',
                                 ),
@@ -144,7 +164,8 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                               CustomButton(
                                 text: 'Edit Profiles',
                                 icon: Icons.edit_rounded,
-                                onPressed: () => context.push('/drivers/${driver.id}/edit'),
+                                onPressed: () =>
+                                    context.push('/drivers/${driver.id}/edit'),
                               ),
                               const SizedBox(width: 16),
                               OutlinedButton.icon(
@@ -152,16 +173,22 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                   final confirmed = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: const Text('Suspend Driver Record'),
-                                      content: const Text('Are you sure you want to suspend this driver from active roster?'),
+                                      title:
+                                          const Text('Suspend Driver Record'),
+                                      content: const Text(
+                                          'Are you sure you want to suspend this driver from active roster?'),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.of(context).pop(false),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
                                           child: const Text('Cancel'),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () => Navigator.of(context).pop(true),
-                                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              foregroundColor: Colors.white),
                                           child: const Text('Delete'),
                                         ),
                                       ],
@@ -169,15 +196,18 @@ class _DriverDetailScreenState extends ConsumerState<DriverDetailScreen> {
                                   );
                                   if (confirmed == true) {
                                     final success = await ref
-                                        .read(driverListControllerProvider.notifier)
+                                        .read(driverListControllerProvider
+                                            .notifier)
                                         .deleteDriver(driver.id);
                                     if (success && mounted) {
                                       context.pop();
                                     }
                                   }
                                 },
-                                icon: const Icon(Icons.delete_outline_rounded, color: Colors.red),
-                                label: const Text('Suspend Driver', style: TextStyle(color: Colors.red)),
+                                icon: const Icon(Icons.delete_outline_rounded,
+                                    color: Colors.red),
+                                label: const Text('Suspend Driver',
+                                    style: TextStyle(color: Colors.red)),
                               ),
                             ],
                           ),
@@ -200,7 +230,8 @@ class _MetricTile extends StatelessWidget {
   final String value;
   final bool isAlert;
 
-  const _MetricTile({required this.label, required this.value, this.isAlert = false});
+  const _MetricTile(
+      {required this.label, required this.value, this.isAlert = false});
 
   @override
   Widget build(BuildContext context) {

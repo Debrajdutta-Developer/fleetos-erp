@@ -56,7 +56,8 @@ class DriverEntity {
       status: map['status'] as String? ?? 'available',
       safetyScore: (map['safetyScore'] as num? ?? 100.0).toDouble(),
       assignedVehicleId: map['assignedVehicleId'] as String?,
-      assignedVehicleLicensePlate: map['assignedVehicleLicensePlate'] as String?,
+      assignedVehicleLicensePlate:
+          map['assignedVehicleLicensePlate'] as String?,
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),
@@ -92,7 +93,8 @@ class DriverEntity {
       status: status ?? this.status,
       safetyScore: safetyScore ?? this.safetyScore,
       assignedVehicleId: assignedVehicleId ?? this.assignedVehicleId,
-      assignedVehicleLicensePlate: assignedVehicleLicensePlate ?? this.assignedVehicleLicensePlate,
+      assignedVehicleLicensePlate:
+          assignedVehicleLicensePlate ?? this.assignedVehicleLicensePlate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,

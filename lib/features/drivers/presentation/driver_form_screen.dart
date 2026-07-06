@@ -97,8 +97,9 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(driverFormControllerProvider.notifier).saveDriver(driver);
+    final success = await ref
+        .read(driverFormControllerProvider.notifier)
+        .saveDriver(driver);
 
     if (success && mounted) {
       final savedId = widget.driverId ??
@@ -107,7 +108,7 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
               .valueOrNull
               ?.firstWhere((d) => d.fullName == driver.fullName)
               .id ??
-              '';
+          '';
 
       if (savedId.isNotEmpty) {
         await ref
@@ -168,8 +169,9 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                         labelText: 'Driver Full Name',
                         prefixIcon: Icon(Icons.person_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter driver full name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter driver full name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -179,8 +181,9 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                         labelText: 'Phone Number',
                         prefixIcon: Icon(Icons.phone_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter phone number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter phone number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -189,8 +192,9 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                         labelText: 'License Number',
                         prefixIcon: Icon(Icons.badge_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter license number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter license number'
+                          : null,
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -202,7 +206,8 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                             Text(
                               'License Expiry Date',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.6),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -229,7 +234,8 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                         prefixIcon: Icon(Icons.info_outline_rounded),
                       ),
                       items: ['available', 'on_duty', 'off_duty', 'suspended']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.toUpperCase())))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -253,7 +259,8 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                         ),
                         ...vehicles.map((v) => DropdownMenuItem(
                               value: v.id,
-                              child: Text('${v.make} ${v.model} (${v.licensePlate})'),
+                              child: Text(
+                                  '${v.make} ${v.model} (${v.licensePlate})'),
                             ))
                       ],
                       onChanged: (val) {
@@ -288,7 +295,9 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
                     ),
                     const SizedBox(height: 32),
                     CustomButton(
-                      text: isEditMode ? 'Update Driver Profiles' : 'Onboard Driver',
+                      text: isEditMode
+                          ? 'Update Driver Profiles'
+                          : 'Onboard Driver',
                       onPressed: _submit,
                     ),
                   ],

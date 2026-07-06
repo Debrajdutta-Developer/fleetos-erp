@@ -20,7 +20,8 @@ abstract class DriverRepository {
   Future<void> deleteDriver(String companyId, String driverId);
 
   /// Update driver status directly
-  Future<void> updateDriverStatus(String companyId, String driverId, String status);
+  Future<void> updateDriverStatus(
+      String companyId, String driverId, String status);
 
   /// Link or unlink primary vehicle to driver
   Future<void> linkVehicle(

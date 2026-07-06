@@ -65,7 +65,8 @@ class DriverRepositoryImpl implements DriverRepository {
   }
 
   @override
-  Future<DriverEntity> createDriver(String companyId, DriverEntity driver) async {
+  Future<DriverEntity> createDriver(
+      String companyId, DriverEntity driver) async {
     try {
       final id = driver.id.isEmpty ? _uuid.v4() : driver.id;
       final newDriver = driver.copyWith(
@@ -126,7 +127,8 @@ class DriverRepositoryImpl implements DriverRepository {
   }
 
   @override
-  Future<void> updateDriverStatus(String companyId, String driverId, String status) async {
+  Future<void> updateDriverStatus(
+      String companyId, String driverId, String status) async {
     try {
       await _firestore
           .collection('companies')

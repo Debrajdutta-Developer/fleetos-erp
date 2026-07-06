@@ -50,12 +50,14 @@ class _DriverListScreenState extends ConsumerState<DriverListScreen> {
         ),
         data: (drivers) {
           final filteredDrivers = drivers.where((d) {
-            final matchesStatus =
-                _statusFilter == 'All' || d.status == _statusFilter.toLowerCase();
+            final matchesStatus = _statusFilter == 'All' ||
+                d.status == _statusFilter.toLowerCase();
             final matchesQuery =
                 d.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
                     d.phone.contains(_searchQuery) ||
-                    d.licenseNumber.toLowerCase().contains(_searchQuery.toLowerCase());
+                    d.licenseNumber
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase());
             return matchesStatus && matchesQuery;
           }).toList();
 
@@ -91,8 +93,15 @@ class _DriverListScreenState extends ConsumerState<DriverListScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      items: ['All', 'Available', 'On_duty', 'Off_duty', 'Suspended']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                      items: [
+                        'All',
+                        'Available',
+                        'On_duty',
+                        'Off_duty',
+                        'Suspended'
+                      ]
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -119,15 +128,18 @@ class _DriverListScreenState extends ConsumerState<DriverListScreen> {
                               ? 'Get started by onboarding your first driver.'
                               : 'No drivers match your search query.',
                           icon: Icons.people_outline_rounded,
-                          actionText: _searchQuery.isEmpty ? 'Onboard Driver' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Onboard Driver' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/drivers/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filteredDrivers.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.5,
@@ -202,9 +214,11 @@ class _DriverCard extends ConsumerWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: (statusColors[driver.status] ?? Colors.grey).withOpacity(0.12),
+                      color: (statusColors[driver.status] ?? Colors.grey)
+                          .withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -248,7 +262,8 @@ class _DriverCard extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.star_rounded, color: Colors.amber, size: 16),
+                      const Icon(Icons.star_rounded,
+                          color: Colors.amber, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         driver.safetyScore.toStringAsFixed(0),
@@ -258,14 +273,18 @@ class _DriverCard extends ConsumerWidget {
                   ),
                   if (isExpired)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
                         'EXPIRED LICENSE',
-                        style: TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                 ],

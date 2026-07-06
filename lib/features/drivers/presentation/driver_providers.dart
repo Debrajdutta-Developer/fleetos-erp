@@ -14,7 +14,8 @@ final driverRepositoryProvider = Provider<DriverRepository>((ref) {
 });
 
 /// StreamProvider listening to the company's drivers
-final driversStreamProvider = StreamProvider.autoDispose<List<DriverEntity>>((ref) {
+final driversStreamProvider =
+    StreamProvider.autoDispose<List<DriverEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(driverRepositoryProvider).watchDrivers(user!.companyId!);
@@ -64,9 +65,12 @@ class DriverFormController extends StateNotifier<DriverFormState> {
       final companyId = user!.companyId!;
 
       // Validation: Phone and License number cannot be empty
-      if (driver.fullName.trim().isEmpty) throw Exception('Driver name cannot be empty.');
-      if (driver.phone.trim().isEmpty) throw Exception('Phone number cannot be empty.');
-      if (driver.licenseNumber.trim().isEmpty) throw Exception('License number cannot be empty.');
+      if (driver.fullName.trim().isEmpty)
+        throw Exception('Driver name cannot be empty.');
+      if (driver.phone.trim().isEmpty)
+        throw Exception('Phone number cannot be empty.');
+      if (driver.licenseNumber.trim().isEmpty)
+        throw Exception('License number cannot be empty.');
 
       DriverEntity savedDriver;
       if (driver.id.isEmpty) {
@@ -92,12 +96,14 @@ class DriverFormController extends StateNotifier<DriverFormState> {
         timestamp: DateTime.now(),
       );
       // Hacky bypass to write audit log (createTrip writes to audit_logs collection)
-      await tripRepo.createTrip(companyId, anyTripPlaceholder(companyId), auditLog);
+      await tripRepo.createTrip(
+          companyId, anyTripPlaceholder(companyId), auditLog);
 
       state = const DriverFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = DriverFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = DriverFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -109,7 +115,8 @@ class DriverFormController extends StateNotifier<DriverFormState> {
 }
 
 final driverFormControllerProvider =
-    StateNotifierProvider.autoDispose<DriverFormController, DriverFormState>((ref) {
+    StateNotifierProvider.autoDispose<DriverFormController, DriverFormState>(
+        (ref) {
   final repository = ref.watch(driverRepositoryProvider);
   return DriverFormController(repository: repository, ref: ref);
 });
@@ -158,7 +165,8 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
   }
 
   /// Bidirectional assignment between Driver and Vehicle
-  Future<bool> assignVehicle(String driverId, String? vehicleId, String? vehicleLicensePlate) async {
+  Future<bool> assignVehicle(
+      String driverId, String? vehicleId, String? vehicleLicensePlate) async {
     state = const AsyncValue.loading();
     try {
       final user = _ref.read(currentUserProvider);
@@ -173,24 +181,30 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
       final vehicleRepo = _ref.read(vehicleRepositoryProvider);
 
       // 1. Unlink previous vehicle if exists
-      if (driver.assignedVehicleId != null && driver.assignedVehicleId!.isNotEmpty) {
-        await vehicleRepo.assignDriver(companyId, driver.assignedVehicleId!, null, null);
+      if (driver.assignedVehicleId != null &&
+          driver.assignedVehicleId!.isNotEmpty) {
+        await vehicleRepo.assignDriver(
+            companyId, driver.assignedVehicleId!, null, null);
       }
 
       // 2. Unlink new vehicle from any other driver if vehicle is non-null
       if (vehicleId != null && vehicleId.isNotEmpty) {
         // Find if another driver is linked to this vehicle
         for (final otherDriver in drivers) {
-          if (otherDriver.id != driverId && otherDriver.assignedVehicleId == vehicleId) {
-            await _repository.linkVehicle(companyId, otherDriver.id, null, null);
+          if (otherDriver.id != driverId &&
+              otherDriver.assignedVehicleId == vehicleId) {
+            await _repository.linkVehicle(
+                companyId, otherDriver.id, null, null);
           }
         }
         // Link vehicle to driver
-        await vehicleRepo.assignDriver(companyId, vehicleId, driverId, driver.fullName);
+        await vehicleRepo.assignDriver(
+            companyId, vehicleId, driverId, driver.fullName);
       }
 
       // 3. Update driver's link details in repository
-      await _repository.linkVehicle(companyId, driverId, vehicleId, vehicleLicensePlate);
+      await _repository.linkVehicle(
+          companyId, driverId, vehicleId, vehicleLicensePlate);
 
       // Write Audit Log
       final tripRepo = _ref.read(tripRepositoryProvider);
@@ -252,7 +266,8 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final driverListControllerProvider =
-    StateNotifierProvider.autoDispose<DriverListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<DriverListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(driverRepositoryProvider);
   return DriverListController(repository: repository, ref: ref);
 });
