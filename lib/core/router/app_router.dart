@@ -7,6 +7,9 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/company_setup/presentation/company_setup_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/vehicles/presentation/vehicle_list_screen.dart';
+import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
+import '../../features/vehicles/presentation/vehicle_form_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -50,6 +53,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: '/vehicles',
+        builder: (context, state) => const VehicleListScreen(),
+      ),
+      GoRoute(
+        path: '/vehicles/new',
+        builder: (context, state) => const VehicleFormScreen(),
+      ),
+      GoRoute(
+        path: '/vehicles/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return VehicleDetailScreen(vehicleId: id);
+        },
+      ),
+      GoRoute(
+        path: '/vehicles/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return VehicleFormScreen(vehicleId: id);
+        },
       ),
     ],
     redirect: (context, state) {

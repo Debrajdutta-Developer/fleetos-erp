@@ -334,8 +334,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                _SidebarNavItem(icon: Icons.dashboard_rounded, label: 'Control Center', isSelected: true),
-                _SidebarNavItem(icon: Icons.local_shipping_outlined, label: 'Fleet Management'),
+                _SidebarNavItem(
+                  icon: Icons.dashboard_rounded,
+                  label: 'Control Center',
+                  isSelected: true,
+                  onTap: () {},
+                ),
+                _SidebarNavItem(
+                  icon: Icons.local_shipping_outlined,
+                  label: 'Fleet Management',
+                  onTap: () => context.push('/vehicles'),
+                ),
                 _SidebarNavItem(icon: Icons.route_outlined, label: 'Routing Engine'),
                 _SidebarNavItem(icon: Icons.people_outline_rounded, label: 'Driver Portal'),
                 _SidebarNavItem(icon: Icons.inventory_2_outlined, label: 'Storage & Hubs'),
@@ -431,9 +440,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     selected: true,
                     onTap: () => Navigator.of(context).pop(),
                   ),
-                  const ListTile(
-                    leading: Icon(Icons.local_shipping_outlined),
-                    title: Text('Fleet Management'),
+                  ListTile(
+                    leading: const Icon(Icons.local_shipping_outlined),
+                    title: const Text('Fleet Management'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/vehicles');
+                    },
                   ),
                   const ListTile(
                     leading: Icon(Icons.route_outlined),
@@ -558,11 +571,13 @@ class _SidebarNavItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isSelected;
+  final VoidCallback? onTap;
 
   const _SidebarNavItem({
     required this.icon,
     required this.label,
     this.isSelected = false,
+    this.onTap,
   });
 
   @override
@@ -591,7 +606,7 @@ class _SidebarNavItem extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }
