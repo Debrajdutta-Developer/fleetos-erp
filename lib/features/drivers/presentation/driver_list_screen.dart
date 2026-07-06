@@ -19,7 +19,6 @@ class _DriverListScreenState extends ConsumerState<DriverListScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final driversAsync = ref.watch(driversStreamProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;

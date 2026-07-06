@@ -81,8 +81,6 @@ class _DriverFormScreenState extends ConsumerState<DriverFormScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-
-
     final driver = DriverEntity(
       id: widget.driverId ?? '',
       fullName: _nameController.text.trim(),
