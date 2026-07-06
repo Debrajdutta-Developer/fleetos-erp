@@ -37,7 +37,7 @@ jobs:
 
       # ৫. কোডের ফরম্যাটিং ঠিক আছে কিনা পরীক্ষা করা (Code Formatting)
       - name: Check Formatting
-        run: flutter format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed .
 
       # ৬. স্ট্যাটিক অ্যানালাইসিস রান করা (Flutter Analyze)
       - name: Analyze Code

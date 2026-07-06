@@ -108,7 +108,7 @@ class _VehicleDetailScreenState extends ConsumerState<VehicleDetailScreen> {
     setState(() => _isUploadingDoc = true);
 
     // Simulate PDF compliance document upload delay
-    await Future<void>.delayed(const Duration(seconds: 1500));
+    await Future<void>.delayed(const Duration(milliseconds: 1500));
 
     if (!mounted) return;
 
