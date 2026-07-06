@@ -28,6 +28,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
   final _coalController = TextEditingController(); // Requirement 8
   final _freightController = TextEditingController();
   final _advanceController = TextEditingController();
+  final _permitExpenseController = TextEditingController();
 
   // Selected entities
   VehicleEntity? _selectedVehicle;
@@ -73,6 +74,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
         _coalController.text = trip.coalQuantity.toString();
         _freightController.text = trip.freightAmount.toString();
         _advanceController.text = trip.advancePayment.toString();
+        _permitExpenseController.text = trip.permitExpense.toString();
 
         _selectedDriverId = trip.driverId;
         _selectedDriverName = trip.driverName;
@@ -117,6 +119,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
     _coalController.dispose();
     _freightController.dispose();
     _advanceController.dispose();
+    _permitExpenseController.dispose();
     super.dispose();
   }
 
@@ -168,6 +171,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
     final coal = double.tryParse(_coalController.text.trim()) ?? 0.0;
     final freight = double.tryParse(_freightController.text.trim()) ?? 0.0;
     final advance = double.tryParse(_advanceController.text.trim()) ?? 0.0;
+    final permitExpense = double.tryParse(_permitExpenseController.text.trim()) ?? 0.0;
 
     if (advance > freight) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -191,6 +195,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
       coalQuantity: coal,
       freightAmount: freight,
       advancePayment: advance,
+      permitExpense: permitExpense,
       status: 'scheduled', // New trips start as scheduled
       statusHistory: [],
       createdAt: DateTime.now(),
@@ -545,6 +550,26 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                         hintText: '0.00',
                                         labelText: 'Advance Payment ($)',
                                         prefixIcon: Icons.payments_outlined,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        validator: (val) {
+                                          if (val == null || val.trim().isEmpty) {
+                                            return 'Required.';
+                                          }
+                                          final numVal = double.tryParse(val.trim());
+                                          if (numVal == null || numVal < 0) {
+                                            return 'Must be >= 0.';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: CustomTextField(
+                                        controller: _permitExpenseController,
+                                        hintText: '0.00',
+                                        labelText: 'Permit Expense ($)',
+                                        prefixIcon: Icons.receipt_long_outlined,
                                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                                         validator: (val) {
                                           if (val == null || val.trim().isEmpty) {

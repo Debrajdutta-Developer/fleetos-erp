@@ -347,6 +347,16 @@ class _TripDetailScreenState extends ConsumerState<TripDetailScreen> {
                             ],
                           ),
                         ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Permit Expense', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.4), fontSize: 12)),
+                              const SizedBox(height: 4),
+                              Text('\$${trip.permitExpense.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ],

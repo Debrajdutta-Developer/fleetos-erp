@@ -15,6 +15,7 @@ class TripEntity {
   final double coalQuantity; // Requirement 8: Coal Quantity (tons)
   final double freightAmount;
   final double advancePayment;
+  final double permitExpense;
   final String status; // scheduled, dispatched, loading, inTransit, delivered, completed, cancelled
   final List<TripStatusHistory> statusHistory;
   final DateTime createdAt;
@@ -36,6 +37,7 @@ class TripEntity {
     required this.coalQuantity,
     required this.freightAmount,
     required this.advancePayment,
+    required this.permitExpense,
     required this.status,
     required this.statusHistory,
     required this.createdAt,
@@ -59,6 +61,7 @@ class TripEntity {
       'coalQuantity': coalQuantity,
       'freightAmount': freightAmount,
       'advancePayment': advancePayment,
+      'permitExpense': permitExpense,
       'status': status,
       'statusHistory': statusHistory.map((x) => x.toMap()).toList(),
       'createdAt': createdAt.toIso8601String(),
@@ -83,6 +86,7 @@ class TripEntity {
       coalQuantity: (map['coalQuantity'] as num? ?? 0.0).toDouble(),
       freightAmount: (map['freightAmount'] as num? ?? 0.0).toDouble(),
       advancePayment: (map['advancePayment'] as num? ?? 0.0).toDouble(),
+      permitExpense: (map['permitExpense'] as num? ?? 0.0).toDouble(),
       status: map['status'] as String? ?? 'scheduled',
       statusHistory: map['statusHistory'] != null
           ? (map['statusHistory'] as List)
@@ -116,6 +120,7 @@ class TripEntity {
     double? coalQuantity,
     double? freightAmount,
     double? advancePayment,
+    double? permitExpense,
     String? status,
     List<TripStatusHistory>? statusHistory,
     DateTime? createdAt,
@@ -137,6 +142,7 @@ class TripEntity {
       coalQuantity: coalQuantity ?? this.coalQuantity,
       freightAmount: freightAmount ?? this.freightAmount,
       advancePayment: advancePayment ?? this.advancePayment,
+      permitExpense: permitExpense ?? this.permitExpense,
       status: status ?? this.status,
       statusHistory: statusHistory ?? this.statusHistory,
       createdAt: createdAt ?? this.createdAt,

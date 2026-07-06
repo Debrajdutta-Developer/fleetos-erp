@@ -19,6 +19,7 @@ void main() {
       'coalQuantity': 25.5,
       'freightAmount': 1500.0,
       'advancePayment': 500.0,
+      'permitExpense': 150.0,
       'status': 'scheduled',
       'statusHistory': [
         {
@@ -48,6 +49,7 @@ void main() {
       coalQuantity: 25.5,
       freightAmount: 1500.0,
       advancePayment: 500.0,
+      permitExpense: 150.0,
       status: 'scheduled',
       statusHistory: [
         TripStatusHistory(
