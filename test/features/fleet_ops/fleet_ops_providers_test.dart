@@ -255,7 +255,8 @@ class MockTripRepository implements TripRepository {
           String companyId, String tripId) =>
       Stream.value([]);
 
-  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) => Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) =>
+      Stream.value(auditLogs);
 }
 
 void main() {
