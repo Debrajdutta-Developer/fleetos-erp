@@ -19,7 +19,6 @@ class _VendorListScreenState extends ConsumerState<VendorListScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final vendorsAsync = ref.watch(vendorsStreamProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;

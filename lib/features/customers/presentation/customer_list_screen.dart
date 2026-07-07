@@ -18,7 +18,6 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final customersAsync = ref.watch(customersStreamProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;
