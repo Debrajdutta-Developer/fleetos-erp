@@ -6,6 +6,8 @@ import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.da
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
 import 'package:fleet_os_erp/features/dashboard/presentation/dashboard_providers.dart';
 import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart';
+import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
+import 'package:fleet_os_erp/features/vendors/presentation/vendor_providers.dart';
 
 void main() {
   group('Dashboard Stats Provider Tests', () {
@@ -115,6 +117,8 @@ void main() {
           vehiclesStreamProvider.overrideWith((ref) => Stream.value(tVehicles)),
           tripsStreamProvider.overrideWith((ref) => Stream.value(tTrips)),
           driversStreamProvider.overrideWith((ref) => Stream.value([])),
+          customersStreamProvider.overrideWith((ref) => Stream.value([])),
+          vendorsStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
 
@@ -122,6 +126,8 @@ void main() {
       await container.read(vehiclesStreamProvider.future);
       await container.read(tripsStreamProvider.future);
       await container.read(driversStreamProvider.future);
+      await container.read(customersStreamProvider.future);
+      await container.read(vendorsStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
@@ -142,6 +148,10 @@ void main() {
       // Total coal = 20 + 15 = 35 tons.
       // Average capacity = (35 / (2 * 25)) * 100 = 70%
       expect(stats.averagePayloadCapacity, 70.0);
+
+      // 5. Verify customer and vendor counts
+      expect(stats.totalCustomersCount, 0);
+      expect(stats.totalVendorsCount, 0);
     });
   });
 }

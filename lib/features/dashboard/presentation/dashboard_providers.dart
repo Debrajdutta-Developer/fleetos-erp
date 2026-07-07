@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
+import '../../customers/presentation/customer_providers.dart';
+import '../../vendors/presentation/vendor_providers.dart';
 
 class DashboardStats {
   final int activeFleetCount;
@@ -11,6 +13,8 @@ class DashboardStats {
   final int totalDriversCount;
   final int availableDriversCount;
   final int expiredLicenseDriversCount;
+  final int totalCustomersCount;
+  final int totalVendorsCount;
 
   const DashboardStats({
     required this.activeFleetCount,
@@ -20,6 +24,8 @@ class DashboardStats {
     required this.totalDriversCount,
     required this.availableDriversCount,
     required this.expiredLicenseDriversCount,
+    required this.totalCustomersCount,
+    required this.totalVendorsCount,
   });
 }
 
@@ -28,10 +34,14 @@ final dashboardStatsProvider =
   final vehiclesAsync = ref.watch(vehiclesStreamProvider);
   final tripsAsync = ref.watch(tripsStreamProvider);
   final driversAsync = ref.watch(driversStreamProvider);
+  final customersAsync = ref.watch(customersStreamProvider);
+  final vendorsAsync = ref.watch(vendorsStreamProvider);
 
   if (vehiclesAsync.isLoading ||
       tripsAsync.isLoading ||
-      driversAsync.isLoading) {
+      driversAsync.isLoading ||
+      customersAsync.isLoading ||
+      vendorsAsync.isLoading) {
     return const AsyncValue.loading();
   }
 
@@ -44,10 +54,18 @@ final dashboardStatsProvider =
   if (driversAsync.hasError) {
     return AsyncValue.error(driversAsync.error!, driversAsync.stackTrace!);
   }
+  if (customersAsync.hasError) {
+    return AsyncValue.error(customersAsync.error!, customersAsync.stackTrace!);
+  }
+  if (vendorsAsync.hasError) {
+    return AsyncValue.error(vendorsAsync.error!, vendorsAsync.stackTrace!);
+  }
 
   final vehicles = vehiclesAsync.value ?? [];
   final trips = tripsAsync.value ?? [];
   final drivers = driversAsync.value ?? [];
+  final customers = customersAsync.value ?? [];
+  final vendors = vendorsAsync.value ?? [];
 
   // 1. Active Fleet Count
   final activeFleetCount = vehicles.where((v) => v.status == 'active').length;
@@ -83,6 +101,10 @@ final dashboardStatsProvider =
   final expiredLicenseDriversCount =
       drivers.where((d) => d.licenseExpiry.isBefore(DateTime.now())).length;
 
+  // 6. Customer & Vendor Statistics
+  final totalCustomersCount = customers.length;
+  final totalVendorsCount = vendors.length;
+
   return AsyncValue.data(DashboardStats(
     activeFleetCount: activeFleetCount,
     tripsScheduled: tripsScheduled,
@@ -91,5 +113,7 @@ final dashboardStatsProvider =
     totalDriversCount: totalDriversCount,
     availableDriversCount: availableDriversCount,
     expiredLicenseDriversCount: expiredLicenseDriversCount,
+    totalCustomersCount: totalCustomersCount,
+    totalVendorsCount: totalVendorsCount,
   ));
 });

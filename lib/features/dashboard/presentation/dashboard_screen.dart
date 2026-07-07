@@ -163,6 +163,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               : 'All compliant',
           isPositive: data.expiredLicenseDriversCount == 0,
         ),
+        _StatCardData(
+          title: 'Active Customers',
+          value: data.totalCustomersCount.toString(),
+          subtitle: 'Corporate accounts',
+          icon: Icons.people_rounded,
+          trend: 'Billed partners',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Partner Vendors',
+          value: data.totalVendorsCount.toString(),
+          subtitle: 'Active contractors',
+          icon: Icons.business_rounded,
+          trend: 'Service directory',
+          isPositive: true,
+        ),
       ],
       loading: () => [
         _StatCardData(
@@ -207,6 +223,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             icon: Icons.badge_outlined,
             trend: '...',
             isPositive: true),
+        _StatCardData(
+            title: 'Active Customers',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.people_rounded,
+            trend: '...',
+            isPositive: true),
+        _StatCardData(
+            title: 'Partner Vendors',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.business_rounded,
+            trend: '...',
+            isPositive: true),
       ],
       error: (e, _) => [
         _StatCardData(
@@ -249,6 +279,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             value: 'ERR',
             subtitle: 'Error loading',
             icon: Icons.badge_outlined,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Active Customers',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.people_rounded,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Partner Vendors',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.business_rounded,
             trend: '...',
             isPositive: false),
       ],
@@ -525,6 +569,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   onTap: () => context.push('/finance'),
                 ),
                 _SidebarNavItem(
+                  icon: Icons.people_rounded,
+                  label: 'Customer Accounts',
+                  onTap: () => context.push('/customers'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.business_rounded,
+                  label: 'Vendor Directory',
+                  onTap: () => context.push('/vendors'),
+                ),
+                _SidebarNavItem(
                   icon: Icons.settings_outlined,
                   label: 'ERP Settings',
                 ),
@@ -666,6 +720,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/drivers');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.people_rounded),
+                    title: const Text('Customer Accounts'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/customers');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.business_rounded),
+                    title: const Text('Vendor Directory'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/vendors');
                     },
                   ),
                   const ListTile(

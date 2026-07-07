@@ -6,6 +6,8 @@ import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
+import '../../vendors/presentation/vendor_providers.dart';
+import '../../vendors/domain/vendor_entity.dart';
 import '../domain/finance_transaction_entity.dart';
 import 'finance_providers.dart';
 
@@ -34,6 +36,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
   String? _selectedTripNumber;
   String? _selectedVehicleId;
   String? _selectedVehiclePlate;
+  String? _selectedVendorId;
+  String? _selectedVendorName;
   DateTime _selectedDate = DateTime.now();
 
   // Available categories based on transaction type
@@ -76,6 +80,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
         _selectedTripNumber = tx.tripNumber;
         _selectedVehicleId = tx.vehicleId;
         _selectedVehiclePlate = tx.vehicleLicensePlate;
+        _selectedVendorId = tx.vendorId;
+        _selectedVendorName = tx.vendorName;
         _selectedDate = tx.transactionDate;
         _notesController.text = tx.notes ?? '';
       } catch (_) {}
@@ -131,6 +137,8 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
       tripNumber: _selectedTripNumber,
       vehicleId: _selectedVehicleId,
       vehicleLicensePlate: _selectedVehiclePlate,
+      vendorId: _selectedVendorId,
+      vendorName: _selectedVendorName,
       notes: _notesController.text.trim().isEmpty
           ? null
           : _notesController.text.trim(),
@@ -174,6 +182,7 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
     final formState = ref.watch(financeFormControllerProvider);
     final tripsAsync = ref.watch(tripsStreamProvider);
     final vehiclesAsync = ref.watch(vehiclesStreamProvider);
+    final vendorsAsync = ref.watch(vendorsStreamProvider);
 
     final activeCategories =
         _selectedType == 'income' ? _incomeCategories : _expenseCategories;
@@ -527,6 +536,68 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                   },
                                 ),
                                 const SizedBox(height: 16),
+
+                                 if (_selectedType == 'expense') ...[
+                                   vendorsAsync.when(
+                                     loading: () => const Center(
+                                       child: CircularProgressIndicator(),
+                                     ),
+                                     error: (err, _) =>
+                                         Text('Error loading vendors: $err'),
+                                     data: (vendors) {
+                                       return DropdownButtonFormField<String?>(
+                                         value: _selectedVendorId != null &&
+                                                 vendors.any(
+                                                   (v) =>
+                                                       v.id == _selectedVendorId,
+                                                 )
+                                             ? _selectedVendorId
+                                             : null,
+                                         hint: const Text(
+                                           'Do not link to a vendor',
+                                         ),
+                                         items: [
+                                           const DropdownMenuItem<String?>(
+                                             value: null,
+                                             child: Text(
+                                               'Not Associated to Vendor',
+                                             ),
+                                           ),
+                                           ...vendors.map(
+                                             (v) => DropdownMenuItem<String?>(
+                                               value: v.id,
+                                               child: Text(
+                                                 '${v.name} (${v.serviceType.toUpperCase()})',
+                                               ),
+                                             ),
+                                           ),
+                                         ],
+                                         onChanged: (val) {
+                                           setState(() {
+                                             _selectedVendorId = val;
+                                             if (val != null) {
+                                               _selectedVendorName = vendors
+                                                   .firstWhere(
+                                                     (v) => v.id == val,
+                                                   )
+                                                   .name;
+                                             } else {
+                                               _selectedVendorName = null;
+                                             }
+                                           });
+                                         },
+                                         decoration: const InputDecoration(
+                                           labelText:
+                                               'Associated Vendor Allocation (Optional)',
+                                           prefixIcon: Icon(
+                                             Icons.business_outlined,
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                   ),
+                                   const SizedBox(height: 16),
+                                 ],
 
                                 // Notes
                                 CustomTextField(

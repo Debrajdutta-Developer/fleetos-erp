@@ -12,6 +12,8 @@ class FinanceTransactionEntity {
   final String? vehicleId;
   final String? vehicleLicensePlate;
   final String? notes;
+  final String? vendorId;
+  final String? vendorName;
   final DateTime transactionDate;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -30,6 +32,8 @@ class FinanceTransactionEntity {
     this.vehicleId,
     this.vehicleLicensePlate,
     this.notes,
+    this.vendorId,
+    this.vendorName,
     required this.transactionDate,
     required this.createdAt,
     required this.updatedAt,
@@ -50,6 +54,8 @@ class FinanceTransactionEntity {
       'vehicleId': vehicleId,
       'vehicleLicensePlate': vehicleLicensePlate,
       'notes': notes,
+      'vendorId': vendorId,
+      'vendorName': vendorName,
       'transactionDate': transactionDate.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -71,6 +77,8 @@ class FinanceTransactionEntity {
       vehicleId: map['vehicleId'] as String?,
       vehicleLicensePlate: map['vehicleLicensePlate'] as String?,
       notes: map['notes'] as String?,
+      vendorId: map['vendorId'] as String?,
+      vendorName: map['vendorName'] as String?,
       transactionDate: map['transactionDate'] != null
           ? DateTime.parse(map['transactionDate'] as String)
           : DateTime.now(),
@@ -99,6 +107,8 @@ class FinanceTransactionEntity {
     String? vehicleId,
     String? vehicleLicensePlate,
     String? notes,
+    String? vendorId,
+    String? vendorName,
     DateTime? transactionDate,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -117,6 +127,8 @@ class FinanceTransactionEntity {
       vehicleId: vehicleId ?? this.vehicleId,
       vehicleLicensePlate: vehicleLicensePlate ?? this.vehicleLicensePlate,
       notes: notes ?? this.notes,
+      vendorId: vendorId ?? this.vendorId,
+      vendorName: vendorName ?? this.vendorName,
       transactionDate: transactionDate ?? this.transactionDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

@@ -290,7 +290,6 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                     final sign =
                                         tx.type == 'income' ? '+' : '-';
 
-                                    // Display allocation strings
                                     List<String> allocs = [];
                                     if (tx.vehicleLicensePlate != null)
                                       allocs.add(
@@ -298,6 +297,8 @@ class _FinanceListScreenState extends ConsumerState<FinanceListScreen> {
                                       );
                                     if (tx.tripNumber != null)
                                       allocs.add('Trip #${tx.tripNumber}');
+                                    if (tx.vendorName != null)
+                                      allocs.add('Vendor: ${tx.vendorName}');
                                     final allocStr = allocs.isEmpty
                                         ? 'General'
                                         : allocs.join('\n');

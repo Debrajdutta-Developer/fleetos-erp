@@ -6,6 +6,10 @@ import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../vehicles/domain/vehicle_entity.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
+import '../../drivers/presentation/driver_providers.dart';
+import '../../drivers/domain/driver_entity.dart';
+import '../../customers/presentation/customer_providers.dart';
+import '../../customers/domain/customer_entity.dart';
 import '../domain/trip_entity.dart';
 import 'trip_providers.dart';
 
@@ -40,21 +44,7 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
   // Selected vehicle permit date for rule testing
   DateTime? _selectedVehiclePermitExpiry;
 
-  // Mock Drivers list corresponding to system drivers
-  final List<Map<String, String>> _drivers = [
-    {'id': 'driver_1', 'name': 'Robert Jenkins'},
-    {'id': 'driver_2', 'name': 'Sarah Connor'},
-    {'id': 'driver_3', 'name': 'Alex Mercer'},
-    {'id': 'driver_4', 'name': 'Bruce Wayne'},
-  ];
 
-  // Mock Customers list
-  final List<Map<String, String>> _customers = [
-    {'id': 'cust_1', 'name': 'Acme Freight Logistics'},
-    {'id': 'cust_2', 'name': 'Walmart Fulfillment'},
-    {'id': 'cust_3', 'name': 'Amazon Retail Inc.'},
-    {'id': 'cust_4', 'name': 'Tesla Energy Corp.'},
-  ];
 
   @override
   void initState() {
@@ -258,6 +248,13 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
     final colorScheme = theme.colorScheme;
     final formState = ref.watch(tripFormControllerProvider);
     final vehiclesAsync = ref.watch(vehiclesStreamProvider);
+    final driversAsync = ref.watch(driversStreamProvider);
+    final customersAsync = ref.watch(customersStreamProvider);
+
+    final drivers = driversAsync.valueOrNull ?? [];
+    final customers = customersAsync.valueOrNull ?? [];
+    final List<DriverEntity> eligibleDrivers = drivers.where((d) => d.status == 'available' || d.id == _selectedDriverId).toList();
+    final List<CustomerEntity> eligibleCustomers = customers;
 
     return Scaffold(
       appBar: AppBar(
@@ -463,24 +460,24 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Driver Dropdown
                                 DropdownButtonFormField<String>(
-                                  value: _drivers.any(
-                                    (d) => d['id'] == _selectedDriverId,
+                                  value: eligibleDrivers.any(
+                                    (d) => d.id == _selectedDriverId,
                                   )
                                       ? _selectedDriverId
                                       : null,
                                   hint: const Text('Assign Primary Driver'),
-                                  items: _drivers.map((driver) {
+                                  items: eligibleDrivers.map((driver) {
                                     return DropdownMenuItem<String>(
-                                      value: driver['id'],
-                                      child: Text(driver['name']!),
+                                      value: driver.id,
+                                      child: Text(driver.fullName),
                                     );
                                   }).toList(),
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedDriverId = id;
-                                      _selectedDriverName = _drivers.firstWhere(
-                                        (d) => d['id'] == id,
-                                      )['name'];
+                                      _selectedDriverName = eligibleDrivers.firstWhere(
+                                        (d) => d.id == id,
+                                      ).fullName;
                                     });
                                   },
                                   decoration: const InputDecoration(
@@ -494,25 +491,25 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
                                 // Customer Dropdown
                                 DropdownButtonFormField<String>(
-                                  value: _customers.any(
-                                    (c) => c['id'] == _selectedCustomerId,
+                                  value: eligibleCustomers.any(
+                                    (c) => c.id == _selectedCustomerId,
                                   )
                                       ? _selectedCustomerId
                                       : null,
                                   hint: const Text('Assign Billed Customer'),
-                                  items: _customers.map((cust) {
+                                  items: eligibleCustomers.map((cust) {
                                     return DropdownMenuItem<String>(
-                                      value: cust['id'],
-                                      child: Text(cust['name']!),
+                                      value: cust.id,
+                                      child: Text(cust.name),
                                     );
                                   }).toList(),
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedCustomerId = id;
                                       _selectedCustomerName =
-                                          _customers.firstWhere(
-                                        (c) => c['id'] == id,
-                                      )['name'];
+                                          eligibleCustomers.firstWhere(
+                                        (c) => c.id == id,
+                                      ).name;
                                     });
                                   },
                                   decoration: const InputDecoration(
