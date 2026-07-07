@@ -7,7 +7,6 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../vendors/presentation/vendor_providers.dart';
-import '../../vendors/domain/vendor_entity.dart';
 import '../domain/finance_transaction_entity.dart';
 import 'finance_providers.dart';
 

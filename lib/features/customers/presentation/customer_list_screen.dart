@@ -18,7 +18,6 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     final customersAsync = ref.watch(customersStreamProvider);
 

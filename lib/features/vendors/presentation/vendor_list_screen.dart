@@ -19,7 +19,6 @@ class _VendorListScreenState extends ConsumerState<VendorListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     final vendorsAsync = ref.watch(vendorsStreamProvider);
 

@@ -88,7 +88,6 @@ class MockTripRepository implements TripRepository {
           String companyId, String tripId) =>
       Stream.value([]);
 
-  @override
   Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) =>
       Stream.value(auditLogs);
 }
