@@ -194,10 +194,12 @@ class MockFinanceRepository implements FinanceRepository {
   Future<FinanceTransactionEntity?> getTransactionById(
     String companyId,
     String transactionId,
-  ) async => null;
+  ) async =>
+      null;
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value([]);
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) =>
+      Stream.value([]);
 }
 
 class MockFleetOpsRepository implements FleetOpsRepository {
