@@ -16,7 +16,8 @@ class MaintenanceFormScreen extends ConsumerStatefulWidget {
   const MaintenanceFormScreen({super.key, this.maintLogId});
 
   @override
-  ConsumerState<MaintenanceFormScreen> createState() => _MaintenanceFormScreenState();
+  ConsumerState<MaintenanceFormScreen> createState() =>
+      _MaintenanceFormScreenState();
 }
 
 class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
@@ -92,8 +93,9 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(maintenanceFormControllerProvider.notifier).saveMaintenanceLog(log);
+    final success = await ref
+        .read(maintenanceFormControllerProvider.notifier)
+        .saveMaintenanceLog(log);
 
     if (success && mounted) {
       context.pop();
@@ -104,7 +106,8 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final formState = ref.watch(maintenanceFormControllerProvider);
-    final maintLogs = ref.watch(maintenanceLogsStreamProvider).valueOrNull ?? [];
+    final maintLogs =
+        ref.watch(maintenanceLogsStreamProvider).valueOrNull ?? [];
     final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
     final vendors = ref.watch(vendorsStreamProvider).valueOrNull ?? [];
 
@@ -116,7 +119,8 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Edit Maintenance Log' : 'Log Maintenance Job'),
+        title:
+            Text(isEditMode ? 'Edit Maintenance Log' : 'Log Maintenance Job'),
       ),
       body: formState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -150,16 +154,19 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         prefixIcon: Icon(Icons.local_shipping_rounded),
                       ),
                       items: vehicles
-                          .map((v) => DropdownMenuItem(value: v.id, child: Text(v.licensePlate)))
+                          .map((v) => DropdownMenuItem(
+                              value: v.id, child: Text(v.licensePlate)))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
                           _selectedVehicleId = val;
-                          _selectedVehiclePlate =
-                              vehicles.firstWhere((v) => v.id == val).licensePlate;
+                          _selectedVehiclePlate = vehicles
+                              .firstWhere((v) => v.id == val)
+                              .licensePlate;
                         });
                       },
-                      validator: (val) => val == null ? 'Select a vehicle' : null,
+                      validator: (val) =>
+                          val == null ? 'Select a vehicle' : null,
                     ),
                     const SizedBox(height: 16),
                     // Vendor Selector
@@ -175,14 +182,16 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                           child: Text('General/Internal Workshop'),
                         ),
                         ...vendors.map(
-                          (v) => DropdownMenuItem<String?>(value: v.id, child: Text(v.name)),
+                          (v) => DropdownMenuItem<String?>(
+                              value: v.id, child: Text(v.name)),
                         ),
                       ],
                       onChanged: (val) {
                         setState(() {
                           _selectedVendorId = val;
-                          _selectedVendorName =
-                              val != null ? vendors.firstWhere((v) => v.id == val).name : null;
+                          _selectedVendorName = val != null
+                              ? vendors.firstWhere((v) => v.id == val).name
+                              : null;
                         });
                       },
                     ),
@@ -195,7 +204,8 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         prefixIcon: Icon(Icons.info_outline_rounded),
                       ),
                       items: ['preventative', 'corrective']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.toUpperCase())))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -214,20 +224,23 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         labelText: 'Repair Job Description',
                         prefixIcon: Icon(Icons.description_outlined),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter job description' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter job description'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Cost Cost
                     TextFormField(
                       controller: _costController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Job Cost (\$)',
                         prefixIcon: Icon(Icons.attach_money_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter maintenance cost' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter maintenance cost'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Odometer
@@ -238,16 +251,19 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         labelText: 'Odometer Reading (km)',
                         prefixIcon: Icon(Icons.speed_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter current odometer' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter current odometer'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Date picker
                     ListTile(
                       leading: const Icon(Icons.calendar_today_rounded),
                       title: const Text('Maintenance Date'),
-                      subtitle: Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      subtitle:
+                          Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,

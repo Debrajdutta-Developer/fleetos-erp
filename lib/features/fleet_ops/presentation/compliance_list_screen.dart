@@ -11,7 +11,8 @@ class ComplianceListScreen extends ConsumerStatefulWidget {
   const ComplianceListScreen({super.key});
 
   @override
-  ConsumerState<ComplianceListScreen> createState() => _ComplianceListScreenState();
+  ConsumerState<ComplianceListScreen> createState() =>
+      _ComplianceListScreenState();
 }
 
 class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
@@ -39,21 +40,24 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
             description: err.toString(),
             icon: Icons.error_outline_rounded,
             actionText: 'Retry',
-            onActionPressed: () => ref.invalidate(complianceDocumentsStreamProvider),
+            onActionPressed: () =>
+                ref.invalidate(complianceDocumentsStreamProvider),
           ),
         ),
         data: (docs) {
           final filtered = docs.where((d) {
-            final matchesType =
-                _docFilter == 'All' || d.documentType.toLowerCase() == _docFilter.toLowerCase();
+            final matchesType = _docFilter == 'All' ||
+                d.documentType.toLowerCase() == _docFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
-            final matchesQuery = d.vehicleLicensePlate.toLowerCase().contains(query) ||
-                d.documentNumber.toLowerCase().contains(query);
+            final matchesQuery =
+                d.vehicleLicensePlate.toLowerCase().contains(query) ||
+                    d.documentNumber.toLowerCase().contains(query);
             return matchesType && matchesQuery;
           }).toList();
 
-          final expiredDocsCount =
-              filtered.where((d) => d.expiryDate.isBefore(DateTime.now())).length;
+          final expiredDocsCount = filtered
+              .where((d) => d.expiryDate.isBefore(DateTime.now()))
+              .length;
 
           return Padding(
             padding: const EdgeInsets.all(24.0),
@@ -70,8 +74,12 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
                     child: Row(
                       children: [
                         Icon(
-                          expiredDocsCount > 0 ? Icons.error_outline_rounded : Icons.verified_user_rounded,
-                          color: expiredDocsCount > 0 ? colorScheme.error : colorScheme.primary,
+                          expiredDocsCount > 0
+                              ? Icons.error_outline_rounded
+                              : Icons.verified_user_rounded,
+                          color: expiredDocsCount > 0
+                              ? colorScheme.error
+                              : colorScheme.primary,
                           size: 32,
                         ),
                         const SizedBox(width: 16),
@@ -96,8 +104,10 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
                                     : 'All fleet vehicles have active, compliant documentation.',
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: expiredDocsCount > 0
-                                      ? colorScheme.onErrorContainer.withOpacity(0.8)
-                                      : colorScheme.onSurfaceVariant.withOpacity(0.8),
+                                      ? colorScheme.onErrorContainer
+                                          .withOpacity(0.8)
+                                      : colorScheme.onSurfaceVariant
+                                          .withOpacity(0.8),
                                 ),
                               ),
                             ],
@@ -113,7 +123,8 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by vehicle plate, certificate number...',
+                          hintText:
+                              'Search by vehicle plate, certificate number...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -136,7 +147,8 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
                         ),
                       ),
                       items: ['All', 'Insurance', 'PUC', 'Fitness', 'Permit']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -163,15 +175,18 @@ class _ComplianceListScreenState extends ConsumerState<ComplianceListScreen> {
                               ? 'Get started by uploading your first vehicle compliance document.'
                               : 'No compliance records match your search query.',
                           icon: Icons.assignment_turned_in_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Add Document' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Add Document' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/compliance/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.4,
@@ -225,7 +240,8 @@ class _ComplianceCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: colorScheme.primary.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(4),
@@ -246,25 +262,31 @@ class _ComplianceCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/compliance/${doc.id}/edit'),
+                      onPressed: () =>
+                          context.push('/compliance/${doc.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Compliance Document'),
-                            content: const Text('Are you sure you want to delete this document certificate record?'),
+                            content: const Text(
+                                'Are you sure you want to delete this document certificate record?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
@@ -317,7 +339,8 @@ class _ComplianceCard extends ConsumerWidget {
                 ),
                 if (isExpired)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: colorScheme.errorContainer,
                       borderRadius: BorderRadius.circular(4),

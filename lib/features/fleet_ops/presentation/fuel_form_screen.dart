@@ -153,16 +153,19 @@ class _FuelFormScreenState extends ConsumerState<FuelFormScreen> {
                         prefixIcon: Icon(Icons.local_shipping_rounded),
                       ),
                       items: vehicles
-                          .map((v) => DropdownMenuItem(value: v.id, child: Text(v.licensePlate)))
+                          .map((v) => DropdownMenuItem(
+                              value: v.id, child: Text(v.licensePlate)))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
                           _selectedVehicleId = val;
-                          _selectedVehiclePlate =
-                              vehicles.firstWhere((v) => v.id == val).licensePlate;
+                          _selectedVehiclePlate = vehicles
+                              .firstWhere((v) => v.id == val)
+                              .licensePlate;
                         });
                       },
-                      validator: (val) => val == null ? 'Select a vehicle' : null,
+                      validator: (val) =>
+                          val == null ? 'Select a vehicle' : null,
                     ),
                     const SizedBox(height: 16),
                     // Driver Selector
@@ -173,39 +176,46 @@ class _FuelFormScreenState extends ConsumerState<FuelFormScreen> {
                         prefixIcon: Icon(Icons.person_rounded),
                       ),
                       items: drivers
-                          .map((d) => DropdownMenuItem(value: d.id, child: Text(d.fullName)))
+                          .map((d) => DropdownMenuItem(
+                              value: d.id, child: Text(d.fullName)))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
                           _selectedDriverId = val;
-                          _selectedDriverName = drivers.firstWhere((d) => d.id == val).fullName;
+                          _selectedDriverName =
+                              drivers.firstWhere((d) => d.id == val).fullName;
                         });
                       },
-                      validator: (val) => val == null ? 'Select a driver' : null,
+                      validator: (val) =>
+                          val == null ? 'Select a driver' : null,
                     ),
                     const SizedBox(height: 16),
                     // Fuel Quantity
                     TextFormField(
                       controller: _fuelQtyController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Fuel Volume (Liters)',
                         prefixIcon: Icon(Icons.local_gas_station_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter fuel quantity' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter fuel quantity'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Amount Cost
                     TextFormField(
                       controller: _amountController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Cost Amount (\$)',
                         prefixIcon: Icon(Icons.attach_money_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter fuel amount cost' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter fuel amount cost'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Odometer
@@ -216,16 +226,19 @@ class _FuelFormScreenState extends ConsumerState<FuelFormScreen> {
                         labelText: 'Odometer Reading (km)',
                         prefixIcon: Icon(Icons.speed_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter current odometer' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter current odometer'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Date picker
                     ListTile(
                       leading: const Icon(Icons.calendar_today_rounded),
                       title: const Text('Refill Date'),
-                      subtitle: Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      subtitle:
+                          Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,

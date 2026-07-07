@@ -212,7 +212,8 @@ class FleetOpsRepositoryImpl implements FleetOpsRepository {
   }
 
   @override
-  Future<List<ComplianceEntity>> getComplianceDocuments(String companyId) async {
+  Future<List<ComplianceEntity>> getComplianceDocuments(
+      String companyId) async {
     try {
       final snapshot = await _firestore
           .collection('companies')

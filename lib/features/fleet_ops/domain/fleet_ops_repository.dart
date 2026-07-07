@@ -13,14 +13,18 @@ abstract class FleetOpsRepository {
   // Maintenance Management
   Stream<List<MaintenanceEntity>> watchMaintenanceLogs(String companyId);
   Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId);
-  Future<MaintenanceEntity> createMaintenanceLog(String companyId, MaintenanceEntity maintLog);
-  Future<void> updateMaintenanceLog(String companyId, MaintenanceEntity maintLog);
+  Future<MaintenanceEntity> createMaintenanceLog(
+      String companyId, MaintenanceEntity maintLog);
+  Future<void> updateMaintenanceLog(
+      String companyId, MaintenanceEntity maintLog);
   Future<void> deleteMaintenanceLog(String companyId, String maintLogId);
 
   // Compliance & Document Management
   Stream<List<ComplianceEntity>> watchComplianceDocuments(String companyId);
   Future<List<ComplianceEntity>> getComplianceDocuments(String companyId);
-  Future<ComplianceEntity> createComplianceDocument(String companyId, ComplianceEntity compliance);
-  Future<void> updateComplianceDocument(String companyId, ComplianceEntity compliance);
+  Future<ComplianceEntity> createComplianceDocument(
+      String companyId, ComplianceEntity compliance);
+  Future<void> updateComplianceDocument(
+      String companyId, ComplianceEntity compliance);
   Future<void> deleteComplianceDocument(String companyId, String complianceId);
 }

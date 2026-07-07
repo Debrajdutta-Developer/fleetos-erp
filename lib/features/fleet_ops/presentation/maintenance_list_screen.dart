@@ -11,7 +11,8 @@ class MaintenanceListScreen extends ConsumerStatefulWidget {
   const MaintenanceListScreen({super.key});
 
   @override
-  ConsumerState<MaintenanceListScreen> createState() => _MaintenanceListScreenState();
+  ConsumerState<MaintenanceListScreen> createState() =>
+      _MaintenanceListScreenState();
 }
 
 class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
@@ -39,21 +40,24 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
             description: err.toString(),
             icon: Icons.error_outline_rounded,
             actionText: 'Retry',
-            onActionPressed: () => ref.invalidate(maintenanceLogsStreamProvider),
+            onActionPressed: () =>
+                ref.invalidate(maintenanceLogsStreamProvider),
           ),
         ),
         data: (logs) {
           final filtered = logs.where((l) {
-            final matchesType =
-                _typeFilter == 'All' || l.type.toLowerCase() == _typeFilter.toLowerCase();
+            final matchesType = _typeFilter == 'All' ||
+                l.type.toLowerCase() == _typeFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
-            final matchesQuery = l.vehicleLicensePlate.toLowerCase().contains(query) ||
-                l.description.toLowerCase().contains(query) ||
-                (l.vendorName ?? '').toLowerCase().contains(query);
+            final matchesQuery =
+                l.vehicleLicensePlate.toLowerCase().contains(query) ||
+                    l.description.toLowerCase().contains(query) ||
+                    (l.vendorName ?? '').toLowerCase().contains(query);
             return matchesType && matchesQuery;
           }).toList();
 
-          final totalCost = filtered.map((l) => l.cost).fold<double>(0.0, (s, c) => s + c);
+          final totalCost =
+              filtered.map((l) => l.cost).fold<double>(0.0, (s, c) => s + c);
           final preventativeCost = filtered
               .where((l) => l.type == 'preventative')
               .map((l) => l.cost)
@@ -75,7 +79,8 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total Maintenance Cost', style: theme.textTheme.bodyMedium),
+                              Text('Total Maintenance Cost',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${totalCost.toStringAsFixed(2)}',
@@ -97,7 +102,8 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Preventative Cost', style: theme.textTheme.bodyMedium),
+                              Text('Preventative Cost',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${preventativeCost.toStringAsFixed(2)}',
@@ -119,7 +125,8 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Corrective Cost', style: theme.textTheme.bodyMedium),
+                              Text('Corrective Cost',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${correctiveCost.toStringAsFixed(2)}',
@@ -141,7 +148,8 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by vehicle plate, vendor, repair description...',
+                          hintText:
+                              'Search by vehicle plate, vendor, repair description...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -164,7 +172,8 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                         ),
                       ),
                       items: ['All', 'Preventative', 'Corrective']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -191,15 +200,18 @@ class _MaintenanceListScreenState extends ConsumerState<MaintenanceListScreen> {
                               ? 'Get started by logging your first vehicle repair entry.'
                               : 'No maintenance records match your search query.',
                           icon: Icons.build_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Log Maintenance' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Log Maintenance' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/maintenance/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.4,
@@ -252,7 +264,8 @@ class _MaintenanceCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: log.type == 'preventative'
                               ? Colors.green.withOpacity(0.12)
@@ -262,7 +275,9 @@ class _MaintenanceCard extends ConsumerWidget {
                         child: Text(
                           log.type.toUpperCase(),
                           style: TextStyle(
-                            color: log.type == 'preventative' ? Colors.green : Colors.red,
+                            color: log.type == 'preventative'
+                                ? Colors.green
+                                : Colors.red,
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
@@ -275,25 +290,31 @@ class _MaintenanceCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/maintenance/${log.id}/edit'),
+                      onPressed: () =>
+                          context.push('/maintenance/${log.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Maintenance Log'),
-                            content: const Text('Are you sure you want to delete this maintenance record?'),
+                            content: const Text(
+                                'Are you sure you want to delete this maintenance record?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
@@ -332,7 +353,8 @@ class _MaintenanceCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Vendor', style: theme.textTheme.labelSmall),
-                    Text(log.vendorName ?? 'General Service', style: theme.textTheme.titleMedium),
+                    Text(log.vendorName ?? 'General Service',
+                        style: theme.textTheme.titleMedium),
                   ],
                 ),
               ],

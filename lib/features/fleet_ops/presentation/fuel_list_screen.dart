@@ -48,9 +48,12 @@ class _FuelListScreenState extends ConsumerState<FuelListScreen> {
                 l.driverName.toLowerCase().contains(query);
           }).toList();
 
-          final totalFuelCost = filtered.map((l) => l.amount).fold<double>(0.0, (s, a) => s + a);
-          final totalFuelQty = filtered.map((l) => l.fuelQty).fold<double>(0.0, (s, q) => s + q);
-          final avgFuelPrice = totalFuelQty > 0 ? (totalFuelCost / totalFuelQty) : 0.0;
+          final totalFuelCost =
+              filtered.map((l) => l.amount).fold<double>(0.0, (s, a) => s + a);
+          final totalFuelQty =
+              filtered.map((l) => l.fuelQty).fold<double>(0.0, (s, q) => s + q);
+          final avgFuelPrice =
+              totalFuelQty > 0 ? (totalFuelCost / totalFuelQty) : 0.0;
 
           return Padding(
             padding: const EdgeInsets.all(24.0),
@@ -67,7 +70,8 @@ class _FuelListScreenState extends ConsumerState<FuelListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total Fuel Cost', style: theme.textTheme.bodyMedium),
+                              Text('Total Fuel Cost',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${totalFuelCost.toStringAsFixed(2)}',
@@ -89,7 +93,8 @@ class _FuelListScreenState extends ConsumerState<FuelListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total Refills Volume', style: theme.textTheme.bodyMedium),
+                              Text('Total Refills Volume',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '${totalFuelQty.toStringAsFixed(0)} L',
@@ -110,7 +115,8 @@ class _FuelListScreenState extends ConsumerState<FuelListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Average Fuel Price', style: theme.textTheme.bodyMedium),
+                              Text('Average Fuel Price',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${avgFuelPrice.toStringAsFixed(2)}/L',
@@ -168,8 +174,10 @@ class _FuelListScreenState extends ConsumerState<FuelListScreen> {
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.4,
@@ -237,29 +245,36 @@ class _FuelCard extends ConsumerWidget {
                       onPressed: () => context.push('/fuel/${log.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Fuel Log'),
-                            content: const Text('Are you sure you want to delete this fuel refill record?'),
+                            content: const Text(
+                                'Are you sure you want to delete this fuel refill record?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
                           ),
                         );
                         if (confirmed == true) {
-                          ref.read(fuelListControllerProvider.notifier).deleteFuelLog(log.id);
+                          ref
+                              .read(fuelListControllerProvider.notifier)
+                              .deleteFuelLog(log.id);
                         }
                       },
                     ),
@@ -275,7 +290,8 @@ class _FuelCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Volume', style: theme.textTheme.labelSmall),
-                    Text('${log.fuelQty} L', style: theme.textTheme.titleMedium),
+                    Text('${log.fuelQty} L',
+                        style: theme.textTheme.titleMedium),
                   ],
                 ),
                 Column(
@@ -289,7 +305,8 @@ class _FuelCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Odometer', style: theme.textTheme.labelSmall),
-                    Text('${log.odometer.toStringAsFixed(0)} km', style: theme.textTheme.titleMedium),
+                    Text('${log.odometer.toStringAsFixed(0)} km',
+                        style: theme.textTheme.titleMedium),
                   ],
                 ),
               ],

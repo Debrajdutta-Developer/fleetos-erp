@@ -17,7 +17,8 @@ final fleetOpsRepositoryProvider = Provider<FleetOpsRepository>((ref) {
   return FleetOpsRepositoryImpl();
 });
 
-final fuelLogsStreamProvider = StreamProvider.autoDispose<List<FuelEntity>>((ref) {
+final fuelLogsStreamProvider =
+    StreamProvider.autoDispose<List<FuelEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(fleetOpsRepositoryProvider).watchFuelLogs(user!.companyId!);
@@ -83,10 +84,13 @@ class FuelFormController extends StateNotifier<FuelFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (fuelLog.vehicleId.isEmpty) throw Exception('Please select a vehicle.');
+      if (fuelLog.vehicleId.isEmpty)
+        throw Exception('Please select a vehicle.');
       if (fuelLog.driverId.isEmpty) throw Exception('Please select a driver.');
-      if (fuelLog.fuelQty <= 0) throw Exception('Fuel quantity must be greater than zero.');
-      if (fuelLog.amount <= 0) throw Exception('Fuel amount cost must be greater than zero.');
+      if (fuelLog.fuelQty <= 0)
+        throw Exception('Fuel quantity must be greater than zero.');
+      if (fuelLog.amount <= 0)
+        throw Exception('Fuel amount cost must be greater than zero.');
 
       FuelEntity saved;
       if (fuelLog.id.isEmpty) {
@@ -108,7 +112,8 @@ class FuelFormController extends StateNotifier<FuelFormState> {
         referenceNumber: saved.id,
         vehicleId: saved.vehicleId,
         vehicleLicensePlate: saved.vehicleLicensePlate,
-        notes: 'Automated fuel cost expense entry for vehicle ${saved.vehicleLicensePlate}.',
+        notes:
+            'Automated fuel cost expense entry for vehicle ${saved.vehicleLicensePlate}.',
         transactionDate: saved.date,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
@@ -120,7 +125,8 @@ class FuelFormController extends StateNotifier<FuelFormState> {
         entityType: 'finance_transaction',
         entityId: tx.id,
         action: 'transaction_created',
-        description: 'Automated fuel cost transaction for vehicle ${saved.vehicleLicensePlate}.',
+        description:
+            'Automated fuel cost transaction for vehicle ${saved.vehicleLicensePlate}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -137,7 +143,8 @@ class FuelFormController extends StateNotifier<FuelFormState> {
         entityType: 'fuel_log',
         entityId: saved.id,
         action: fuelLog.id.isEmpty ? 'fuel_log_created' : 'fuel_log_updated',
-        description: 'Fuel log of ${saved.fuelQty}L logged for ${saved.vehicleLicensePlate}.',
+        description:
+            'Fuel log of ${saved.fuelQty}L logged for ${saved.vehicleLicensePlate}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -147,7 +154,8 @@ class FuelFormController extends StateNotifier<FuelFormState> {
       state = const FuelFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = FuelFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = FuelFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -191,7 +199,8 @@ class FuelListController extends StateNotifier<AsyncValue<void>> {
 
       // Automatically soft-delete corresponding finance transaction
       final financeRepo = _ref.read(financeRepositoryProvider);
-      await financeRepo.deleteTransaction(companyId, 'tx_fuel_$fuelLogId', txAuditLog);
+      await financeRepo.deleteTransaction(
+          companyId, 'tx_fuel_$fuelLogId', txAuditLog);
 
       // Write Audit Log
       final tripRepo = _ref.read(tripRepositoryProvider);
@@ -218,7 +227,8 @@ class FuelListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final fuelListControllerProvider =
-    StateNotifierProvider.autoDispose<FuelListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<FuelListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(fleetOpsRepositoryProvider);
   return FuelListController(repository: repository, ref: ref);
 });
@@ -253,7 +263,8 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
   final FleetOpsRepository _repository;
   final Ref _ref;
 
-  MaintenanceFormController({required FleetOpsRepository repository, required Ref ref})
+  MaintenanceFormController(
+      {required FleetOpsRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const MaintenanceFormState());
@@ -265,9 +276,12 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (maintLog.vehicleId.isEmpty) throw Exception('Please select a vehicle.');
-      if (maintLog.description.trim().isEmpty) throw Exception('Please enter a description.');
-      if (maintLog.cost <= 0) throw Exception('Maintenance cost must be greater than zero.');
+      if (maintLog.vehicleId.isEmpty)
+        throw Exception('Please select a vehicle.');
+      if (maintLog.description.trim().isEmpty)
+        throw Exception('Please enter a description.');
+      if (maintLog.cost <= 0)
+        throw Exception('Maintenance cost must be greater than zero.');
 
       MaintenanceEntity saved;
       if (maintLog.id.isEmpty) {
@@ -303,7 +317,8 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
         entityType: 'finance_transaction',
         entityId: tx.id,
         action: 'transaction_created',
-        description: 'Automated maintenance transaction for vehicle ${saved.vehicleLicensePlate}.',
+        description:
+            'Automated maintenance transaction for vehicle ${saved.vehicleLicensePlate}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -318,8 +333,10 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
         companyId: companyId,
         entityType: 'maintenance_log',
         entityId: saved.id,
-        action: maintLog.id.isEmpty ? 'maintenance_created' : 'maintenance_updated',
-        description: 'Maintenance logged for ${saved.vehicleLicensePlate}: ${saved.description}.',
+        action:
+            maintLog.id.isEmpty ? 'maintenance_created' : 'maintenance_updated',
+        description:
+            'Maintenance logged for ${saved.vehicleLicensePlate}: ${saved.description}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -329,7 +346,8 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
       state = const MaintenanceFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = MaintenanceFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = MaintenanceFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -345,7 +363,8 @@ class MaintenanceListController extends StateNotifier<AsyncValue<void>> {
   final FleetOpsRepository _repository;
   final Ref _ref;
 
-  MaintenanceListController({required FleetOpsRepository repository, required Ref ref})
+  MaintenanceListController(
+      {required FleetOpsRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -373,7 +392,8 @@ class MaintenanceListController extends StateNotifier<AsyncValue<void>> {
 
       // Automatically soft-delete corresponding finance transaction
       final financeRepo = _ref.read(financeRepositoryProvider);
-      await financeRepo.deleteTransaction(companyId, 'tx_maint_$maintLogId', txAuditLog);
+      await financeRepo.deleteTransaction(
+          companyId, 'tx_maint_$maintLogId', txAuditLog);
 
       // Write Audit Log
       final tripRepo = _ref.read(tripRepositoryProvider);
@@ -435,7 +455,8 @@ class ComplianceFormController extends StateNotifier<ComplianceFormState> {
   final FleetOpsRepository _repository;
   final Ref _ref;
 
-  ComplianceFormController({required FleetOpsRepository repository, required Ref ref})
+  ComplianceFormController(
+      {required FleetOpsRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const ComplianceFormState());
@@ -448,7 +469,8 @@ class ComplianceFormController extends StateNotifier<ComplianceFormState> {
       final companyId = user!.companyId!;
 
       if (doc.vehicleId.isEmpty) throw Exception('Please select a vehicle.');
-      if (doc.documentNumber.trim().isEmpty) throw Exception('Please enter a document number.');
+      if (doc.documentNumber.trim().isEmpty)
+        throw Exception('Please enter a document number.');
 
       ComplianceEntity saved;
       if (doc.id.isEmpty) {
@@ -483,7 +505,8 @@ class ComplianceFormController extends StateNotifier<ComplianceFormState> {
         entityType: 'compliance_doc',
         entityId: saved.id,
         action: doc.id.isEmpty ? 'compliance_created' : 'compliance_updated',
-        description: 'Compliance document (${saved.documentType.toUpperCase()}) added for ${saved.vehicleLicensePlate}.',
+        description:
+            'Compliance document (${saved.documentType.toUpperCase()}) added for ${saved.vehicleLicensePlate}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -493,7 +516,8 @@ class ComplianceFormController extends StateNotifier<ComplianceFormState> {
       state = const ComplianceFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = ComplianceFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = ComplianceFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -509,7 +533,8 @@ class ComplianceListController extends StateNotifier<AsyncValue<void>> {
   final FleetOpsRepository _repository;
   final Ref _ref;
 
-  ComplianceListController({required FleetOpsRepository repository, required Ref ref})
+  ComplianceListController(
+      {required FleetOpsRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));

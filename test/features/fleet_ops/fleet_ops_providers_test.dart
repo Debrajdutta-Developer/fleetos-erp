@@ -30,7 +30,8 @@ class MockFleetOpsRepository implements FleetOpsRepository {
   });
 
   @override
-  Stream<List<FuelEntity>> watchFuelLogs(String companyId) => Stream.value(fuelLogs);
+  Stream<List<FuelEntity>> watchFuelLogs(String companyId) =>
+      Stream.value(fuelLogs);
 
   @override
   Future<List<FuelEntity>> getFuelLogs(String companyId) async => fuelLogs;
@@ -58,19 +59,23 @@ class MockFleetOpsRepository implements FleetOpsRepository {
   }
 
   @override
-  Stream<List<MaintenanceEntity>> watchMaintenanceLogs(String companyId) => Stream.value(maintLogs);
+  Stream<List<MaintenanceEntity>> watchMaintenanceLogs(String companyId) =>
+      Stream.value(maintLogs);
 
   @override
-  Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId) async => maintLogs;
+  Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId) async =>
+      maintLogs;
 
   @override
-  Future<MaintenanceEntity> createMaintenanceLog(String companyId, MaintenanceEntity maintLog) async {
+  Future<MaintenanceEntity> createMaintenanceLog(
+      String companyId, MaintenanceEntity maintLog) async {
     maintLogs.add(maintLog);
     return maintLog;
   }
 
   @override
-  Future<void> updateMaintenanceLog(String companyId, MaintenanceEntity maintLog) async {
+  Future<void> updateMaintenanceLog(
+      String companyId, MaintenanceEntity maintLog) async {
     final idx = maintLogs.indexWhere((m) => m.id == maintLog.id);
     if (idx != -1) {
       maintLogs[idx] = maintLog;
@@ -86,19 +91,24 @@ class MockFleetOpsRepository implements FleetOpsRepository {
   }
 
   @override
-  Stream<List<ComplianceEntity>> watchComplianceDocuments(String companyId) => Stream.value(docs);
+  Stream<List<ComplianceEntity>> watchComplianceDocuments(String companyId) =>
+      Stream.value(docs);
 
   @override
-  Future<List<ComplianceEntity>> getComplianceDocuments(String companyId) async => docs;
+  Future<List<ComplianceEntity>> getComplianceDocuments(
+          String companyId) async =>
+      docs;
 
   @override
-  Future<ComplianceEntity> createComplianceDocument(String companyId, ComplianceEntity compliance) async {
+  Future<ComplianceEntity> createComplianceDocument(
+      String companyId, ComplianceEntity compliance) async {
     docs.add(compliance);
     return compliance;
   }
 
   @override
-  Future<void> updateComplianceDocument(String companyId, ComplianceEntity compliance) async {
+  Future<void> updateComplianceDocument(
+      String companyId, ComplianceEntity compliance) async {
     final idx = docs.indexWhere((d) => d.id == compliance.id);
     if (idx != -1) {
       docs[idx] = compliance;
@@ -106,7 +116,8 @@ class MockFleetOpsRepository implements FleetOpsRepository {
   }
 
   @override
-  Future<void> deleteComplianceDocument(String companyId, String complianceId) async {
+  Future<void> deleteComplianceDocument(
+      String companyId, String complianceId) async {
     final idx = docs.indexWhere((d) => d.id == complianceId);
     if (idx != -1) {
       docs[idx] = docs[idx].copyWith(deletedAt: DateTime.now());
@@ -119,13 +130,17 @@ class MockFinanceRepository implements FinanceRepository {
   final List<AuditLogEntity> auditLogs = [];
 
   @override
-  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) => Stream.value(txs);
+  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) =>
+      Stream.value(txs);
 
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async => txs;
+  Future<List<FinanceTransactionEntity>> getTransactions(
+          String companyId) async =>
+      txs;
 
   @override
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async {
+  Future<FinanceTransactionEntity?> getTransactionById(
+      String companyId, String transactionId) async {
     try {
       return txs.firstWhere((t) => t.id == transactionId);
     } catch (_) {
@@ -163,7 +178,8 @@ class MockFinanceRepository implements FinanceRepository {
   }
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) =>
+      Stream.value(auditLogs);
 }
 
 class MockVehicleRepository implements VehicleRepository {
@@ -171,13 +187,15 @@ class MockVehicleRepository implements VehicleRepository {
   MockVehicleRepository({required this.vehicles});
 
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value(vehicles);
 
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
 
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async {
+  Future<VehicleEntity> createVehicle(
+      String companyId, VehicleEntity vehicle) async {
     vehicles.add(vehicle);
     return vehicle;
   }
@@ -194,10 +212,13 @@ class MockVehicleRepository implements VehicleRepository {
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
 
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {}
 
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, file) async => '';
+  Future<String> uploadComplianceDocument(
+          String companyId, String vehicleId, String docType, file) async =>
+      '';
 }
 
 class MockTripRepository implements TripRepository {
@@ -210,7 +231,8 @@ class MockTripRepository implements TripRepository {
   Future<List<TripEntity>> getTrips(String companyId) async => [];
 
   @override
-  Future<TripEntity?> getTripById(String companyId, String tripId) async => null;
+  Future<TripEntity?> getTripById(String companyId, String tripId) async =>
+      null;
 
   @override
   Future<TripEntity> createTrip(
@@ -220,16 +242,22 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<void> updateTripStatus(String companyId, String tripId, String newStatus, String cbId, String cbName, {String? notes}) async {}
+  Future<void> updateTripStatus(String companyId, String tripId,
+      String newStatus, String cbId, String cbName,
+      {String? notes}) async {}
 
   @override
-  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
+  Future<void> deleteTrip(
+      String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) => Stream.value([]);
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+          String companyId, String tripId) =>
+      Stream.value([]);
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) => Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) =>
+      Stream.value(auditLogs);
 }
 
 void main() {
@@ -249,8 +277,10 @@ void main() {
       updatedAt: now,
     );
 
-    test('should save fuel log, write finance transaction, and log audit log', () async {
-      final fleetOpsRepo = MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
+    test('should save fuel log, write finance transaction, and log audit log',
+        () async {
+      final fleetOpsRepo =
+          MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
       final financeRepo = MockFinanceRepository();
       final vehicleRepo = MockVehicleRepository(vehicles: [tVehicle]);
       final tripRepo = MockTripRepository();
@@ -297,11 +327,15 @@ void main() {
       expect(financeRepo.txs.length, 1);
       expect(financeRepo.txs[0].category, 'diesel');
       expect(financeRepo.txs[0].amount, 150.0);
-      expect(tripRepo.auditLogs.any((a) => a.action == 'fuel_log_created'), true);
+      expect(
+          tripRepo.auditLogs.any((a) => a.action == 'fuel_log_created'), true);
     });
 
-    test('should save maintenance log, write finance transaction, and log audit log', () async {
-      final fleetOpsRepo = MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
+    test(
+        'should save maintenance log, write finance transaction, and log audit log',
+        () async {
+      final fleetOpsRepo =
+          MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
       final financeRepo = MockFinanceRepository();
       final vehicleRepo = MockVehicleRepository(vehicles: [tVehicle]);
       final tripRepo = MockTripRepository();
@@ -325,7 +359,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(maintenanceFormControllerProvider.notifier);
+      final controller =
+          container.read(maintenanceFormControllerProvider.notifier);
       final newMaint = MaintenanceEntity(
         id: '',
         companyId: 'comp_1',
@@ -347,11 +382,13 @@ void main() {
       expect(financeRepo.txs.length, 1);
       expect(financeRepo.txs[0].category, 'repair');
       expect(financeRepo.txs[0].amount, 500.0);
-      expect(tripRepo.auditLogs.any((a) => a.action == 'maintenance_created'), true);
+      expect(tripRepo.auditLogs.any((a) => a.action == 'maintenance_created'),
+          true);
     });
 
     test('should save compliance doc and update vehicle exipry date', () async {
-      final fleetOpsRepo = MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
+      final fleetOpsRepo =
+          MockFleetOpsRepository(fuelLogs: [], maintLogs: [], docs: []);
       final financeRepo = MockFinanceRepository();
       final vehicleRepo = MockVehicleRepository(vehicles: [tVehicle]);
       final tripRepo = MockTripRepository();
@@ -375,7 +412,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(complianceFormControllerProvider.notifier);
+      final controller =
+          container.read(complianceFormControllerProvider.notifier);
       final futureExpiry = now.add(const Duration(days: 300));
       final newDoc = ComplianceEntity(
         id: '',
@@ -394,7 +432,8 @@ void main() {
       expect(result, true);
       expect(fleetOpsRepo.docs.length, 1);
       expect(vehicleRepo.vehicles[0].insuranceExpiry, futureExpiry);
-      expect(tripRepo.auditLogs.any((a) => a.action == 'compliance_created'), true);
+      expect(tripRepo.auditLogs.any((a) => a.action == 'compliance_created'),
+          true);
     });
   });
 }

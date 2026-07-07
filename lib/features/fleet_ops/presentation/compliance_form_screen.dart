@@ -14,7 +14,8 @@ class ComplianceFormScreen extends ConsumerStatefulWidget {
   const ComplianceFormScreen({super.key, this.complianceId});
 
   @override
-  ConsumerState<ComplianceFormScreen> createState() => _ComplianceFormScreenState();
+  ConsumerState<ComplianceFormScreen> createState() =>
+      _ComplianceFormScreenState();
 }
 
 class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
@@ -74,8 +75,9 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(complianceFormControllerProvider.notifier).saveComplianceDocument(doc);
+    final success = await ref
+        .read(complianceFormControllerProvider.notifier)
+        .saveComplianceDocument(doc);
 
     if (success && mounted) {
       context.pop();
@@ -97,7 +99,9 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Edit Compliance Document' : 'Add Compliance Document'),
+        title: Text(isEditMode
+            ? 'Edit Compliance Document'
+            : 'Add Compliance Document'),
       ),
       body: formState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -131,16 +135,19 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
                         prefixIcon: Icon(Icons.local_shipping_rounded),
                       ),
                       items: vehicles
-                          .map((v) => DropdownMenuItem(value: v.id, child: Text(v.licensePlate)))
+                          .map((v) => DropdownMenuItem(
+                              value: v.id, child: Text(v.licensePlate)))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
                           _selectedVehicleId = val;
-                          _selectedVehiclePlate =
-                              vehicles.firstWhere((v) => v.id == val).licensePlate;
+                          _selectedVehiclePlate = vehicles
+                              .firstWhere((v) => v.id == val)
+                              .licensePlate;
                         });
                       },
-                      validator: (val) => val == null ? 'Select a vehicle' : null,
+                      validator: (val) =>
+                          val == null ? 'Select a vehicle' : null,
                     ),
                     const SizedBox(height: 16),
                     // Document Type Selector
@@ -151,7 +158,8 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
                         prefixIcon: Icon(Icons.description_outlined),
                       ),
                       items: ['insurance', 'puc', 'fitness', 'permit', 'other']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.toUpperCase())))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -169,22 +177,27 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
                         labelText: 'Certificate / Document Number',
                         prefixIcon: Icon(Icons.badge_outlined),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter document certificate number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter document certificate number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Date picker for expiry
                     ListTile(
                       leading: const Icon(Icons.calendar_today_rounded),
                       title: const Text('Expiry Date'),
-                      subtitle: Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      subtitle:
+                          Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
                           initialDate: _selectedDate,
-                          firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                          lastDate: DateTime.now().add(const Duration(days: 5 * 365)),
+                          firstDate: DateTime.now()
+                              .subtract(const Duration(days: 365)),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 5 * 365)),
                         );
                         if (picked != null) {
                           setState(() {
@@ -195,7 +208,9 @@ class _ComplianceFormScreenState extends ConsumerState<ComplianceFormScreen> {
                     ),
                     const SizedBox(height: 32),
                     CustomButton(
-                      text: isEditMode ? 'Update Certificate' : 'Save Certificate',
+                      text: isEditMode
+                          ? 'Update Certificate'
+                          : 'Save Certificate',
                       onPressed: _submit,
                     ),
                   ],
