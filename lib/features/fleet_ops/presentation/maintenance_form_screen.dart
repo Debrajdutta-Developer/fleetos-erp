@@ -101,7 +101,9 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
       updatedAt: DateTime.now(),
       partId: _selectedPartId,
       partName: _selectedPartName,
-      partQuantity: _selectedPartId != null ? int.tryParse(_partQtyController.text.trim()) : null,
+      partQuantity: _selectedPartId != null
+          ? int.tryParse(_partQtyController.text.trim())
+          : null,
     );
 
     final success = await ref
@@ -243,14 +245,17 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         ...parts.map(
                           (p) => DropdownMenuItem<String?>(
                             value: p.id,
-                            child: Text('${p.name} (${p.partNumber}) - Avail: ${p.quantity}'),
+                            child: Text(
+                                '${p.name} (${p.partNumber}) - Avail: ${p.quantity}'),
                           ),
                         ),
                       ],
                       onChanged: (val) {
                         setState(() {
                           _selectedPartId = val;
-                          _selectedPartName = val != null ? parts.firstWhere((p) => p.id == val).name : null;
+                          _selectedPartName = val != null
+                              ? parts.firstWhere((p) => p.id == val).name
+                              : null;
                         });
                       },
                     ),
@@ -262,10 +267,12 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           labelText: 'Spare Part Quantity Used',
-                          prefixIcon: Icon(Icons.production_quantity_limits_rounded),
+                          prefixIcon:
+                              Icon(Icons.production_quantity_limits_rounded),
                         ),
                         validator: (val) {
-                          if (_selectedPartId != null && (val == null || val.trim().isEmpty)) {
+                          if (_selectedPartId != null &&
+                              (val == null || val.trim().isEmpty)) {
                             return 'Enter quantity of parts used';
                           }
                           final parsed = int.tryParse(val ?? '');
@@ -273,7 +280,8 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                             return 'Enter a positive integer quantity';
                           }
                           // Check available stock
-                          final part = parts.firstWhere((p) => p.id == _selectedPartId);
+                          final part =
+                              parts.firstWhere((p) => p.id == _selectedPartId);
                           if (parsed > part.quantity) {
                             return 'Not enough stock! Available: ${part.quantity}';
                           }

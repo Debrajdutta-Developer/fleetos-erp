@@ -11,7 +11,8 @@ class TransactionListScreen extends ConsumerStatefulWidget {
   const TransactionListScreen({super.key});
 
   @override
-  ConsumerState<TransactionListScreen> createState() => _TransactionListScreenState();
+  ConsumerState<TransactionListScreen> createState() =>
+      _TransactionListScreenState();
 }
 
 class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
@@ -39,7 +40,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
             description: err.toString(),
             icon: Icons.error_outline_rounded,
             actionText: 'Retry',
-            onActionPressed: () => ref.invalidate(inventoryTransactionsStreamProvider),
+            onActionPressed: () =>
+                ref.invalidate(inventoryTransactionsStreamProvider),
           ),
         ),
         data: (transactions) {
@@ -47,8 +49,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
             ..sort((a, b) => b.date.compareTo(a.date));
 
           final filtered = sorted.where((t) {
-            final matchesType =
-                _typeFilter == 'All' || t.type.toLowerCase() == _typeFilter.toLowerCase();
+            final matchesType = _typeFilter == 'All' ||
+                t.type.toLowerCase() == _typeFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
             final matchesQuery = t.partName.toLowerCase().contains(query) ||
                 t.notes.toLowerCase().contains(query) ||
@@ -66,7 +68,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by part name, transaction notes, reference ID...',
+                          hintText:
+                              'Search by part name, transaction notes, reference ID...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -89,7 +92,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                         ),
                       ),
                       items: ['All', 'Stock_In', 'Stock_Out', 'Adjustment']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.replaceAll('_', ' '))))
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.replaceAll('_', ' '))))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -103,7 +107,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                     CustomButton(
                       text: 'Record Tx',
                       icon: Icons.add_rounded,
-                      onPressed: () => context.push('/inventory/transactions/new'),
+                      onPressed: () =>
+                          context.push('/inventory/transactions/new'),
                     ),
                   ],
                 ),
@@ -116,9 +121,11 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                               ? 'Get started by recording stock adjustments or stock ins.'
                               : 'No inventory transactions match your search query.',
                           icon: Icons.receipt_long_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Record Stock Tx' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Record Stock Tx' : null,
                           onActionPressed: _searchQuery.isEmpty
-                              ? () => context.push('/inventory/transactions/new')
+                              ? () =>
+                                  context.push('/inventory/transactions/new')
                               : null,
                         )
                       : isDesktop
@@ -155,10 +162,12 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
             final isPositive = tx.quantity > 0;
             return DataRow(
               cells: [
-                DataCell(Text(tx.partName, style: const TextStyle(fontWeight: FontWeight.bold))),
+                DataCell(Text(tx.partName,
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
                 DataCell(
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: tx.type == 'stock_in'
                           ? Colors.green.withOpacity(0.12)
@@ -192,7 +201,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
                 ),
                 DataCell(Text('\$${tx.unitCost.toStringAsFixed(2)}')),
                 DataCell(Text('\$${tx.totalCost.toStringAsFixed(2)}')),
-                DataCell(Text(tx.notes, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                DataCell(Text(tx.notes,
+                    maxLines: 1, overflow: TextOverflow.ellipsis)),
                 DataCell(Text(dateStr)),
               ],
             );
@@ -217,7 +227,8 @@ class _TransactionListScreenState extends ConsumerState<TransactionListScreen> {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            title: Text(tx.partName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(tx.partName,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

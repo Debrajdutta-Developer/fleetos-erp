@@ -345,7 +345,8 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
             unitCost: part.unitCost,
             totalCost: saved.partQuantity! * part.unitCost,
             referenceId: saved.id,
-            notes: 'Automatic deduction during maintenance job for vehicle ${saved.vehicleLicensePlate}.',
+            notes:
+                'Automatic deduction during maintenance job for vehicle ${saved.vehicleLicensePlate}.',
             date: saved.date,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),

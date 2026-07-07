@@ -21,17 +21,22 @@ final partsStreamProvider = StreamProvider.autoDispose<List<PartEntity>>((ref) {
   return ref.watch(inventoryRepositoryProvider).watchParts(user!.companyId!);
 });
 
-final suppliersStreamProvider = StreamProvider.autoDispose<List<SupplierEntity>>((ref) {
+final suppliersStreamProvider =
+    StreamProvider.autoDispose<List<SupplierEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
-  return ref.watch(inventoryRepositoryProvider).watchSuppliers(user!.companyId!);
+  return ref
+      .watch(inventoryRepositoryProvider)
+      .watchSuppliers(user!.companyId!);
 });
 
 final inventoryTransactionsStreamProvider =
     StreamProvider.autoDispose<List<InventoryTransactionEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
-  return ref.watch(inventoryRepositoryProvider).watchTransactions(user!.companyId!);
+  return ref
+      .watch(inventoryRepositoryProvider)
+      .watchTransactions(user!.companyId!);
 });
 
 // ================= PART FORM CONTROLLER =================
@@ -64,7 +69,8 @@ class PartFormController extends StateNotifier<PartFormState> {
   final InventoryRepository _repository;
   final Ref _ref;
 
-  PartFormController({required InventoryRepository repository, required Ref ref})
+  PartFormController(
+      {required InventoryRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const PartFormState());
@@ -76,9 +82,12 @@ class PartFormController extends StateNotifier<PartFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (part.partNumber.trim().isEmpty) throw Exception('Please enter a part number.');
-      if (part.name.trim().isEmpty) throw Exception('Please enter a part name.');
-      if (part.minStockThreshold < 0) throw Exception('Minimum threshold cannot be negative.');
+      if (part.partNumber.trim().isEmpty)
+        throw Exception('Please enter a part number.');
+      if (part.name.trim().isEmpty)
+        throw Exception('Please enter a part name.');
+      if (part.minStockThreshold < 0)
+        throw Exception('Minimum threshold cannot be negative.');
 
       PartEntity saved;
       if (part.id.isEmpty) {
@@ -106,7 +115,8 @@ class PartFormController extends StateNotifier<PartFormState> {
       state = const PartFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = PartFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = PartFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -122,7 +132,8 @@ class PartListController extends StateNotifier<AsyncValue<void>> {
   final InventoryRepository _repository;
   final Ref _ref;
 
-  PartListController({required InventoryRepository repository, required Ref ref})
+  PartListController(
+      {required InventoryRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -161,7 +172,8 @@ class PartListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final partListControllerProvider =
-    StateNotifierProvider.autoDispose<PartListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<PartListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(inventoryRepositoryProvider);
   return PartListController(repository: repository, ref: ref);
 });
@@ -196,7 +208,8 @@ class SupplierFormController extends StateNotifier<SupplierFormState> {
   final InventoryRepository _repository;
   final Ref _ref;
 
-  SupplierFormController({required InventoryRepository repository, required Ref ref})
+  SupplierFormController(
+      {required InventoryRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const SupplierFormState());
@@ -208,8 +221,10 @@ class SupplierFormController extends StateNotifier<SupplierFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (supplier.name.trim().isEmpty) throw Exception('Please enter a supplier name.');
-      if (supplier.contactPerson.trim().isEmpty) throw Exception('Please enter contact person.');
+      if (supplier.name.trim().isEmpty)
+        throw Exception('Please enter a supplier name.');
+      if (supplier.contactPerson.trim().isEmpty)
+        throw Exception('Please enter contact person.');
 
       SupplierEntity saved;
       if (supplier.id.isEmpty) {
@@ -237,14 +252,15 @@ class SupplierFormController extends StateNotifier<SupplierFormState> {
       state = const SupplierFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = SupplierFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = SupplierFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
 }
 
-final supplierFormControllerProvider =
-    StateNotifierProvider.autoDispose<SupplierFormController, SupplierFormState>((ref) {
+final supplierFormControllerProvider = StateNotifierProvider.autoDispose<
+    SupplierFormController, SupplierFormState>((ref) {
   final repository = ref.watch(inventoryRepositoryProvider);
   return SupplierFormController(repository: repository, ref: ref);
 });
@@ -253,7 +269,8 @@ class SupplierListController extends StateNotifier<AsyncValue<void>> {
   final InventoryRepository _repository;
   final Ref _ref;
 
-  SupplierListController({required InventoryRepository repository, required Ref ref})
+  SupplierListController(
+      {required InventoryRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -292,7 +309,8 @@ class SupplierListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final supplierListControllerProvider =
-    StateNotifierProvider.autoDispose<SupplierListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<SupplierListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(inventoryRepositoryProvider);
   return SupplierListController(repository: repository, ref: ref);
 });
@@ -323,11 +341,13 @@ class InventoryTransactionState {
   }
 }
 
-class InventoryTransactionController extends StateNotifier<InventoryTransactionState> {
+class InventoryTransactionController
+    extends StateNotifier<InventoryTransactionState> {
   final InventoryRepository _repository;
   final Ref _ref;
 
-  InventoryTransactionController({required InventoryRepository repository, required Ref ref})
+  InventoryTransactionController(
+      {required InventoryRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const InventoryTransactionState());
@@ -339,8 +359,10 @@ class InventoryTransactionController extends StateNotifier<InventoryTransactionS
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (transaction.partId.isEmpty) throw Exception('Please select a spare part.');
-      if (transaction.quantity == 0) throw Exception('Quantity change must not be zero.');
+      if (transaction.partId.isEmpty)
+        throw Exception('Please select a spare part.');
+      if (transaction.quantity == 0)
+        throw Exception('Quantity change must not be zero.');
 
       // Fetch the part to update stock quantity
       final part = await _repository.getPartById(companyId, transaction.partId);
@@ -349,16 +371,20 @@ class InventoryTransactionController extends StateNotifier<InventoryTransactionS
       // Validate stock out / adjustment constraints
       final newQty = part.quantity + transaction.quantity;
       if (newQty < 0) {
-        throw Exception('Transaction failed. Out of stock! Available: ${part.quantity}.');
+        throw Exception(
+            'Transaction failed. Out of stock! Available: ${part.quantity}.');
       }
 
       // Record transaction
-      final savedTx = await _repository.createTransaction(companyId, transaction);
+      final savedTx =
+          await _repository.createTransaction(companyId, transaction);
 
       // Update part stock quantity
       final updatedPart = part.copyWith(
         quantity: newQty,
-        unitCost: transaction.type == 'stock_in' ? transaction.unitCost : part.unitCost,
+        unitCost: transaction.type == 'stock_in'
+            ? transaction.unitCost
+            : part.unitCost,
       );
       await _repository.updatePart(companyId, updatedPart);
 
@@ -373,7 +399,8 @@ class InventoryTransactionController extends StateNotifier<InventoryTransactionS
           amount: savedTx.totalCost,
           paymentMode: 'cash',
           referenceNumber: savedTx.id,
-          notes: 'Automated inventory stock-in expense: ${savedTx.quantity}x ${savedTx.partName}.',
+          notes:
+              'Automated inventory stock-in expense: ${savedTx.quantity}x ${savedTx.partName}.',
           transactionDate: savedTx.date,
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
@@ -401,7 +428,8 @@ class InventoryTransactionController extends StateNotifier<InventoryTransactionS
         entityType: 'inventory_tx',
         entityId: savedTx.id,
         action: 'inventory_transaction_recorded',
-        description: 'Inventory ${savedTx.type.toUpperCase()}: ${savedTx.quantity}x ${savedTx.partName}.',
+        description:
+            'Inventory ${savedTx.type.toUpperCase()}: ${savedTx.quantity}x ${savedTx.partName}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -411,14 +439,16 @@ class InventoryTransactionController extends StateNotifier<InventoryTransactionS
       state = const InventoryTransactionState(isCompleted: true);
       return true;
     } catch (e) {
-      state = InventoryTransactionState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = InventoryTransactionState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
 }
 
-final inventoryTransactionControllerProvider = StateNotifierProvider.autoDispose<
-    InventoryTransactionController, InventoryTransactionState>((ref) {
+final inventoryTransactionControllerProvider =
+    StateNotifierProvider.autoDispose<InventoryTransactionController,
+        InventoryTransactionState>((ref) {
   final repository = ref.watch(inventoryRepositoryProvider);
   return InventoryTransactionController(repository: repository, ref: ref);
 });

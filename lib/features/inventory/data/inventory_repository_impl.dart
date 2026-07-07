@@ -25,7 +25,9 @@ class InventoryRepositoryImpl implements InventoryRepository {
         .where('deletedAt', isNull: true)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => PartEntity.fromMap(doc.data())).toList();
+      return snapshot.docs
+          .map((doc) => PartEntity.fromMap(doc.data()))
+          .toList();
     });
   }
 
@@ -39,7 +41,9 @@ class InventoryRepositoryImpl implements InventoryRepository {
           .where('deletedAt', isNull: true)
           .get();
 
-      return snapshot.docs.map((doc) => PartEntity.fromMap(doc.data())).toList();
+      return snapshot.docs
+          .map((doc) => PartEntity.fromMap(doc.data()))
+          .toList();
     } catch (e) {
       throw ServerFailure(e.toString());
     }
@@ -151,7 +155,8 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<SupplierEntity?> getSupplierById(String companyId, String supplierId) async {
+  Future<SupplierEntity?> getSupplierById(
+      String companyId, String supplierId) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -167,7 +172,8 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<SupplierEntity> createSupplier(String companyId, SupplierEntity supplier) async {
+  Future<SupplierEntity> createSupplier(
+      String companyId, SupplierEntity supplier) async {
     try {
       final id = supplier.id.isEmpty ? _uuid.v4() : supplier.id;
       final newSupplier = supplier.copyWith(
@@ -237,7 +243,8 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<List<InventoryTransactionEntity>> getTransactions(String companyId) async {
+  Future<List<InventoryTransactionEntity>> getTransactions(
+      String companyId) async {
     try {
       final snapshot = await _firestore
           .collection('companies')

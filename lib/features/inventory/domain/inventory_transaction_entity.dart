@@ -4,7 +4,8 @@ class InventoryTransactionEntity {
   final String partId;
   final String partName;
   final String type; // stock_in, stock_out, adjustment
-  final int quantity; // change in quantity (can be negative for stock_out/adjustment)
+  final int
+      quantity; // change in quantity (can be negative for stock_out/adjustment)
   final double unitCost; // cost per unit (for stock_in/adjustment)
   final double totalCost; // quantity * unitCost
   final String? referenceId; // e.g. maintenance log ID or purchase order ID

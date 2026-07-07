@@ -58,7 +58,8 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by supplier name, contact person...',
+                          hintText:
+                              'Search by supplier name, contact person...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -88,15 +89,18 @@ class _SupplierListScreenState extends ConsumerState<SupplierListScreen> {
                               ? 'Get started by linking your first spare parts vendor supplier.'
                               : 'No suppliers match your search query.',
                           icon: Icons.business_rounded,
-                          actionText: _searchQuery.isEmpty ? 'Add Supplier' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Add Supplier' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/inventory/suppliers/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.4,
@@ -160,32 +164,40 @@ class _SupplierCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/inventory/suppliers/${supplier.id}/edit'),
+                      onPressed: () => context
+                          .push('/inventory/suppliers/${supplier.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Supplier'),
-                            content: const Text('Are you sure you want to delete this supplier profile?'),
+                            content: const Text(
+                                'Are you sure you want to delete this supplier profile?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
                           ),
                         );
                         if (confirmed == true) {
-                          ref.read(supplierListControllerProvider.notifier).deleteSupplier(supplier.id);
+                          ref
+                              .read(supplierListControllerProvider.notifier)
+                              .deleteSupplier(supplier.id);
                         }
                       },
                     ),

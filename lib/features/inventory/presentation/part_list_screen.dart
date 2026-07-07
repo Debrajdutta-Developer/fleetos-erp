@@ -43,8 +43,8 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
         ),
         data: (parts) {
           final filtered = parts.where((p) {
-            final matchesCategory =
-                _categoryFilter == 'All' || p.category.toLowerCase() == _categoryFilter.toLowerCase();
+            final matchesCategory = _categoryFilter == 'All' ||
+                p.category.toLowerCase() == _categoryFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
             final matchesQuery = p.name.toLowerCase().contains(query) ||
                 p.partNumber.toLowerCase().contains(query) ||
@@ -52,8 +52,10 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
             return matchesCategory && matchesQuery;
           }).toList();
 
-          final totalStockValue = parts.fold<double>(0.0, (s, p) => s + (p.quantity * p.unitCost));
-          final lowStockPartsCount = parts.where((p) => p.quantity <= p.minStockThreshold).length;
+          final totalStockValue =
+              parts.fold<double>(0.0, (s, p) => s + (p.quantity * p.unitCost));
+          final lowStockPartsCount =
+              parts.where((p) => p.quantity <= p.minStockThreshold).length;
 
           return Padding(
             padding: const EdgeInsets.all(24.0),
@@ -70,7 +72,8 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Total Stock Value', style: theme.textTheme.bodyMedium),
+                              Text('Total Stock Value',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '\$${totalStockValue.toStringAsFixed(2)}',
@@ -87,19 +90,24 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Card(
-                        color: lowStockPartsCount > 0 ? colorScheme.errorContainer : null,
+                        color: lowStockPartsCount > 0
+                            ? colorScheme.errorContainer
+                            : null,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Low Stock Alerts', style: theme.textTheme.bodyMedium),
+                              Text('Low Stock Alerts',
+                                  style: theme.textTheme.bodyMedium),
                               const SizedBox(height: 4),
                               Text(
                                 '$lowStockPartsCount parts',
                                 style: theme.textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: lowStockPartsCount > 0 ? colorScheme.error : null,
+                                  color: lowStockPartsCount > 0
+                                      ? colorScheme.error
+                                      : null,
                                 ),
                               ),
                             ],
@@ -116,7 +124,8 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by part name, part number, supplier...',
+                          hintText:
+                              'Search by part name, part number, supplier...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -138,8 +147,17 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      items: ['All', 'Engine', 'Brake', 'Tyre', 'Electrical', 'Lubricant', 'Other']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                      items: [
+                        'All',
+                        'Engine',
+                        'Brake',
+                        'Tyre',
+                        'Electrical',
+                        'Lubricant',
+                        'Other'
+                      ]
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -173,8 +191,10 @@ class _PartListScreenState extends ConsumerState<PartListScreen> {
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.35,
@@ -239,32 +259,40 @@ class _PartCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/inventory/${part.id}/edit'),
+                      onPressed: () =>
+                          context.push('/inventory/${part.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Part'),
-                            content: const Text('Are you sure you want to delete this spare part record?'),
+                            content: const Text(
+                                'Are you sure you want to delete this spare part record?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
                           ),
                         );
                         if (confirmed == true) {
-                          ref.read(partListControllerProvider.notifier).deletePart(part.id);
+                          ref
+                              .read(partListControllerProvider.notifier)
+                              .deletePart(part.id);
                         }
                       },
                     ),
@@ -280,14 +308,16 @@ class _PartCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Category', style: theme.textTheme.labelSmall),
-                    Text(part.category.toUpperCase(), style: theme.textTheme.titleMedium),
+                    Text(part.category.toUpperCase(),
+                        style: theme.textTheme.titleMedium),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Unit Cost', style: theme.textTheme.labelSmall),
-                    Text('\$${part.unitCost}', style: theme.textTheme.titleMedium),
+                    Text('\$${part.unitCost}',
+                        style: theme.textTheme.titleMedium),
                   ],
                 ),
                 Column(
@@ -305,7 +335,8 @@ class _PartCard extends ConsumerWidget {
                         ),
                         if (isLowStock) ...[
                           const SizedBox(width: 4),
-                          const Icon(Icons.warning_amber_rounded, size: 16, color: Colors.red),
+                          const Icon(Icons.warning_amber_rounded,
+                              size: 16, color: Colors.red),
                         ],
                       ],
                     ),
@@ -319,19 +350,24 @@ class _PartCard extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    part.supplierName != null ? 'Supplier: ${part.supplierName}' : 'No supplier linked',
+                    part.supplierName != null
+                        ? 'Supplier: ${part.supplierName}'
+                        : 'No supplier linked',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => context.push('/inventory/transactions/new?partId=${part.id}'),
+                  onPressed: () => context
+                      .push('/inventory/transactions/new?partId=${part.id}'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     visualDensity: VisualDensity.compact,
                   ),
-                  child: const Text('Adjust Stock', style: TextStyle(fontSize: 12)),
+                  child: const Text('Adjust Stock',
+                      style: TextStyle(fontSize: 12)),
                 ),
               ],
             ),

@@ -12,7 +12,8 @@ class TransactionFormScreen extends ConsumerStatefulWidget {
   const TransactionFormScreen({super.key, this.preSelectedPartId});
 
   @override
-  ConsumerState<TransactionFormScreen> createState() => _TransactionFormScreenState();
+  ConsumerState<TransactionFormScreen> createState() =>
+      _TransactionFormScreenState();
 }
 
 class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
@@ -55,7 +56,8 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     final qtyChange = int.parse(_qtyController.text.trim());
     final absoluteQty = _txType == 'stock_out' ? -qtyChange.abs() : qtyChange;
 
-    final double uCost = double.tryParse(_unitCostController.text.trim()) ?? 0.0;
+    final double uCost =
+        double.tryParse(_unitCostController.text.trim()) ?? 0.0;
 
     final tx = InventoryTransactionEntity(
       id: '',
@@ -72,8 +74,9 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(inventoryTransactionControllerProvider.notifier).recordTransaction(tx);
+    final success = await ref
+        .read(inventoryTransactionControllerProvider.notifier)
+        .recordTransaction(tx);
 
     if (success && mounted) {
       context.pop();
@@ -86,7 +89,9 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     final formState = ref.watch(inventoryTransactionControllerProvider);
     final parts = ref.watch(partsStreamProvider).valueOrNull ?? [];
 
-    if (_selectedPartId != null && parts.isNotEmpty && _selectedPartName == null) {
+    if (_selectedPartId != null &&
+        parts.isNotEmpty &&
+        _selectedPartName == null) {
       final matched = parts.firstWhere((p) => p.id == _selectedPartId);
       _selectedPartName = matched.name;
       _unitCostController.text = matched.unitCost.toString();
@@ -129,17 +134,21 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                       ),
                       items: parts
                           .map((p) => DropdownMenuItem(
-                              value: p.id, child: Text('${p.name} (${p.partNumber}) - Qty: ${p.quantity}')))
+                              value: p.id,
+                              child: Text(
+                                  '${p.name} (${p.partNumber}) - Qty: ${p.quantity}')))
                           .toList(),
                       onChanged: (val) {
                         setState(() {
                           _selectedPartId = val;
                           final matched = parts.firstWhere((p) => p.id == val);
                           _selectedPartName = matched.name;
-                          _unitCostController.text = matched.unitCost.toString();
+                          _unitCostController.text =
+                              matched.unitCost.toString();
                         });
                       },
-                      validator: (val) => val == null ? 'Select a spare part' : null,
+                      validator: (val) =>
+                          val == null ? 'Select a spare part' : null,
                     ),
                     const SizedBox(height: 16),
                     // Transaction Type
@@ -151,7 +160,9 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                       ),
                       items: ['stock_in', 'stock_out', 'adjustment']
                           .map((s) => DropdownMenuItem(
-                              value: s, child: Text(s.toUpperCase().replaceAll('_', ' '))))
+                              value: s,
+                              child:
+                                  Text(s.toUpperCase().replaceAll('_', ' '))))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -170,20 +181,23 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                         labelText: 'Quantity Change',
                         prefixIcon: Icon(Icons.add_road_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter quantity value' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter quantity value'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Cost per Unit
                     TextFormField(
                       controller: _unitCostController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Cost Price per Unit (\$)',
                         prefixIcon: Icon(Icons.attach_money_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter cost price' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter cost price'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Notes
@@ -193,16 +207,19 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                         labelText: 'Transaction Description / Notes',
                         prefixIcon: Icon(Icons.description_outlined),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter transaction description' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter transaction description'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Date
                     ListTile(
                       leading: const Icon(Icons.calendar_today_rounded),
                       title: const Text('Transaction Date'),
-                      subtitle: Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      subtitle:
+                          Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                      trailing:
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,

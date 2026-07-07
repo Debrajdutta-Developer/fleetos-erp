@@ -49,7 +49,8 @@ class MockInventoryRepository implements InventoryRepository {
 
   @override
   Future<PartEntity> createPart(String companyId, PartEntity part) async {
-    final newPart = part.id.isEmpty ? part.copyWith(id: const Uuid().v4()) : part;
+    final newPart =
+        part.id.isEmpty ? part.copyWith(id: const Uuid().v4()) : part;
     parts.add(newPart);
     return newPart;
   }
@@ -68,20 +69,26 @@ class MockInventoryRepository implements InventoryRepository {
   }
 
   @override
-  Stream<List<SupplierEntity>> watchSuppliers(String companyId) => Stream.value(suppliers);
+  Stream<List<SupplierEntity>> watchSuppliers(String companyId) =>
+      Stream.value(suppliers);
 
   @override
-  Future<List<SupplierEntity>> getSuppliers(String companyId) async => suppliers;
+  Future<List<SupplierEntity>> getSuppliers(String companyId) async =>
+      suppliers;
 
   @override
-  Future<SupplierEntity?> getSupplierById(String companyId, String supplierId) async {
+  Future<SupplierEntity?> getSupplierById(
+      String companyId, String supplierId) async {
     final list = suppliers.where((s) => s.id == supplierId).toList();
     return list.isNotEmpty ? list.first : null;
   }
 
   @override
-  Future<SupplierEntity> createSupplier(String companyId, SupplierEntity supplier) async {
-    final newSupplier = supplier.id.isEmpty ? supplier.copyWith(id: const Uuid().v4()) : supplier;
+  Future<SupplierEntity> createSupplier(
+      String companyId, SupplierEntity supplier) async {
+    final newSupplier = supplier.id.isEmpty
+        ? supplier.copyWith(id: const Uuid().v4())
+        : supplier;
     suppliers.add(newSupplier);
     return newSupplier;
   }
@@ -100,15 +107,21 @@ class MockInventoryRepository implements InventoryRepository {
   }
 
   @override
-  Stream<List<InventoryTransactionEntity>> watchTransactions(String companyId) => Stream.value(transactions);
+  Stream<List<InventoryTransactionEntity>> watchTransactions(
+          String companyId) =>
+      Stream.value(transactions);
 
   @override
-  Future<List<InventoryTransactionEntity>> getTransactions(String companyId) async => transactions;
+  Future<List<InventoryTransactionEntity>> getTransactions(
+          String companyId) async =>
+      transactions;
 
   @override
   Future<InventoryTransactionEntity> createTransaction(
       String companyId, InventoryTransactionEntity transaction) async {
-    final newTx = transaction.id.isEmpty ? transaction.copyWith(id: const Uuid().v4()) : transaction;
+    final newTx = transaction.id.isEmpty
+        ? transaction.copyWith(id: const Uuid().v4())
+        : transaction;
     transactions.add(newTx);
     return newTx;
   }
@@ -124,7 +137,8 @@ class MockTripRepository implements TripRepository {
   Future<List<TripEntity>> getTrips(String companyId) async => [];
 
   @override
-  Future<TripEntity?> getTripById(String companyId, String tripId) async => null;
+  Future<TripEntity?> getTripById(String companyId, String tripId) async =>
+      null;
 
   @override
   Future<TripEntity> createTrip(
@@ -134,48 +148,63 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<void> updateTripStatus(String companyId, String tripId, String newStatus, String cbId, String cbName, {String? notes}) async {}
+  Future<void> updateTripStatus(String companyId, String tripId,
+      String newStatus, String cbId, String cbName,
+      {String? notes}) async {}
 
   @override
-  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
+  Future<void> deleteTrip(
+      String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) => Stream.value([]);
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+          String companyId, String tripId) =>
+      Stream.value([]);
 
-  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) => Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) =>
+      Stream.value(auditLogs);
 }
 
 class MockFinanceRepository implements FinanceRepository {
   final List<FinanceTransactionEntity> txs = [];
 
   @override
-  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) => Stream.value(txs);
+  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) =>
+      Stream.value(txs);
 
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async => txs;
+  Future<List<FinanceTransactionEntity>> getTransactions(
+          String companyId) async =>
+      txs;
 
   @override
-  Future<FinanceTransactionEntity> createTransaction(
-      String companyId, FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
+  Future<FinanceTransactionEntity> createTransaction(String companyId,
+      FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
     txs.add(transaction);
     return transaction;
   }
 
   @override
-  Future<void> deleteTransaction(String companyId, String transactionId, AuditLogEntity auditLog) async {}
+  Future<void> deleteTransaction(
+      String companyId, String transactionId, AuditLogEntity auditLog) async {}
 }
 
 class MockFleetOpsRepository implements FleetOpsRepository {
   @override
-  Future<MaintenanceEntity> createMaintenanceLog(String companyId, MaintenanceEntity log) async => log;
+  Future<MaintenanceEntity> createMaintenanceLog(
+          String companyId, MaintenanceEntity log) async =>
+      log;
   @override
-  Future<void> updateMaintenanceLog(String companyId, MaintenanceEntity log) async {}
+  Future<void> updateMaintenanceLog(
+      String companyId, MaintenanceEntity log) async {}
   @override
   Future<void> deleteMaintenanceLog(String companyId, String logId) async {}
   @override
-  Stream<List<MaintenanceEntity>> watchMaintenanceLogs(String companyId) => Stream.value([]);
+  Stream<List<MaintenanceEntity>> watchMaintenanceLogs(String companyId) =>
+      Stream.value([]);
   @override
-  Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId) async => [];
+  Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId) async =>
+      [];
 
   // Implement remaining to satisfy interface
   @override
@@ -206,19 +235,27 @@ class MockVehicleRepository implements VehicleRepository {
 
   // Empty implementation to satisfy interface
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value([]);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value([]);
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => [];
   @override
-  Future<VehicleEntity?> getVehicleById(String companyId, String vehicleId) async => null;
+  Future<VehicleEntity?> getVehicleById(
+          String companyId, String vehicleId) async =>
+      null;
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async => vehicle;
+  Future<VehicleEntity> createVehicle(
+          String companyId, VehicleEntity vehicle) async =>
+      vehicle;
   @override
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {}
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, file) async => '';
+  Future<String> uploadComplianceDocument(
+          String companyId, String vehicleId, String docType, file) async =>
+      '';
 }
 
 void main() {
@@ -227,7 +264,8 @@ void main() {
 
     test('should save spare part details and write audit log', () async {
       final partsList = <PartEntity>[];
-      final inventoryRepo = MockInventoryRepository(parts: partsList, suppliers: [], transactions: []);
+      final inventoryRepo = MockInventoryRepository(
+          parts: partsList, suppliers: [], transactions: []);
       final tripRepo = MockTripRepository();
 
       final container = ProviderContainer(
@@ -271,7 +309,9 @@ void main() {
       expect(tripRepo.auditLogs.first.action, 'part_created');
     });
 
-    test('should record stock transaction, update quantity, and record finance ledger on stock_in', () async {
+    test(
+        'should record stock transaction, update quantity, and record finance ledger on stock_in',
+        () async {
       final initialPart = PartEntity(
         id: 'part_123',
         companyId: 'comp_1',
@@ -288,7 +328,8 @@ void main() {
 
       final partsList = <PartEntity>[initialPart];
       final txList = <InventoryTransactionEntity>[];
-      final inventoryRepo = MockInventoryRepository(parts: partsList, suppliers: [], transactions: txList);
+      final inventoryRepo = MockInventoryRepository(
+          parts: partsList, suppliers: [], transactions: txList);
       final tripRepo = MockTripRepository();
       final financeRepo = MockFinanceRepository();
 
@@ -310,7 +351,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(inventoryTransactionControllerProvider.notifier);
+      final controller =
+          container.read(inventoryTransactionControllerProvider.notifier);
       final tx = InventoryTransactionEntity(
         id: '',
         companyId: 'comp_1',
@@ -357,7 +399,8 @@ void main() {
 
       final partsList = <PartEntity>[initialPart];
       final txList = <InventoryTransactionEntity>[];
-      final inventoryRepo = MockInventoryRepository(parts: partsList, suppliers: [], transactions: txList);
+      final inventoryRepo = MockInventoryRepository(
+          parts: partsList, suppliers: [], transactions: txList);
       final tripRepo = MockTripRepository();
       final financeRepo = MockFinanceRepository();
       final fleetOpsRepo = MockFleetOpsRepository();
@@ -383,7 +426,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(maintenanceFormControllerProvider.notifier);
+      final controller =
+          container.read(maintenanceFormControllerProvider.notifier);
       final maint = MaintenanceEntity(
         id: '',
         companyId: 'comp_1',

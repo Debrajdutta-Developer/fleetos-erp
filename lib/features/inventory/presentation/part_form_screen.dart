@@ -75,7 +75,12 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
       description: _descriptionController.text.trim(),
       category: _category,
       quantity: widget.partId != null
-          ? ref.read(partsStreamProvider).valueOrNull?.firstWhere((p) => p.id == widget.partId).quantity ?? 0
+          ? ref
+                  .read(partsStreamProvider)
+                  .valueOrNull
+                  ?.firstWhere((p) => p.id == widget.partId)
+                  .quantity ??
+              0
           : 0,
       minStockThreshold: int.parse(_minStockThresholdController.text.trim()),
       unitCost: double.tryParse(_unitCostController.text.trim()) ?? 0.0,
@@ -85,7 +90,8 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success = await ref.read(partFormControllerProvider.notifier).savePart(part);
+    final success =
+        await ref.read(partFormControllerProvider.notifier).savePart(part);
 
     if (success && mounted) {
       context.pop();
@@ -140,8 +146,9 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
                         labelText: 'Part Number / SKU Code',
                         prefixIcon: Icon(Icons.qr_code_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter part number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter part number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Name
@@ -151,8 +158,9 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
                         labelText: 'Spare Part Name',
                         prefixIcon: Icon(Icons.settings_suggest_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter part name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter part name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Description
@@ -172,8 +180,16 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
                         labelText: 'Part Category',
                         prefixIcon: Icon(Icons.category_rounded),
                       ),
-                      items: ['engine', 'brake', 'tyre', 'electrical', 'lubricant', 'other']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
+                      items: [
+                        'engine',
+                        'brake',
+                        'tyre',
+                        'electrical',
+                        'lubricant',
+                        'other'
+                      ]
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.toUpperCase())))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -197,14 +213,16 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
                           child: Text('No Supplier Linked'),
                         ),
                         ...suppliers.map(
-                          (s) => DropdownMenuItem<String?>(value: s.id, child: Text(s.name)),
+                          (s) => DropdownMenuItem<String?>(
+                              value: s.id, child: Text(s.name)),
                         ),
                       ],
                       onChanged: (val) {
                         setState(() {
                           _selectedSupplierId = val;
-                          _selectedSupplierName =
-                              val != null ? suppliers.firstWhere((s) => s.id == val).name : null;
+                          _selectedSupplierName = val != null
+                              ? suppliers.firstWhere((s) => s.id == val).name
+                              : null;
                         });
                       },
                     ),
@@ -217,20 +235,23 @@ class _PartFormScreenState extends ConsumerState<PartFormScreen> {
                         labelText: 'Minimum Low-Stock Alert Threshold',
                         prefixIcon: Icon(Icons.notifications_active_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter low stock alert level' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter low stock alert level'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Unit Cost (Only for display / default value on purchase)
                     TextFormField(
                       controller: _unitCostController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Average Unit Purchase Cost (\$)',
                         prefixIcon: Icon(Icons.attach_money_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter part cost price' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter part cost price'
+                          : null,
                     ),
                     const SizedBox(height: 32),
                     CustomButton(

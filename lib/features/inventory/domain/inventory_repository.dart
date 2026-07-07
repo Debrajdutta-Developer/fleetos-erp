@@ -15,7 +15,8 @@ abstract class InventoryRepository {
   Stream<List<SupplierEntity>> watchSuppliers(String companyId);
   Future<List<SupplierEntity>> getSuppliers(String companyId);
   Future<SupplierEntity?> getSupplierById(String companyId, String supplierId);
-  Future<SupplierEntity> createSupplier(String companyId, SupplierEntity supplier);
+  Future<SupplierEntity> createSupplier(
+      String companyId, SupplierEntity supplier);
   Future<void> updateSupplier(String companyId, SupplierEntity supplier);
   Future<void> deleteSupplier(String companyId, String supplierId);
 

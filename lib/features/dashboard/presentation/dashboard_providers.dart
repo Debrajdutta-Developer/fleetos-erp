@@ -120,8 +120,10 @@ final dashboardStatsProvider =
 
   // 7. Spare Parts Inventory Statistics
   final totalPartsCount = parts.length;
-  final lowStockPartsCount = parts.where((p) => p.quantity <= p.minStockThreshold).length;
-  final totalStockValue = parts.fold<double>(0.0, (sum, p) => sum + (p.quantity * p.unitCost));
+  final lowStockPartsCount =
+      parts.where((p) => p.quantity <= p.minStockThreshold).length;
+  final totalStockValue =
+      parts.fold<double>(0.0, (sum, p) => sum + (p.quantity * p.unitCost));
 
   return AsyncValue.data(DashboardStats(
     activeFleetCount: activeFleetCount,

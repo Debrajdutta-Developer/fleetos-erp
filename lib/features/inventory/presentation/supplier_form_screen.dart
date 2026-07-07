@@ -72,8 +72,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(supplierFormControllerProvider.notifier).saveSupplier(supplier);
+    final success = await ref
+        .read(supplierFormControllerProvider.notifier)
+        .saveSupplier(supplier);
 
     if (success && mounted) {
       context.pop();
@@ -127,8 +128,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         labelText: 'Supplier Company Name',
                         prefixIcon: Icon(Icons.business_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter supplier name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter supplier name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Contact Person
@@ -138,8 +140,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         labelText: 'Contact Person Name',
                         prefixIcon: Icon(Icons.person_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter contact person name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter contact person name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Phone
@@ -149,8 +152,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         labelText: 'Phone Number',
                         prefixIcon: Icon(Icons.phone_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter phone number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter phone number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Email
@@ -160,8 +164,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         labelText: 'Email Address',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter email address' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter email address'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     // Address
@@ -172,8 +177,9 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
                         labelText: 'Physical Address',
                         prefixIcon: Icon(Icons.location_on_outlined),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter supplier address' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter supplier address'
+                          : null,
                     ),
                     const SizedBox(height: 32),
                     CustomButton(
