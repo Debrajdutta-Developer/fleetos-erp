@@ -8,6 +8,7 @@ import 'package:fleet_os_erp/features/dashboard/presentation/dashboard_providers
 import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart';
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/vendors/presentation/vendor_providers.dart';
+import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
 
 void main() {
   group('Dashboard Stats Provider Tests', () {
@@ -119,6 +120,7 @@ void main() {
           driversStreamProvider.overrideWith((ref) => Stream.value([])),
           customersStreamProvider.overrideWith((ref) => Stream.value([])),
           vendorsStreamProvider.overrideWith((ref) => Stream.value([])),
+          partsStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
 
@@ -128,6 +130,7 @@ void main() {
       await container.read(driversStreamProvider.future);
       await container.read(customersStreamProvider.future);
       await container.read(vendorsStreamProvider.future);
+      await container.read(partsStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
@@ -152,6 +155,11 @@ void main() {
       // 5. Verify customer and vendor counts
       expect(stats.totalCustomersCount, 0);
       expect(stats.totalVendorsCount, 0);
+
+      // 6. Verify inventory statistics
+      expect(stats.totalPartsCount, 0);
+      expect(stats.lowStockPartsCount, 0);
+      expect(stats.totalStockValue, 0.0);
     });
   });
 }
