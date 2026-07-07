@@ -3,26 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../lib/features/auth/domain/user_entity.dart';
-import '../../../lib/features/auth/presentation/auth_providers.dart';
-import '../../../lib/features/inventory/domain/part_entity.dart';
-import '../../../lib/features/inventory/domain/supplier_entity.dart';
-import '../../../lib/features/inventory/domain/inventory_transaction_entity.dart';
-import '../../../lib/features/inventory/domain/inventory_repository.dart';
-import '../../../lib/features/inventory/presentation/inventory_providers.dart';
-import '../../../lib/features/finance/domain/finance_transaction_entity.dart';
-import '../../../lib/features/finance/domain/finance_repository.dart';
-import '../../../lib/features/finance/presentation/finance_providers.dart';
-import '../../../lib/features/trips/domain/audit_log_entity.dart';
-import '../../../lib/features/trips/domain/trip_entity.dart';
-import '../../../lib/features/trips/domain/trip_repository.dart';
-import '../../../lib/features/trips/presentation/trip_providers.dart';
-import '../../../lib/features/fleet_ops/domain/maintenance_entity.dart';
-import '../../../lib/features/fleet_ops/domain/fleet_ops_repository.dart';
-import '../../../lib/features/fleet_ops/presentation/fleet_ops_providers.dart';
-import '../../../lib/features/vehicles/domain/vehicle_entity.dart';
-import '../../../lib/features/vehicles/domain/vehicle_repository.dart';
-import '../../../lib/features/vehicles/presentation/vehicle_providers.dart';
+import 'package:fleet_os_erp/features/auth/domain/user_entity.dart';
+import 'package:fleet_os_erp/features/auth/presentation/auth_providers.dart';
+import 'package:fleet_os_erp/features/inventory/domain/part_entity.dart';
+import 'package:fleet_os_erp/features/inventory/domain/supplier_entity.dart';
+import 'package:fleet_os_erp/features/inventory/domain/inventory_transaction_entity.dart';
+import 'package:fleet_os_erp/features/inventory/domain/inventory_repository.dart';
+import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
+import 'package:fleet_os_erp/features/finance/domain/finance_transaction_entity.dart';
+import 'package:fleet_os_erp/features/finance/domain/finance_repository.dart';
+import 'package:fleet_os_erp/features/finance/presentation/finance_providers.dart';
+import 'package:fleet_os_erp/features/trips/domain/audit_log_entity.dart';
+import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
+import 'package:fleet_os_erp/features/trips/domain/trip_repository.dart';
+import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
+import 'package:fleet_os_erp/features/fleet_ops/domain/maintenance_entity.dart';
+import 'package:fleet_os_erp/features/fleet_ops/domain/fuel_entity.dart';
+import 'package:fleet_os_erp/features/fleet_ops/domain/compliance_entity.dart';
+import 'package:fleet_os_erp/features/fleet_ops/domain/fleet_ops_repository.dart';
+import 'package:fleet_os_erp/features/fleet_ops/presentation/fleet_ops_providers.dart';
+import 'package:fleet_os_erp/features/vehicles/domain/vehicle_entity.dart';
+import 'package:fleet_os_erp/features/vehicles/domain/vehicle_repository.dart';
+import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
 
 class MockInventoryRepository implements InventoryRepository {
   final List<PartEntity> parts;
@@ -187,6 +189,15 @@ class MockFinanceRepository implements FinanceRepository {
   @override
   Future<void> deleteTransaction(
       String companyId, String transactionId, AuditLogEntity auditLog) async {}
+
+  @override
+  Future<FinanceTransactionEntity?> getTransactionById(
+    String companyId,
+    String transactionId,
+  ) async => null;
+
+  @override
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value([]);
 }
 
 class MockFleetOpsRepository implements FleetOpsRepository {
