@@ -579,6 +579,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   onTap: () => context.push('/vendors'),
                 ),
                 _SidebarNavItem(
+                  icon: Icons.local_gas_station_rounded,
+                  label: 'Fuel Registry',
+                  onTap: () => context.push('/fuel'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.build_rounded,
+                  label: 'Maintenance Logs',
+                  onTap: () => context.push('/maintenance'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.verified_user_rounded,
+                  label: 'Compliance Docs',
+                  onTap: () => context.push('/compliance'),
+                ),
+                _SidebarNavItem(
                   icon: Icons.settings_outlined,
                   label: 'ERP Settings',
                 ),
@@ -736,6 +751,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/vendors');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.local_gas_station_rounded),
+                    title: const Text('Fuel Registry'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/fuel');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.build_rounded),
+                    title: const Text('Maintenance Logs'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/maintenance');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.verified_user_rounded),
+                    title: const Text('Compliance Docs'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/compliance');
                     },
                   ),
                   const ListTile(

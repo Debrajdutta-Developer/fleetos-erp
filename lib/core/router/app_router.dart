@@ -23,6 +23,12 @@ import '../../features/customers/presentation/customer_list_screen.dart';
 import '../../features/customers/presentation/customer_form_screen.dart';
 import '../../features/vendors/presentation/vendor_list_screen.dart';
 import '../../features/vendors/presentation/vendor_form_screen.dart';
+import '../../features/fleet_ops/presentation/fuel_list_screen.dart';
+import '../../features/fleet_ops/presentation/fuel_form_screen.dart';
+import '../../features/fleet_ops/presentation/maintenance_list_screen.dart';
+import '../../features/fleet_ops/presentation/maintenance_form_screen.dart';
+import '../../features/fleet_ops/presentation/compliance_list_screen.dart';
+import '../../features/fleet_ops/presentation/compliance_form_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -175,6 +181,51 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return VendorFormScreen(vendorId: id);
+        },
+      ),
+      GoRoute(
+        path: '/fuel',
+        builder: (context, state) => const FuelListScreen(),
+      ),
+      GoRoute(
+        path: '/fuel/new',
+        builder: (context, state) => const FuelFormScreen(),
+      ),
+      GoRoute(
+        path: '/fuel/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return FuelFormScreen(fuelLogId: id);
+        },
+      ),
+      GoRoute(
+        path: '/maintenance',
+        builder: (context, state) => const MaintenanceListScreen(),
+      ),
+      GoRoute(
+        path: '/maintenance/new',
+        builder: (context, state) => const MaintenanceFormScreen(),
+      ),
+      GoRoute(
+        path: '/maintenance/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return MaintenanceFormScreen(maintLogId: id);
+        },
+      ),
+      GoRoute(
+        path: '/compliance',
+        builder: (context, state) => const ComplianceListScreen(),
+      ),
+      GoRoute(
+        path: '/compliance/new',
+        builder: (context, state) => const ComplianceFormScreen(),
+      ),
+      GoRoute(
+        path: '/compliance/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ComplianceFormScreen(complianceId: id);
         },
       ),
     ],
