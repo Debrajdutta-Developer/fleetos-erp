@@ -206,27 +206,26 @@ class MockFleetOpsRepository implements FleetOpsRepository {
   Future<List<MaintenanceEntity>> getMaintenanceLogs(String companyId) async =>
       [];
 
-  // Implement remaining to satisfy interface
   @override
-  Future createFuelLog(c, f) async => f;
+  Future<FuelEntity> createFuelLog(String companyId, FuelEntity fuelLog) async => fuelLog;
   @override
-  Future updateFuelLog(c, f) async {}
+  Future<void> updateFuelLog(String companyId, FuelEntity fuelLog) async {}
   @override
-  Future deleteFuelLog(c, id) async {}
+  Future<void> deleteFuelLog(String companyId, String fuelLogId) async {}
   @override
-  Stream watchFuelLogs(c) => Stream.value([]);
+  Stream<List<FuelEntity>> watchFuelLogs(String companyId) => Stream.value([]);
   @override
-  Future getFuelLogs(c) async => [];
+  Future<List<FuelEntity>> getFuelLogs(String companyId) async => [];
   @override
-  Future createComplianceDocument(c, d) async => d;
+  Future<ComplianceEntity> createComplianceDocument(String companyId, ComplianceEntity document) async => document;
   @override
-  Future updateComplianceDocument(c, d) async {}
+  Future<void> updateComplianceDocument(String companyId, ComplianceEntity document) async {}
   @override
-  Future deleteComplianceDocument(c, id) async {}
+  Future<void> deleteComplianceDocument(String companyId, String documentId) async {}
   @override
-  Stream watchComplianceDocuments(c) => Stream.value([]);
+  Stream<List<ComplianceEntity>> watchComplianceDocuments(String companyId) => Stream.value([]);
   @override
-  Future getComplianceDocuments(c) async => [];
+  Future<List<ComplianceEntity>> getComplianceDocuments(String companyId) async => [];
 }
 
 class MockVehicleRepository implements VehicleRepository {
@@ -240,22 +239,14 @@ class MockVehicleRepository implements VehicleRepository {
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => [];
   @override
-  Future<VehicleEntity?> getVehicleById(
-          String companyId, String vehicleId) async =>
-      null;
-  @override
-  Future<VehicleEntity> createVehicle(
-          String companyId, VehicleEntity vehicle) async =>
-      vehicle;
+  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async => vehicle;
   @override
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
   @override
   Future<void> assignDriver(String companyId, String vehicleId,
       String? driverId, String? driverName) async {}
   @override
-  Future<String> uploadComplianceDocument(
-          String companyId, String vehicleId, String docType, file) async =>
-      '';
+  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, dynamic file) async => '';
 }
 
 void main() {
