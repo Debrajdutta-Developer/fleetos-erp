@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
-import '../../vehicles/domain/vehicle_entity.dart';
 import '../../drivers/presentation/driver_providers.dart';
-import '../../drivers/domain/driver_entity.dart';
 import '../domain/fuel_entity.dart';
 import 'fleet_ops_providers.dart';
 

@@ -255,9 +255,7 @@ class MockTripRepository implements TripRepository {
           String companyId, String tripId) =>
       Stream.value([]);
 
-  @override
-  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) =>
-      Stream.value(auditLogs);
+  Stream<List<AuditLogEntity>> watchAuditLogs(String companyId) => Stream.value(auditLogs);
 }
 
 void main() {
@@ -266,13 +264,17 @@ void main() {
 
     final tVehicle = VehicleEntity(
       id: 'veh_1',
+      vin: 'VIN123456789',
       licensePlate: 'ABC-123',
-      modelName: 'Tesla Semi',
-      totalCapacity: 25.0,
+      make: 'Tesla',
+      model: 'Semi',
+      year: 2024,
+      status: 'available',
+      fuelType: 'electric',
+      odometer: 10000.0,
       insuranceExpiry: now,
       pucExpiry: now,
       fitnessExpiry: now,
-      status: 'available',
       createdAt: now,
       updatedAt: now,
     );

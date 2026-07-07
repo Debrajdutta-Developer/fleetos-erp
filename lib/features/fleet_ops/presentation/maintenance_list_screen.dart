@@ -239,7 +239,6 @@ class _MaintenanceCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final dateStr = DateFormat('dd MMM yyyy').format(log.date);
 
     return Card(
