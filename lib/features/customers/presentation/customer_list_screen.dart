@@ -59,7 +59,8 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by customer name, contact, phone...',
+                          hintText:
+                              'Search by customer name, contact, phone...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -89,15 +90,18 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
                               ? 'Get started by onboarding your first Billed Corporate Customer.'
                               : 'No customers match your search query.',
                           icon: Icons.people_outline_rounded,
-                          actionText: _searchQuery.isEmpty ? 'Add Customer' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Add Customer' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/customers/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.5,
@@ -163,25 +167,31 @@ class _CustomerCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/customers/${customer.id}/edit'),
+                      onPressed: () =>
+                          context.push('/customers/${customer.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Customer'),
-                            content: Text('Are you sure you want to delete ${customer.name}?'),
+                            content: Text(
+                                'Are you sure you want to delete ${customer.name}?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],

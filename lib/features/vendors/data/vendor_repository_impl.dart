@@ -65,7 +65,8 @@ class VendorRepositoryImpl implements VendorRepository {
   }
 
   @override
-  Future<VendorEntity> createVendor(String companyId, VendorEntity vendor) async {
+  Future<VendorEntity> createVendor(
+      String companyId, VendorEntity vendor) async {
     try {
       final id = vendor.id.isEmpty ? _uuid.v4() : vendor.id;
       final newVendor = vendor.copyWith(

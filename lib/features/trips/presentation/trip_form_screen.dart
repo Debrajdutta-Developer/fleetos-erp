@@ -44,8 +44,6 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
   // Selected vehicle permit date for rule testing
   DateTime? _selectedVehiclePermitExpiry;
 
-
-
   @override
   void initState() {
     super.initState();
@@ -253,7 +251,9 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
 
     final drivers = driversAsync.valueOrNull ?? [];
     final customers = customersAsync.valueOrNull ?? [];
-    final List<DriverEntity> eligibleDrivers = drivers.where((d) => d.status == 'available' || d.id == _selectedDriverId).toList();
+    final List<DriverEntity> eligibleDrivers = drivers
+        .where((d) => d.status == 'available' || d.id == _selectedDriverId)
+        .toList();
     final List<CustomerEntity> eligibleCustomers = customers;
 
     return Scaffold(
@@ -475,9 +475,11 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedDriverId = id;
-                                      _selectedDriverName = eligibleDrivers.firstWhere(
-                                        (d) => d.id == id,
-                                      ).fullName;
+                                      _selectedDriverName = eligibleDrivers
+                                          .firstWhere(
+                                            (d) => d.id == id,
+                                          )
+                                          .fullName;
                                     });
                                   },
                                   decoration: const InputDecoration(
@@ -506,10 +508,11 @@ class _TripFormScreenState extends ConsumerState<TripFormScreen> {
                                   onChanged: (id) {
                                     setState(() {
                                       _selectedCustomerId = id;
-                                      _selectedCustomerName =
-                                          eligibleCustomers.firstWhere(
-                                        (c) => c.id == id,
-                                      ).name;
+                                      _selectedCustomerName = eligibleCustomers
+                                          .firstWhere(
+                                            (c) => c.id == id,
+                                          )
+                                          .name;
                                     });
                                   },
                                   decoration: const InputDecoration(

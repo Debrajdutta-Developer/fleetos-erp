@@ -64,7 +64,8 @@ class MockTripRepository implements TripRepository {
   Future<List<TripEntity>> getTrips(String companyId) async => [];
 
   @override
-  Future<TripEntity?> getTripById(String companyId, String tripId) async => null;
+  Future<TripEntity?> getTripById(String companyId, String tripId) async =>
+      null;
 
   @override
   Future<TripEntity> createTrip(

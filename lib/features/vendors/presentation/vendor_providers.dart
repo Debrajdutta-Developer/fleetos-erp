@@ -11,7 +11,8 @@ final vendorRepositoryProvider = Provider<VendorRepository>((ref) {
   return VendorRepositoryImpl();
 });
 
-final vendorsStreamProvider = StreamProvider.autoDispose<List<VendorEntity>>((ref) {
+final vendorsStreamProvider =
+    StreamProvider.autoDispose<List<VendorEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(vendorRepositoryProvider).watchVendors(user!.companyId!);
@@ -57,8 +58,10 @@ class VendorFormController extends StateNotifier<VendorFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (vendor.name.trim().isEmpty) throw Exception('Vendor name cannot be empty.');
-      if (vendor.phone.trim().isEmpty) throw Exception('Phone number cannot be empty.');
+      if (vendor.name.trim().isEmpty)
+        throw Exception('Vendor name cannot be empty.');
+      if (vendor.phone.trim().isEmpty)
+        throw Exception('Phone number cannot be empty.');
 
       VendorEntity savedVendor;
       if (vendor.id.isEmpty) {
@@ -88,7 +91,8 @@ class VendorFormController extends StateNotifier<VendorFormState> {
       state = const VendorFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = VendorFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = VendorFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -119,7 +123,8 @@ TripEntity _dummyTrip(String companyId) {
 }
 
 final vendorFormControllerProvider =
-    StateNotifierProvider.autoDispose<VendorFormController, VendorFormState>((ref) {
+    StateNotifierProvider.autoDispose<VendorFormController, VendorFormState>(
+        (ref) {
   final repository = ref.watch(vendorRepositoryProvider);
   return VendorFormController(repository: repository, ref: ref);
 });
@@ -167,7 +172,8 @@ class VendorListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final vendorListControllerProvider =
-    StateNotifierProvider.autoDispose<VendorListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<VendorListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(vendorRepositoryProvider);
   return VendorListController(repository: repository, ref: ref);
 });

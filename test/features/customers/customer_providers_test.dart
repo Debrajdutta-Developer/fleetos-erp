@@ -19,10 +19,12 @@ class MockCustomerRepository implements CustomerRepository {
       Stream.value(customers);
 
   @override
-  Future<List<CustomerEntity>> getCustomers(String companyId) async => customers;
+  Future<List<CustomerEntity>> getCustomers(String companyId) async =>
+      customers;
 
   @override
-  Future<CustomerEntity?> getCustomerById(String companyId, String customerId) async {
+  Future<CustomerEntity?> getCustomerById(
+      String companyId, String customerId) async {
     try {
       return customers.firstWhere((c) => c.id == customerId);
     } catch (_) {
@@ -64,7 +66,8 @@ class MockTripRepository implements TripRepository {
   Future<List<TripEntity>> getTrips(String companyId) async => [];
 
   @override
-  Future<TripEntity?> getTripById(String companyId, String tripId) async => null;
+  Future<TripEntity?> getTripById(String companyId, String tripId) async =>
+      null;
 
   @override
   Future<TripEntity> createTrip(
@@ -109,7 +112,8 @@ void main() {
     ];
 
     test('should save customer and write audit logs successfully', () async {
-      final customerRepo = MockCustomerRepository(customers: List.from(tCustomers));
+      final customerRepo =
+          MockCustomerRepository(customers: List.from(tCustomers));
       final tripRepo = MockTripRepository();
 
       final container = ProviderContainer(
@@ -129,7 +133,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(customerFormControllerProvider.notifier);
+      final controller =
+          container.read(customerFormControllerProvider.notifier);
       final newCustomer = CustomerEntity(
         id: '',
         name: 'Amazon Retail Inc.',
@@ -152,7 +157,8 @@ void main() {
 
     test('should soft-delete customer and write delete audit log successfully',
         () async {
-      final customerRepo = MockCustomerRepository(customers: List.from(tCustomers));
+      final customerRepo =
+          MockCustomerRepository(customers: List.from(tCustomers));
       final tripRepo = MockTripRepository();
 
       final container = ProviderContainer(
@@ -172,7 +178,8 @@ void main() {
         ],
       );
 
-      final controller = container.read(customerListControllerProvider.notifier);
+      final controller =
+          container.read(customerListControllerProvider.notifier);
       final result = await controller.deleteCustomer('cust_1');
 
       expect(result, true);

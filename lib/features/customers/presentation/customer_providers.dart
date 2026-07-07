@@ -11,7 +11,8 @@ final customerRepositoryProvider = Provider<CustomerRepository>((ref) {
   return CustomerRepositoryImpl();
 });
 
-final customersStreamProvider = StreamProvider.autoDispose<List<CustomerEntity>>((ref) {
+final customersStreamProvider =
+    StreamProvider.autoDispose<List<CustomerEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(customerRepositoryProvider).watchCustomers(user!.companyId!);
@@ -45,7 +46,8 @@ class CustomerFormController extends StateNotifier<CustomerFormState> {
   final CustomerRepository _repository;
   final Ref _ref;
 
-  CustomerFormController({required CustomerRepository repository, required Ref ref})
+  CustomerFormController(
+      {required CustomerRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const CustomerFormState());
@@ -57,8 +59,10 @@ class CustomerFormController extends StateNotifier<CustomerFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      if (customer.name.trim().isEmpty) throw Exception('Customer name cannot be empty.');
-      if (customer.phone.trim().isEmpty) throw Exception('Phone number cannot be empty.');
+      if (customer.name.trim().isEmpty)
+        throw Exception('Customer name cannot be empty.');
+      if (customer.phone.trim().isEmpty)
+        throw Exception('Phone number cannot be empty.');
 
       CustomerEntity savedCustomer;
       if (customer.id.isEmpty) {
@@ -88,7 +92,8 @@ class CustomerFormController extends StateNotifier<CustomerFormState> {
       state = const CustomerFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = CustomerFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = CustomerFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -118,8 +123,8 @@ TripEntity _dummyTrip(String companyId) {
   );
 }
 
-final customerFormControllerProvider =
-    StateNotifierProvider.autoDispose<CustomerFormController, CustomerFormState>((ref) {
+final customerFormControllerProvider = StateNotifierProvider.autoDispose<
+    CustomerFormController, CustomerFormState>((ref) {
   final repository = ref.watch(customerRepositoryProvider);
   return CustomerFormController(repository: repository, ref: ref);
 });
@@ -128,7 +133,8 @@ class CustomerListController extends StateNotifier<AsyncValue<void>> {
   final CustomerRepository _repository;
   final Ref _ref;
 
-  CustomerListController({required CustomerRepository repository, required Ref ref})
+  CustomerListController(
+      {required CustomerRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -167,7 +173,8 @@ class CustomerListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final customerListControllerProvider =
-    StateNotifierProvider.autoDispose<CustomerListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<CustomerListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(customerRepositoryProvider);
   return CustomerListController(repository: repository, ref: ref);
 });

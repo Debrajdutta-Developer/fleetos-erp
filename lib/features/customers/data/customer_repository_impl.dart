@@ -46,7 +46,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<CustomerEntity?> getCustomerById(String companyId, String customerId) async {
+  Future<CustomerEntity?> getCustomerById(
+      String companyId, String customerId) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -65,7 +66,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<CustomerEntity> createCustomer(String companyId, CustomerEntity customer) async {
+  Future<CustomerEntity> createCustomer(
+      String companyId, CustomerEntity customer) async {
     try {
       final id = customer.id.isEmpty ? _uuid.v4() : customer.id;
       final newCustomer = customer.copyWith(

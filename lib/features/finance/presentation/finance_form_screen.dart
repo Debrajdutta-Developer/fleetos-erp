@@ -537,67 +537,67 @@ class _FinanceFormScreenState extends ConsumerState<FinanceFormScreen> {
                                 ),
                                 const SizedBox(height: 16),
 
-                                 if (_selectedType == 'expense') ...[
-                                   vendorsAsync.when(
-                                     loading: () => const Center(
-                                       child: CircularProgressIndicator(),
-                                     ),
-                                     error: (err, _) =>
-                                         Text('Error loading vendors: $err'),
-                                     data: (vendors) {
-                                       return DropdownButtonFormField<String?>(
-                                         value: _selectedVendorId != null &&
-                                                 vendors.any(
-                                                   (v) =>
-                                                       v.id == _selectedVendorId,
-                                                 )
-                                             ? _selectedVendorId
-                                             : null,
-                                         hint: const Text(
-                                           'Do not link to a vendor',
-                                         ),
-                                         items: [
-                                           const DropdownMenuItem<String?>(
-                                             value: null,
-                                             child: Text(
-                                               'Not Associated to Vendor',
-                                             ),
-                                           ),
-                                           ...vendors.map(
-                                             (v) => DropdownMenuItem<String?>(
-                                               value: v.id,
-                                               child: Text(
-                                                 '${v.name} (${v.serviceType.toUpperCase()})',
-                                               ),
-                                             ),
-                                           ),
-                                         ],
-                                         onChanged: (val) {
-                                           setState(() {
-                                             _selectedVendorId = val;
-                                             if (val != null) {
-                                               _selectedVendorName = vendors
-                                                   .firstWhere(
-                                                     (v) => v.id == val,
-                                                   )
-                                                   .name;
-                                             } else {
-                                               _selectedVendorName = null;
-                                             }
-                                           });
-                                         },
-                                         decoration: const InputDecoration(
-                                           labelText:
-                                               'Associated Vendor Allocation (Optional)',
-                                           prefixIcon: Icon(
-                                             Icons.business_outlined,
-                                           ),
-                                         ),
-                                       );
-                                     },
-                                   ),
-                                   const SizedBox(height: 16),
-                                 ],
+                                if (_selectedType == 'expense') ...[
+                                  vendorsAsync.when(
+                                    loading: () => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    error: (err, _) =>
+                                        Text('Error loading vendors: $err'),
+                                    data: (vendors) {
+                                      return DropdownButtonFormField<String?>(
+                                        value: _selectedVendorId != null &&
+                                                vendors.any(
+                                                  (v) =>
+                                                      v.id == _selectedVendorId,
+                                                )
+                                            ? _selectedVendorId
+                                            : null,
+                                        hint: const Text(
+                                          'Do not link to a vendor',
+                                        ),
+                                        items: [
+                                          const DropdownMenuItem<String?>(
+                                            value: null,
+                                            child: Text(
+                                              'Not Associated to Vendor',
+                                            ),
+                                          ),
+                                          ...vendors.map(
+                                            (v) => DropdownMenuItem<String?>(
+                                              value: v.id,
+                                              child: Text(
+                                                '${v.name} (${v.serviceType.toUpperCase()})',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        onChanged: (val) {
+                                          setState(() {
+                                            _selectedVendorId = val;
+                                            if (val != null) {
+                                              _selectedVendorName = vendors
+                                                  .firstWhere(
+                                                    (v) => v.id == val,
+                                                  )
+                                                  .name;
+                                            } else {
+                                              _selectedVendorName = null;
+                                            }
+                                          });
+                                        },
+                                        decoration: const InputDecoration(
+                                          labelText:
+                                              'Associated Vendor Allocation (Optional)',
+                                          prefixIcon: Icon(
+                                            Icons.business_outlined,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                ],
 
                                 // Notes
                                 CustomTextField(

@@ -43,8 +43,8 @@ class _VendorListScreenState extends ConsumerState<VendorListScreen> {
         ),
         data: (vendors) {
           final filtered = vendors.where((v) {
-            final matchesType =
-                _typeFilter == 'All' || v.serviceType == _typeFilter.toLowerCase();
+            final matchesType = _typeFilter == 'All' ||
+                v.serviceType == _typeFilter.toLowerCase();
             final query = _searchQuery.toLowerCase();
             final matchesQuery = v.name.toLowerCase().contains(query) ||
                 v.phone.contains(query) ||
@@ -84,8 +84,16 @@ class _VendorListScreenState extends ConsumerState<VendorListScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      items: ['All', 'Fuel', 'Maintenance', 'Parts', 'Permit', 'Miscellaneous']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                      items: [
+                        'All',
+                        'Fuel',
+                        'Maintenance',
+                        'Parts',
+                        'Permit',
+                        'Miscellaneous'
+                      ]
+                          .map(
+                              (s) => DropdownMenuItem(value: s, child: Text(s)))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -112,15 +120,18 @@ class _VendorListScreenState extends ConsumerState<VendorListScreen> {
                               ? 'Get started by onboarding your first Service/Goods Vendor.'
                               : 'No vendors match your search query.',
                           icon: Icons.business_rounded,
-                          actionText: _searchQuery.isEmpty ? 'Add Vendor' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Add Vendor' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/vendors/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.5,
@@ -174,7 +185,8 @@ class _VendorCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: colorScheme.primary.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(4),
@@ -195,32 +207,40 @@ class _VendorCard extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/vendors/${vendor.id}/edit'),
+                      onPressed: () =>
+                          context.push('/vendors/${vendor.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Delete Vendor'),
-                            content: Text('Are you sure you want to delete ${vendor.name}?'),
+                            content: Text(
+                                'Are you sure you want to delete ${vendor.name}?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red, foregroundColor: Colors.white),
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white),
                                 child: const Text('Delete'),
                               ),
                             ],
                           ),
                         );
                         if (confirmed == true) {
-                          ref.read(vendorListControllerProvider.notifier).deleteVendor(vendor.id);
+                          ref
+                              .read(vendorListControllerProvider.notifier)
+                              .deleteVendor(vendor.id);
                         }
                       },
                     ),

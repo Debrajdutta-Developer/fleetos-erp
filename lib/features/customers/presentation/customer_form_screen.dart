@@ -71,8 +71,9 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(customerFormControllerProvider.notifier).saveCustomer(customer);
+    final success = await ref
+        .read(customerFormControllerProvider.notifier)
+        .saveCustomer(customer);
 
     if (success && mounted) {
       context.pop();
@@ -125,8 +126,9 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                         labelText: 'Customer Corporate Name',
                         prefixIcon: Icon(Icons.business_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter customer corporate name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter customer corporate name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -144,8 +146,9 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                         labelText: 'Phone Number',
                         prefixIcon: Icon(Icons.phone_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter phone number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter phone number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(

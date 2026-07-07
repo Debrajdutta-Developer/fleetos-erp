@@ -70,8 +70,9 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    final success =
-        await ref.read(vendorFormControllerProvider.notifier).saveVendor(vendor);
+    final success = await ref
+        .read(vendorFormControllerProvider.notifier)
+        .saveVendor(vendor);
 
     if (success && mounted) {
       context.pop();
@@ -124,8 +125,9 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                         labelText: 'Vendor Name',
                         prefixIcon: Icon(Icons.business_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter vendor name' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter vendor name'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
@@ -134,8 +136,15 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                         labelText: 'Service/Goods Type',
                         prefixIcon: Icon(Icons.info_outline_rounded),
                       ),
-                      items: ['fuel', 'maintenance', 'parts', 'permit', 'miscellaneous']
-                          .map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase())))
+                      items: [
+                        'fuel',
+                        'maintenance',
+                        'parts',
+                        'permit',
+                        'miscellaneous'
+                      ]
+                          .map((s) => DropdownMenuItem(
+                              value: s, child: Text(s.toUpperCase())))
                           .toList(),
                       onChanged: (val) {
                         if (val != null) {
@@ -153,8 +162,9 @@ class _VendorFormScreenState extends ConsumerState<VendorFormScreen> {
                         labelText: 'Phone Number',
                         prefixIcon: Icon(Icons.phone_rounded),
                       ),
-                      validator: (val) =>
-                          val == null || val.trim().isEmpty ? 'Enter phone number' : null,
+                      validator: (val) => val == null || val.trim().isEmpty
+                          ? 'Enter phone number'
+                          : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
