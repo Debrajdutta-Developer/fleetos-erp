@@ -4,6 +4,7 @@ import '../../trips/presentation/trip_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
 import '../../vendors/presentation/vendor_providers.dart';
+import '../../inventory/presentation/inventory_providers.dart';
 
 class DashboardStats {
   final int activeFleetCount;
@@ -15,6 +16,9 @@ class DashboardStats {
   final int expiredLicenseDriversCount;
   final int totalCustomersCount;
   final int totalVendorsCount;
+  final int totalPartsCount;
+  final int lowStockPartsCount;
+  final double totalStockValue;
 
   const DashboardStats({
     required this.activeFleetCount,
@@ -26,6 +30,9 @@ class DashboardStats {
     required this.expiredLicenseDriversCount,
     required this.totalCustomersCount,
     required this.totalVendorsCount,
+    required this.totalPartsCount,
+    required this.lowStockPartsCount,
+    required this.totalStockValue,
   });
 }
 
@@ -36,12 +43,14 @@ final dashboardStatsProvider =
   final driversAsync = ref.watch(driversStreamProvider);
   final customersAsync = ref.watch(customersStreamProvider);
   final vendorsAsync = ref.watch(vendorsStreamProvider);
+  final partsAsync = ref.watch(partsStreamProvider);
 
   if (vehiclesAsync.isLoading ||
       tripsAsync.isLoading ||
       driversAsync.isLoading ||
       customersAsync.isLoading ||
-      vendorsAsync.isLoading) {
+      vendorsAsync.isLoading ||
+      partsAsync.isLoading) {
     return const AsyncValue.loading();
   }
 
@@ -60,12 +69,16 @@ final dashboardStatsProvider =
   if (vendorsAsync.hasError) {
     return AsyncValue.error(vendorsAsync.error!, vendorsAsync.stackTrace!);
   }
+  if (partsAsync.hasError) {
+    return AsyncValue.error(partsAsync.error!, partsAsync.stackTrace!);
+  }
 
   final vehicles = vehiclesAsync.value ?? [];
   final trips = tripsAsync.value ?? [];
   final drivers = driversAsync.value ?? [];
   final customers = customersAsync.value ?? [];
   final vendors = vendorsAsync.value ?? [];
+  final parts = partsAsync.value ?? [];
 
   // 1. Active Fleet Count
   final activeFleetCount = vehicles.where((v) => v.status == 'active').length;
@@ -105,6 +118,11 @@ final dashboardStatsProvider =
   final totalCustomersCount = customers.length;
   final totalVendorsCount = vendors.length;
 
+  // 7. Spare Parts Inventory Statistics
+  final totalPartsCount = parts.length;
+  final lowStockPartsCount = parts.where((p) => p.quantity <= p.minStockThreshold).length;
+  final totalStockValue = parts.fold<double>(0.0, (sum, p) => sum + (p.quantity * p.unitCost));
+
   return AsyncValue.data(DashboardStats(
     activeFleetCount: activeFleetCount,
     tripsScheduled: tripsScheduled,
@@ -115,5 +133,8 @@ final dashboardStatsProvider =
     expiredLicenseDriversCount: expiredLicenseDriversCount,
     totalCustomersCount: totalCustomersCount,
     totalVendorsCount: totalVendorsCount,
+    totalPartsCount: totalPartsCount,
+    lowStockPartsCount: lowStockPartsCount,
+    totalStockValue: totalStockValue,
   ));
 });

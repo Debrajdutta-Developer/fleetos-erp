@@ -179,6 +179,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           trend: 'Service directory',
           isPositive: true,
         ),
+        _StatCardData(
+          title: 'Spare Parts Stock',
+          value: data.totalPartsCount.toString(),
+          subtitle: 'Different parts listed',
+          icon: Icons.build_outlined,
+          trend: 'Asset items',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Low Stock Warnings',
+          value: data.lowStockPartsCount.toString().padLeft(2, '0'),
+          subtitle: 'Requires reorder',
+          icon: Icons.production_quantity_limits_rounded,
+          trend: data.lowStockPartsCount > 0 ? 'Reorder needed' : 'All stocked',
+          isPositive: data.lowStockPartsCount == 0,
+        ),
+        _StatCardData(
+          title: 'Inventory Total Value',
+          value: '\$${data.totalStockValue.toStringAsFixed(0)}',
+          subtitle: 'Parts stock value',
+          icon: Icons.attach_money_rounded,
+          trend: 'Asset valuation',
+          isPositive: true,
+        ),
       ],
       loading: () => [
         _StatCardData(
@@ -235,6 +259,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             value: '...',
             subtitle: 'Loading...',
             icon: Icons.business_rounded,
+            trend: '...',
+            isPositive: true),
+        _StatCardData(
+            title: 'Spare Parts Stock',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.build_outlined,
+            trend: '...',
+            isPositive: true),
+        _StatCardData(
+            title: 'Low Stock Warnings',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.production_quantity_limits_rounded,
+            trend: '...',
+            isPositive: true),
+        _StatCardData(
+            title: 'Inventory Total Value',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.attach_money_rounded,
             trend: '...',
             isPositive: true),
       ],
@@ -562,6 +607,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 _SidebarNavItem(
                   icon: Icons.inventory_2_outlined,
                   label: 'Storage & Hubs',
+                  onTap: () => context.push('/inventory'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.business_outlined,
+                  label: 'Inventory Suppliers',
+                  onTap: () => context.push('/inventory/suppliers'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.receipt_long_outlined,
+                  label: 'Inventory Transactions',
+                  onTap: () => context.push('/inventory/transactions'),
                 ),
                 _SidebarNavItem(
                   icon: Icons.account_balance_outlined,
@@ -775,6 +831,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/compliance');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.inventory_2_outlined),
+                    title: const Text('Storage & Hubs'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/inventory');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.business_outlined),
+                    title: const Text('Inventory Suppliers'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/inventory/suppliers');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.receipt_long_outlined),
+                    title: const Text('Inventory Transactions'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/inventory/transactions');
                     },
                   ),
                   const ListTile(

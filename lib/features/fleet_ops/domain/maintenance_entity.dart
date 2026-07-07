@@ -14,6 +14,10 @@ class MaintenanceEntity {
   final DateTime updatedAt;
   final DateTime? deletedAt;
 
+  final String? partId;
+  final String? partName;
+  final int? partQuantity;
+
   const MaintenanceEntity({
     required this.id,
     required this.companyId,
@@ -29,6 +33,9 @@ class MaintenanceEntity {
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
+    this.partId,
+    this.partName,
+    this.partQuantity,
   });
 
   Map<String, dynamic> toMap() {
@@ -47,6 +54,9 @@ class MaintenanceEntity {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
+      'partId': partId,
+      'partName': partName,
+      'partQuantity': partQuantity,
     };
   }
 
@@ -74,6 +84,9 @@ class MaintenanceEntity {
       deletedAt: map['deletedAt'] != null
           ? DateTime.parse(map['deletedAt'] as String)
           : null,
+      partId: map['partId'] as String?,
+      partName: map['partName'] as String?,
+      partQuantity: map['partQuantity'] as int?,
     );
   }
 
@@ -92,6 +105,9 @@ class MaintenanceEntity {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
+    String? partId,
+    String? partName,
+    int? partQuantity,
   }) {
     return MaintenanceEntity(
       id: id ?? this.id,
@@ -108,6 +124,9 @@ class MaintenanceEntity {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
+      partId: partId ?? this.partId,
+      partName: partName ?? this.partName,
+      partQuantity: partQuantity ?? this.partQuantity,
     );
   }
 }

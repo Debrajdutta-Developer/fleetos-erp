@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../vendors/presentation/vendor_providers.dart';
+import '../../inventory/presentation/inventory_providers.dart';
 import '../domain/maintenance_entity.dart';
 import 'fleet_ops_providers.dart';
 
@@ -31,6 +32,10 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
   String _maintType = 'preventative';
   DateTime _selectedDate = DateTime.now();
 
+  String? _selectedPartId;
+  String? _selectedPartName;
+  late TextEditingController _partQtyController;
+
   bool _initialized = false;
 
   @override
@@ -39,6 +44,7 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
     _descriptionController = TextEditingController();
     _costController = TextEditingController();
     _odometerController = TextEditingController();
+    _partQtyController = TextEditingController();
   }
 
   @override
@@ -46,6 +52,7 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
     _descriptionController.dispose();
     _costController.dispose();
     _odometerController.dispose();
+    _partQtyController.dispose();
     super.dispose();
   }
 
@@ -62,6 +69,9 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
       _selectedVendorName = log.vendorName;
       _maintType = log.type;
       _selectedDate = log.date;
+      _selectedPartId = log.partId;
+      _selectedPartName = log.partName;
+      _partQtyController.text = log.partQuantity?.toString() ?? '';
     }
     _initialized = true;
   }
@@ -89,6 +99,9 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
       date: _selectedDate,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      partId: _selectedPartId,
+      partName: _selectedPartName,
+      partQuantity: _selectedPartId != null ? int.tryParse(_partQtyController.text.trim()) : null,
     );
 
     final success = await ref
@@ -108,6 +121,7 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
         ref.watch(maintenanceLogsStreamProvider).valueOrNull ?? [];
     final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
     final vendors = ref.watch(vendorsStreamProvider).valueOrNull ?? [];
+    final parts = ref.watch(partsStreamProvider).valueOrNull ?? [];
 
     if (widget.maintLogId != null && maintLogs.isNotEmpty) {
       _initializeValues(maintLogs);
@@ -214,6 +228,60 @@ class _MaintenanceFormScreenState extends ConsumerState<MaintenanceFormScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
+                    // Spare Part selector
+                    DropdownButtonFormField<String?>(
+                      value: _selectedPartId,
+                      decoration: const InputDecoration(
+                        labelText: 'Select Spare Part Used (Optional)',
+                        prefixIcon: Icon(Icons.settings_suggest_rounded),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text('No Spare Part Used'),
+                        ),
+                        ...parts.map(
+                          (p) => DropdownMenuItem<String?>(
+                            value: p.id,
+                            child: Text('${p.name} (${p.partNumber}) - Avail: ${p.quantity}'),
+                          ),
+                        ),
+                      ],
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedPartId = val;
+                          _selectedPartName = val != null ? parts.firstWhere((p) => p.id == val).name : null;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Part quantity used
+                    if (_selectedPartId != null) ...[
+                      TextFormField(
+                        controller: _partQtyController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Spare Part Quantity Used',
+                          prefixIcon: Icon(Icons.production_quantity_limits_rounded),
+                        ),
+                        validator: (val) {
+                          if (_selectedPartId != null && (val == null || val.trim().isEmpty)) {
+                            return 'Enter quantity of parts used';
+                          }
+                          final parsed = int.tryParse(val ?? '');
+                          if (parsed == null || parsed <= 0) {
+                            return 'Enter a positive integer quantity';
+                          }
+                          // Check available stock
+                          final part = parts.firstWhere((p) => p.id == _selectedPartId);
+                          if (parsed > part.quantity) {
+                            return 'Not enough stock! Available: ${part.quantity}';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     // Job Description
                     TextFormField(
                       controller: _descriptionController,

@@ -29,6 +29,12 @@ import '../../features/fleet_ops/presentation/maintenance_list_screen.dart';
 import '../../features/fleet_ops/presentation/maintenance_form_screen.dart';
 import '../../features/fleet_ops/presentation/compliance_list_screen.dart';
 import '../../features/fleet_ops/presentation/compliance_form_screen.dart';
+import '../../features/inventory/presentation/part_list_screen.dart';
+import '../../features/inventory/presentation/part_form_screen.dart';
+import '../../features/inventory/presentation/supplier_list_screen.dart';
+import '../../features/inventory/presentation/supplier_form_screen.dart';
+import '../../features/inventory/presentation/transaction_list_screen.dart';
+import '../../features/inventory/presentation/transaction_form_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -226,6 +232,47 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = state.pathParameters['id']!;
           return ComplianceFormScreen(complianceId: id);
+        },
+      ),
+      GoRoute(
+        path: '/inventory',
+        builder: (context, state) => const PartListScreen(),
+      ),
+      GoRoute(
+        path: '/inventory/new',
+        builder: (context, state) => const PartFormScreen(),
+      ),
+      GoRoute(
+        path: '/inventory/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return PartFormScreen(partId: id);
+        },
+      ),
+      GoRoute(
+        path: '/inventory/suppliers',
+        builder: (context, state) => const SupplierListScreen(),
+      ),
+      GoRoute(
+        path: '/inventory/suppliers/new',
+        builder: (context, state) => const SupplierFormScreen(),
+      ),
+      GoRoute(
+        path: '/inventory/suppliers/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return SupplierFormScreen(supplierId: id);
+        },
+      ),
+      GoRoute(
+        path: '/inventory/transactions',
+        builder: (context, state) => const TransactionListScreen(),
+      ),
+      GoRoute(
+        path: '/inventory/transactions/new',
+        builder: (context, state) {
+          final partId = state.uri.queryParameters['partId'];
+          return TransactionFormScreen(preSelectedPartId: partId);
         },
       ),
     ],

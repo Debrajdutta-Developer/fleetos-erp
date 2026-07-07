@@ -12,6 +12,8 @@ import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../trips/domain/audit_log_entity.dart';
 import '../../trips/domain/trip_entity.dart';
+import '../../inventory/presentation/inventory_providers.dart';
+import '../../inventory/domain/inventory_transaction_entity.dart';
 
 final fleetOpsRepositoryProvider = Provider<FleetOpsRepository>((ref) {
   return FleetOpsRepositoryImpl();
@@ -325,6 +327,36 @@ class MaintenanceFormController extends StateNotifier<MaintenanceFormState> {
       );
 
       await financeRepo.createTransaction(companyId, tx, txAuditLog);
+
+      // Automatically deduct stock if parts are used
+      if (saved.partId != null &&
+          saved.partQuantity != null &&
+          saved.partQuantity! > 0) {
+        final inventoryRepo = _ref.read(inventoryRepositoryProvider);
+        final part = await inventoryRepo.getPartById(companyId, saved.partId!);
+        if (part != null) {
+          final partTx = InventoryTransactionEntity(
+            id: 'tx_maint_part_${saved.id}',
+            companyId: companyId,
+            partId: saved.partId!,
+            partName: saved.partName ?? part.name,
+            type: 'stock_out',
+            quantity: -saved.partQuantity!,
+            unitCost: part.unitCost,
+            totalCost: saved.partQuantity! * part.unitCost,
+            referenceId: saved.id,
+            notes: 'Automatic deduction during maintenance job for vehicle ${saved.vehicleLicensePlate}.',
+            date: saved.date,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          await inventoryRepo.createTransaction(companyId, partTx);
+          await inventoryRepo.updatePart(
+            companyId,
+            part.copyWith(quantity: part.quantity - saved.partQuantity!),
+          );
+        }
+      }
 
       // Write Audit Log
       final tripRepo = _ref.read(tripRepositoryProvider);
