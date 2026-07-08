@@ -173,7 +173,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                             controller: _creditLimitController,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                              labelText: 'Credit Limit ($)',
+                              labelText: 'Credit Limit (\$)',
                               prefixIcon: Icon(Icons.credit_card_rounded),
                             ),
                             validator: (val) {

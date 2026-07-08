@@ -277,7 +277,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                             controller: _defaultRateController,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                              labelText: 'Default Freight Rate ($/ton)',
+                              labelText: 'Default Freight Rate (\$/ton)',
                               prefixIcon: Icon(Icons.monetization_on_outlined),
                             ),
                             validator: (val) {
@@ -360,7 +360,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.ratePerTon.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Rate per Ton ($)'),
+                                      decoration: const InputDecoration(labelText: 'Rate per Ton (\$)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: _routeRates[index].pickup,
@@ -376,7 +376,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.flatRate.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate ($)'),
+                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate (\$)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: _routeRates[index].pickup,
@@ -460,7 +460,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.ratePerTon.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Rate per Ton ($)'),
+                                      decoration: const InputDecoration(labelText: 'Rate per Ton (\$)'),
                                       onChanged: (val) {
                                         _vehicleRates[index] = VehicleRate(
                                           vehicleId: _vehicleRates[index].vehicleId,
@@ -476,7 +476,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.flatRate.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate ($)'),
+                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate (\$)'),
                                       onChanged: (val) {
                                         _vehicleRates[index] = VehicleRate(
                                           vehicleId: _vehicleRates[index].vehicleId,
