@@ -25,8 +25,8 @@ abstract class CustomerRepository {
   Stream<List<InvoiceEntity>> watchInvoices(String companyId);
   Future<List<InvoiceEntity>> getInvoices(String companyId);
   Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId);
-  Future<InvoiceEntity> createInvoice(
-      String companyId, InvoiceEntity invoice);
-  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status);
+  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice);
+  Future<void> updateInvoiceStatus(
+      String companyId, String invoiceId, String status);
   Future<void> deleteInvoice(String companyId, String invoiceId);
 }

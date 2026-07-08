@@ -138,13 +138,16 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen> {
                   child: filtered.isEmpty
                       ? EmptyStateWidget(
                           title: 'No Invoices Found',
-                          description: 'Generated invoice bills will appear here automatically on trip completion.',
+                          description:
+                              'Generated invoice bills will appear here automatically on trip completion.',
                           icon: Icons.receipt_long_outlined,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.45,
@@ -244,7 +247,9 @@ class _StatusTab extends StatelessWidget {
         onSelected: (_) => onTap(),
         selectedColor: colorScheme.primaryContainer,
         labelStyle: TextStyle(
-          color: isSelected ? colorScheme.onPrimaryContainer : colorScheme.onSurface,
+          color: isSelected
+              ? colorScheme.onPrimaryContainer
+              : colorScheme.onSurface,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
@@ -296,7 +301,8 @@ class _InvoiceCard extends ConsumerWidget {
                     children: [
                       Text(
                         invoice.invoiceNumber,
-                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                        style: theme.textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
                         invoice.customerName,
@@ -308,7 +314,8 @@ class _InvoiceCard extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(6),
@@ -329,7 +336,8 @@ class _InvoiceCard extends ConsumerWidget {
               children: [
                 const Icon(Icons.confirmation_number_outlined, size: 14),
                 const SizedBox(width: 6),
-                Text('Trip Ref: ${invoice.tripId}', style: theme.textTheme.bodyMedium),
+                Text('Trip Ref: ${invoice.tripId}',
+                    style: theme.textTheme.bodyMedium),
               ],
             ),
             const SizedBox(height: 4),
@@ -359,32 +367,41 @@ class _InvoiceCard extends ConsumerWidget {
                     if (invoice.status == 'draft')
                       ElevatedButton(
                         onPressed: () {
-                          ref.read(invoiceListControllerProvider.notifier).updateStatus(invoice.id, 'sent');
+                          ref
+                              .read(invoiceListControllerProvider.notifier)
+                              .updateStatus(invoice.id, 'sent');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
                         ),
                         child: const Text('Send'),
                       ),
                     if (invoice.status == 'sent')
                       ElevatedButton(
                         onPressed: () {
-                          ref.read(invoiceListControllerProvider.notifier).updateStatus(invoice.id, 'paid');
+                          ref
+                              .read(invoiceListControllerProvider.notifier)
+                              .updateStatus(invoice.id, 'paid');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 4),
                         ),
                         child: const Text('Mark Paid'),
                       ),
                     const SizedBox(width: 4),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          color: Colors.red),
                       onPressed: () {
-                        ref.read(invoiceListControllerProvider.notifier).deleteInvoice(invoice.id);
+                        ref
+                            .read(invoiceListControllerProvider.notifier)
+                            .deleteInvoice(invoice.id);
                       },
                     ),
                   ],

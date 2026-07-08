@@ -177,8 +177,10 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                               prefixIcon: Icon(Icons.credit_card_rounded),
                             ),
                             validator: (val) {
-                              if (val == null || val.trim().isEmpty) return 'Enter credit limit';
-                              if (double.tryParse(val) == null) return 'Enter valid number';
+                              if (val == null || val.trim().isEmpty)
+                                return 'Enter credit limit';
+                              if (double.tryParse(val) == null)
+                                return 'Enter valid number';
                               return null;
                             },
                           ),
@@ -196,9 +198,10 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                               labelText: 'Phone Number',
                               prefixIcon: Icon(Icons.phone_rounded),
                             ),
-                            validator: (val) => val == null || val.trim().isEmpty
-                                ? 'Enter phone number'
-                                : null,
+                            validator: (val) =>
+                                val == null || val.trim().isEmpty
+                                    ? 'Enter phone number'
+                                    : null,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -246,7 +249,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                     if (_contactsList.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text('No additional contacts added yet.', style: TextStyle(fontStyle: FontStyle.italic)),
+                        child: Text('No additional contacts added yet.',
+                            style: TextStyle(fontStyle: FontStyle.italic)),
                       )
                     else
                       ...List.generate(_contactsList.length, (index) {
@@ -259,11 +263,16 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text('Contact #${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('Contact #${index + 1}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
                                     IconButton(
-                                      icon: const Icon(Icons.remove_circle_outline_rounded, color: Colors.red),
+                                      icon: const Icon(
+                                          Icons.remove_circle_outline_rounded,
+                                          color: Colors.red),
                                       onPressed: () => _removeContact(index),
                                     ),
                                   ],
@@ -273,7 +282,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         initialValue: contact.name,
-                                        decoration: const InputDecoration(labelText: 'Name'),
+                                        decoration: const InputDecoration(
+                                            labelText: 'Name'),
                                         onChanged: (val) {
                                           _contactsList[index] = ContactPerson(
                                             name: val,
@@ -288,7 +298,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         initialValue: contact.role,
-                                        decoration: const InputDecoration(labelText: 'Role/Designation'),
+                                        decoration: const InputDecoration(
+                                            labelText: 'Role/Designation'),
                                         onChanged: (val) {
                                           _contactsList[index] = ContactPerson(
                                             name: _contactsList[index].name,
@@ -307,7 +318,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         initialValue: contact.phone,
-                                        decoration: const InputDecoration(labelText: 'Phone'),
+                                        decoration: const InputDecoration(
+                                            labelText: 'Phone'),
                                         onChanged: (val) {
                                           _contactsList[index] = ContactPerson(
                                             name: _contactsList[index].name,
@@ -322,7 +334,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         initialValue: contact.email,
-                                        decoration: const InputDecoration(labelText: 'Email'),
+                                        decoration: const InputDecoration(
+                                            labelText: 'Email'),
                                         onChanged: (val) {
                                           _contactsList[index] = ContactPerson(
                                             name: _contactsList[index].name,

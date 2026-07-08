@@ -236,7 +236,9 @@ class _CustomerCard extends ConsumerWidget {
                       'Bal: \$${customer.outstandingBalance.toStringAsFixed(0)}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: (customer.creditLimit > 0 && customer.outstandingBalance >= customer.creditLimit)
+                        color: (customer.creditLimit > 0 &&
+                                customer.outstandingBalance >=
+                                    customer.creditLimit)
                             ? Colors.red
                             : colorScheme.primary,
                       ),

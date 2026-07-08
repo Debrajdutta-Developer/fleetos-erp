@@ -166,7 +166,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<ContractEntity?> getContractById(String companyId, String contractId) async {
+  Future<ContractEntity?> getContractById(
+      String companyId, String contractId) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -185,7 +186,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<ContractEntity> createContract(String companyId, ContractEntity contract) async {
+  Future<ContractEntity> createContract(
+      String companyId, ContractEntity contract) async {
     try {
       final id = contract.id.isEmpty ? _uuid.v4() : contract.id;
       final newContract = contract.copyWith(
@@ -280,7 +282,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId) async {
+  Future<InvoiceEntity?> getInvoiceById(
+      String companyId, String invoiceId) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -299,7 +302,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice) async {
+  Future<InvoiceEntity> createInvoice(
+      String companyId, InvoiceEntity invoice) async {
     try {
       final id = invoice.id.isEmpty ? _uuid.v4() : invoice.id;
       final newInvoice = invoice.copyWith(
@@ -324,7 +328,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
-  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status) async {
+  Future<void> updateInvoiceStatus(
+      String companyId, String invoiceId, String status) async {
     try {
       await _firestore
           .collection('companies')

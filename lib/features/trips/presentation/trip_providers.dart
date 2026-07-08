@@ -175,9 +175,11 @@ class TripFormController extends StateNotifier<TripFormState> {
 
       // Business Rule: Verify customer credit limit
       final customerRepo = _ref.read(customerRepositoryProvider);
-      final customer = await customerRepo.getCustomerById(companyId, trip.customerId);
+      final customer =
+          await customerRepo.getCustomerById(companyId, trip.customerId);
       if (customer != null && customer.creditLimit > 0) {
-        if (customer.outstandingBalance + trip.freightAmount > customer.creditLimit) {
+        if (customer.outstandingBalance + trip.freightAmount >
+            customer.creditLimit) {
           throw Exception(
             'Validation Blocked: Customer credit limit of \$${customer.creditLimit.toStringAsFixed(2)} exceeded. Outstanding balance: \$${customer.outstandingBalance.toStringAsFixed(2)}.',
           );
@@ -322,8 +324,10 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
               // Check route-wise pricing
               final routeRate = activeContract.routeRates.firstWhere(
                 (r) =>
-                    r.pickup.toLowerCase().trim() == trip.pickupLocation.toLowerCase().trim() &&
-                    r.delivery.toLowerCase().trim() == trip.deliveryLocation.toLowerCase().trim(),
+                    r.pickup.toLowerCase().trim() ==
+                        trip.pickupLocation.toLowerCase().trim() &&
+                    r.delivery.toLowerCase().trim() ==
+                        trip.deliveryLocation.toLowerCase().trim(),
                 orElse: () => const RouteRate(pickup: '', delivery: ''),
               );
 
@@ -332,7 +336,8 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
                     ? routeRate.flatRate
                     : (routeRate.ratePerTon * trip.coalQuantity);
               } else if (activeContract.defaultFreightRate > 0) {
-                calculatedAmount = activeContract.defaultFreightRate * trip.coalQuantity;
+                calculatedAmount =
+                    activeContract.defaultFreightRate * trip.coalQuantity;
               }
             }
           }
@@ -355,10 +360,12 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
           await customerRepo.createInvoice(companyId, newInvoice);
 
           // Update Customer outstanding balance
-          final customer = await customerRepo.getCustomerById(companyId, trip.customerId);
+          final customer =
+              await customerRepo.getCustomerById(companyId, trip.customerId);
           if (customer != null) {
             final updatedCustomer = customer.copyWith(
-              outstandingBalance: customer.outstandingBalance + calculatedAmount,
+              outstandingBalance:
+                  customer.outstandingBalance + calculatedAmount,
             );
             await customerRepo.updateCustomer(companyId, updatedCustomer);
           }

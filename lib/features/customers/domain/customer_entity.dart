@@ -96,7 +96,10 @@ class CustomerEntity {
       deletedAt: map['deletedAt'] != null
           ? DateTime.parse(map['deletedAt'] as String)
           : null,
-      contacts: contactsList.map((c) => ContactPerson.fromMap(Map<String, dynamic>.from(c as Map))).toList(),
+      contacts: contactsList
+          .map(
+              (c) => ContactPerson.fromMap(Map<String, dynamic>.from(c as Map)))
+          .toList(),
       creditLimit: (map['creditLimit'] as num? ?? 0.0).toDouble(),
       outstandingBalance: (map['outstandingBalance'] as num? ?? 0.0).toDouble(),
     );

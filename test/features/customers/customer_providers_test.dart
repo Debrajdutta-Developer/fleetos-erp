@@ -67,22 +67,28 @@ class MockCustomerRepository implements CustomerRepository {
 
   // Contracts
   @override
-  Stream<List<ContractEntity>> watchContracts(String companyId) => Stream.value(contracts);
+  Stream<List<ContractEntity>> watchContracts(String companyId) =>
+      Stream.value(contracts);
   @override
-  Future<List<ContractEntity>> getContracts(String companyId) async => contracts;
+  Future<List<ContractEntity>> getContracts(String companyId) async =>
+      contracts;
   @override
-  Future<ContractEntity?> getContractById(String companyId, String contractId) async {
+  Future<ContractEntity?> getContractById(
+      String companyId, String contractId) async {
     try {
       return contracts.firstWhere((c) => c.id == contractId);
     } catch (_) {
       return null;
     }
   }
+
   @override
-  Future<ContractEntity> createContract(String companyId, ContractEntity contract) async {
+  Future<ContractEntity> createContract(
+      String companyId, ContractEntity contract) async {
     contracts.add(contract);
     return contract;
   }
+
   @override
   Future<void> updateContract(String companyId, ContractEntity contract) async {
     final idx = contracts.indexWhere((c) => c.id == contract.id);
@@ -90,6 +96,7 @@ class MockCustomerRepository implements CustomerRepository {
       contracts[idx] = contract;
     }
   }
+
   @override
   Future<void> deleteContract(String companyId, String contractId) async {
     final idx = contracts.indexWhere((c) => c.id == contractId);
@@ -100,29 +107,36 @@ class MockCustomerRepository implements CustomerRepository {
 
   // Invoices
   @override
-  Stream<List<InvoiceEntity>> watchInvoices(String companyId) => Stream.value(invoices);
+  Stream<List<InvoiceEntity>> watchInvoices(String companyId) =>
+      Stream.value(invoices);
   @override
   Future<List<InvoiceEntity>> getInvoices(String companyId) async => invoices;
   @override
-  Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId) async {
+  Future<InvoiceEntity?> getInvoiceById(
+      String companyId, String invoiceId) async {
     try {
       return invoices.firstWhere((i) => i.id == invoiceId);
     } catch (_) {
       return null;
     }
   }
+
   @override
-  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice) async {
+  Future<InvoiceEntity> createInvoice(
+      String companyId, InvoiceEntity invoice) async {
     invoices.add(invoice);
     return invoice;
   }
+
   @override
-  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status) async {
+  Future<void> updateInvoiceStatus(
+      String companyId, String invoiceId, String status) async {
     final idx = invoices.indexWhere((i) => i.id == invoiceId);
     if (idx != -1) {
       invoices[idx] = invoices[idx].copyWith(status: status);
     }
   }
+
   @override
   Future<void> deleteInvoice(String companyId, String invoiceId) async {
     final idx = invoices.indexWhere((i) => i.id == invoiceId);
@@ -191,37 +205,52 @@ class MockVehicleRepository implements VehicleRepository {
   @override
   Future<void> updateVehicle(String companyId, VehicleEntity vehicle) async {}
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value([]);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value([]);
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => [];
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async => vehicle;
+  Future<VehicleEntity> createVehicle(
+          String companyId, VehicleEntity vehicle) async =>
+      vehicle;
   @override
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {}
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, dynamic file) async => '';
+  Future<String> uploadComplianceDocument(String companyId, String vehicleId,
+          String docType, dynamic file) async =>
+      '';
 }
 
 class MockFinanceRepository implements FinanceRepository {
   final List<FinanceTransactionEntity> txs = [];
 
   @override
-  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) => Stream.value(txs);
+  Stream<List<FinanceTransactionEntity>> watchTransactions(String companyId) =>
+      Stream.value(txs);
   @override
-  Future<List<FinanceTransactionEntity>> getTransactions(String companyId) async => txs;
+  Future<List<FinanceTransactionEntity>> getTransactions(
+          String companyId) async =>
+      txs;
   @override
-  Future<FinanceTransactionEntity?> getTransactionById(String companyId, String transactionId) async => null;
+  Future<FinanceTransactionEntity?> getTransactionById(
+          String companyId, String transactionId) async =>
+      null;
   @override
-  Future<FinanceTransactionEntity> createTransaction(String companyId, FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
+  Future<FinanceTransactionEntity> createTransaction(String companyId,
+      FinanceTransactionEntity transaction, AuditLogEntity auditLog) async {
     txs.add(transaction);
     return transaction;
   }
+
   @override
-  Future<void> deleteTransaction(String companyId, String transactionId, AuditLogEntity auditLog) async {}
+  Future<void> deleteTransaction(
+      String companyId, String transactionId, AuditLogEntity auditLog) async {}
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) => Stream.value([]);
+  Stream<List<AuditLogEntity>> watchAuditLogsForFinance(String companyId) =>
+      Stream.value([]);
 }
 
 void main() {
@@ -275,7 +304,13 @@ void main() {
         address: 'Seattle',
         createdAt: now,
         updatedAt: now,
-        contacts: [const ContactPerson(name: 'Charlie', email: 'c@amazon.com', phone: '123', role: 'Billing')],
+        contacts: [
+          const ContactPerson(
+              name: 'Charlie',
+              email: 'c@amazon.com',
+              phone: '123',
+              role: 'Billing')
+        ],
         creditLimit: 10000.0,
       );
 
@@ -289,8 +324,11 @@ void main() {
       expect(tripRepo.auditLogs[0].action, 'customer_created');
     });
 
-    test('should validate customer credit limit and block trip scheduling if exceeded', () async {
-      final customerRepo = MockCustomerRepository(customers: List.from(tCustomers));
+    test(
+        'should validate customer credit limit and block trip scheduling if exceeded',
+        () async {
+      final customerRepo =
+          MockCustomerRepository(customers: List.from(tCustomers));
       final tripRepo = MockTripRepository();
 
       final container = ProviderContainer(
@@ -310,7 +348,8 @@ void main() {
         ],
       );
 
-      final formController = container.read(tripFormControllerProvider.notifier);
+      final formController =
+          container.read(tripFormControllerProvider.notifier);
 
       // Walmart has creditLimit = 5000.0, outstandingBalance = 1000.0.
       // Scheduling a trip with freightAmount = 4500.0 (total 5500.0) should fail.
@@ -338,11 +377,15 @@ void main() {
 
       final success = await formController.saveTrip(trip);
       expect(success, false);
-      expect(container.read(tripFormControllerProvider).errorMessage, contains('exceeded'));
+      expect(container.read(tripFormControllerProvider).errorMessage,
+          contains('exceeded'));
     });
 
-    test('should auto-draft invoice and update customer balance on trip completion based on contract pricing', () async {
-      final customerRepo = MockCustomerRepository(customers: List.from(tCustomers));
+    test(
+        'should auto-draft invoice and update customer balance on trip completion based on contract pricing',
+        () async {
+      final customerRepo =
+          MockCustomerRepository(customers: List.from(tCustomers));
       final tripRepo = MockTripRepository();
       final vehicleRepo = MockVehicleRepository();
       final financeRepo = MockFinanceRepository();
@@ -357,7 +400,8 @@ void main() {
         status: 'active',
         defaultFreightRate: 15.0, // $15 per ton
         routeRates: [
-          const RouteRate(pickup: 'Hub A', delivery: 'Plant B', ratePerTon: 22.0),
+          const RouteRate(
+              pickup: 'Hub A', delivery: 'Plant B', ratePerTon: 22.0),
         ],
         createdAt: now,
         updatedAt: now,
@@ -377,7 +421,8 @@ void main() {
         deliveryLocation: 'Plant B',
         cargoType: 'Coal',
         coalQuantity: 20.0,
-        freightAmount: 50.0, // Overwritten by contract rate $22/ton * 20 tons = $440
+        freightAmount:
+            50.0, // Overwritten by contract rate $22/ton * 20 tons = $440
         advancePayment: 0.0,
         permitExpense: 0.0,
         status: 'inTransit',
@@ -406,7 +451,8 @@ void main() {
         ],
       );
 
-      final listController = container.read(tripListControllerProvider.notifier);
+      final listController =
+          container.read(tripListControllerProvider.notifier);
       final result = await listController.updateStatus('trip_1', 'completed');
 
       expect(result, true);
@@ -417,7 +463,8 @@ void main() {
       expect(customerRepo.invoices[0].status, 'draft');
 
       // Verify customer balance was incremented by $440
-      final updatedWalmart = customerRepo.customers.firstWhere((c) => c.id == 'cust_1');
+      final updatedWalmart =
+          customerRepo.customers.firstWhere((c) => c.id == 'cust_1');
       expect(updatedWalmart.outstandingBalance, 1440.0); // 1000 base + 440 new
 
       // Verify income finance transaction logged $440

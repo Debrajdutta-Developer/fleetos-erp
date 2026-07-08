@@ -127,8 +127,12 @@ class ContractEntity {
           : DateTime.now(),
       status: map['status'] as String? ?? 'active',
       defaultFreightRate: (map['defaultFreightRate'] as num? ?? 0.0).toDouble(),
-      routeRates: routeList.map((r) => RouteRate.fromMap(Map<String, dynamic>.from(r as Map))).toList(),
-      vehicleRates: vehicleList.map((v) => VehicleRate.fromMap(Map<String, dynamic>.from(v as Map))).toList(),
+      routeRates: routeList
+          .map((r) => RouteRate.fromMap(Map<String, dynamic>.from(r as Map)))
+          .toList(),
+      vehicleRates: vehicleList
+          .map((v) => VehicleRate.fromMap(Map<String, dynamic>.from(v as Map)))
+          .toList(),
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),

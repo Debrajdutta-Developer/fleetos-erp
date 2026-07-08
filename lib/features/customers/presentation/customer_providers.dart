@@ -329,8 +329,9 @@ class InvoiceFormController extends StateNotifier<CustomerFormState> {
   }
 }
 
-final invoiceFormControllerProvider = StateNotifierProvider.autoDispose<
-    InvoiceFormController, CustomerFormState>((ref) {
+final invoiceFormControllerProvider =
+    StateNotifierProvider.autoDispose<InvoiceFormController, CustomerFormState>(
+        (ref) {
   final repository = ref.watch(customerRepositoryProvider);
   return InvoiceFormController(repository: repository, ref: ref);
 });

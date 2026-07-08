@@ -45,7 +45,8 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
     super.dispose();
   }
 
-  void _initializeValues(List<ContractEntity> contracts, List<CustomerEntity> customers) {
+  void _initializeValues(
+      List<ContractEntity> contracts, List<CustomerEntity> customers) {
     if (_initialized) return;
     if (widget.contractId != null) {
       final contract = contracts.firstWhere((c) => c.id == widget.contractId);
@@ -95,13 +96,15 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
 
   void _addRouteRate() {
     setState(() {
-      _routeRates.add(const RouteRate(pickup: '', delivery: '', ratePerTon: 0.0, flatRate: 0.0));
+      _routeRates.add(const RouteRate(
+          pickup: '', delivery: '', ratePerTon: 0.0, flatRate: 0.0));
     });
   }
 
   void _addVehicleRate() {
     setState(() {
-      _vehicleRates.add(const VehicleRate(vehicleId: '', licensePlate: '', ratePerTon: 0.0, flatRate: 0.0));
+      _vehicleRates.add(const VehicleRate(
+          vehicleId: '', licensePlate: '', ratePerTon: 0.0, flatRate: 0.0));
     });
   }
 
@@ -117,7 +120,8 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
       startDate: _startDate,
       endDate: _endDate,
       status: _status,
-      defaultFreightRate: double.tryParse(_defaultRateController.text.trim()) ?? 0.0,
+      defaultFreightRate:
+          double.tryParse(_defaultRateController.text.trim()) ?? 0.0,
       routeRates: _routeRates,
       vehicleRates: _vehicleRates,
       createdAt: DateTime.now(),
@@ -184,9 +188,10 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                               labelText: 'Contract Number',
                               prefixIcon: Icon(Icons.assignment_rounded),
                             ),
-                            validator: (val) => val == null || val.trim().isEmpty
-                                ? 'Enter contract number'
-                                : null,
+                            validator: (val) =>
+                                val == null || val.trim().isEmpty
+                                    ? 'Enter contract number'
+                                    : null,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -206,7 +211,9 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                             onChanged: (val) {
                               setState(() {
                                 _selectedCustomerId = val;
-                                _selectedCustomerName = customers.firstWhere((c) => c.id == val).name;
+                                _selectedCustomerName = customers
+                                    .firstWhere((c) => c.id == val)
+                                    .name;
                               });
                             },
                           ),
@@ -258,9 +265,13 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                               prefixIcon: Icon(Icons.info_outline_rounded),
                             ),
                             items: const [
-                              DropdownMenuItem(value: 'active', child: Text('ACTIVE')),
-                              DropdownMenuItem(value: 'expired', child: Text('EXPIRED')),
-                              DropdownMenuItem(value: 'terminated', child: Text('TERMINATED')),
+                              DropdownMenuItem(
+                                  value: 'active', child: Text('ACTIVE')),
+                              DropdownMenuItem(
+                                  value: 'expired', child: Text('EXPIRED')),
+                              DropdownMenuItem(
+                                  value: 'terminated',
+                                  child: Text('TERMINATED')),
                             ],
                             onChanged: (val) {
                               if (val != null) {
@@ -281,8 +292,10 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                               prefixIcon: Icon(Icons.monetization_on_outlined),
                             ),
                             validator: (val) {
-                              if (val == null || val.trim().isEmpty) return 'Enter default rate';
-                              if (double.tryParse(val) == null) return 'Enter valid number';
+                              if (val == null || val.trim().isEmpty)
+                                return 'Enter default rate';
+                              if (double.tryParse(val) == null)
+                                return 'Enter valid number';
                               return null;
                             },
                           ),
@@ -295,7 +308,9 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Route-wise Custom Rates', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text('Route-wise Custom Rates',
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
                         TextButton.icon(
                           onPressed: _addRouteRate,
                           icon: const Icon(Icons.add_circle_outline_rounded),
@@ -317,12 +332,15 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                   Expanded(
                                     child: TextFormField(
                                       initialValue: rate.pickup,
-                                      decoration: const InputDecoration(labelText: 'Pickup Location (e.g. Hub A)'),
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Pickup Location (e.g. Hub A)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: val,
                                           delivery: _routeRates[index].delivery,
-                                          ratePerTon: _routeRates[index].ratePerTon,
+                                          ratePerTon:
+                                              _routeRates[index].ratePerTon,
                                           flatRate: _routeRates[index].flatRate,
                                         );
                                       },
@@ -332,19 +350,23 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                   Expanded(
                                     child: TextFormField(
                                       initialValue: rate.delivery,
-                                      decoration: const InputDecoration(labelText: 'Delivery Location (e.g. Plant B)'),
+                                      decoration: const InputDecoration(
+                                          labelText:
+                                              'Delivery Location (e.g. Plant B)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: _routeRates[index].pickup,
                                           delivery: val,
-                                          ratePerTon: _routeRates[index].ratePerTon,
+                                          ratePerTon:
+                                              _routeRates[index].ratePerTon,
                                           flatRate: _routeRates[index].flatRate,
                                         );
                                       },
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                    icon: const Icon(Icons.delete_outline,
+                                        color: Colors.red),
                                     onPressed: () {
                                       setState(() {
                                         _routeRates.removeAt(index);
@@ -360,12 +382,14 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.ratePerTon.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Rate per Ton (\$)'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Rate per Ton (\$)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: _routeRates[index].pickup,
                                           delivery: _routeRates[index].delivery,
-                                          ratePerTon: double.tryParse(val) ?? 0.0,
+                                          ratePerTon:
+                                              double.tryParse(val) ?? 0.0,
                                           flatRate: _routeRates[index].flatRate,
                                         );
                                       },
@@ -376,12 +400,14 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.flatRate.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate (\$)'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Or Flat Trip Rate (\$)'),
                                       onChanged: (val) {
                                         _routeRates[index] = RouteRate(
                                           pickup: _routeRates[index].pickup,
                                           delivery: _routeRates[index].delivery,
-                                          ratePerTon: _routeRates[index].ratePerTon,
+                                          ratePerTon:
+                                              _routeRates[index].ratePerTon,
                                           flatRate: double.tryParse(val) ?? 0.0,
                                         );
                                       },
@@ -401,7 +427,9 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Vehicle-specific Rates', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text('Vehicle-specific Rates',
+                            style: theme.textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
                         TextButton.icon(
                           onPressed: _addVehicleRate,
                           icon: const Icon(Icons.add_circle_outline_rounded),
@@ -422,29 +450,37 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                 children: [
                                   Expanded(
                                     child: DropdownButtonFormField<String>(
-                                      value: rate.vehicleId.isEmpty ? null : rate.vehicleId,
-                                      decoration: const InputDecoration(labelText: 'Select Vehicle'),
+                                      value: rate.vehicleId.isEmpty
+                                          ? null
+                                          : rate.vehicleId,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Select Vehicle'),
                                       items: vehicles.map((v) {
                                         return DropdownMenuItem(
                                           value: v.id,
-                                          child: Text('${v.licensePlate} (${v.make})'),
+                                          child: Text(
+                                              '${v.licensePlate} (${v.make})'),
                                         );
                                       }).toList(),
                                       onChanged: (val) {
                                         if (val != null) {
-                                          final v = vehicles.firstWhere((veh) => veh.id == val);
+                                          final v = vehicles.firstWhere(
+                                              (veh) => veh.id == val);
                                           _vehicleRates[index] = VehicleRate(
                                             vehicleId: val,
                                             licensePlate: v.licensePlate,
-                                            ratePerTon: _vehicleRates[index].ratePerTon,
-                                            flatRate: _vehicleRates[index].flatRate,
+                                            ratePerTon:
+                                                _vehicleRates[index].ratePerTon,
+                                            flatRate:
+                                                _vehicleRates[index].flatRate,
                                           );
                                         }
                                       },
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                    icon: const Icon(Icons.delete_outline,
+                                        color: Colors.red),
                                     onPressed: () {
                                       setState(() {
                                         _vehicleRates.removeAt(index);
@@ -460,13 +496,18 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.ratePerTon.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Rate per Ton (\$)'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Rate per Ton (\$)'),
                                       onChanged: (val) {
                                         _vehicleRates[index] = VehicleRate(
-                                          vehicleId: _vehicleRates[index].vehicleId,
-                                          licensePlate: _vehicleRates[index].licensePlate,
-                                          ratePerTon: double.tryParse(val) ?? 0.0,
-                                          flatRate: _vehicleRates[index].flatRate,
+                                          vehicleId:
+                                              _vehicleRates[index].vehicleId,
+                                          licensePlate:
+                                              _vehicleRates[index].licensePlate,
+                                          ratePerTon:
+                                              double.tryParse(val) ?? 0.0,
+                                          flatRate:
+                                              _vehicleRates[index].flatRate,
                                         );
                                       },
                                     ),
@@ -476,12 +517,16 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                     child: TextFormField(
                                       initialValue: rate.flatRate.toString(),
                                       keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: 'Or Flat Trip Rate (\$)'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Or Flat Trip Rate (\$)'),
                                       onChanged: (val) {
                                         _vehicleRates[index] = VehicleRate(
-                                          vehicleId: _vehicleRates[index].vehicleId,
-                                          licensePlate: _vehicleRates[index].licensePlate,
-                                          ratePerTon: _vehicleRates[index].ratePerTon,
+                                          vehicleId:
+                                              _vehicleRates[index].vehicleId,
+                                          licensePlate:
+                                              _vehicleRates[index].licensePlate,
+                                          ratePerTon:
+                                              _vehicleRates[index].ratePerTon,
                                           flatRate: double.tryParse(val) ?? 0.0,
                                         );
                                       },

@@ -142,7 +142,8 @@ final dashboardStatsProvider =
       parts.fold<double>(0.0, (sum, p) => sum + (p.quantity * p.unitCost));
 
   // 8. Contract & Invoice Statistics
-  final activeContractsCount = contracts.where((c) => c.status == 'active').length;
+  final activeContractsCount =
+      contracts.where((c) => c.status == 'active').length;
   final outstandingInvoicesAmount = invoices
       .where((i) => i.status == 'sent')
       .fold<double>(0.0, (sum, i) => sum + i.amount);

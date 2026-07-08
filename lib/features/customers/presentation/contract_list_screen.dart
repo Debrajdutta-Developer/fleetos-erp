@@ -55,7 +55,8 @@ class _ContractListScreenState extends ConsumerState<ContractListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Search by contract number, customer name...',
+                          hintText:
+                              'Search by contract number, customer name...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -85,15 +86,18 @@ class _ContractListScreenState extends ConsumerState<ContractListScreen> {
                               ? 'Get started by creating your first Freight Contract.'
                               : 'No contracts match your search query.',
                           icon: Icons.article_outlined,
-                          actionText: _searchQuery.isEmpty ? 'Create Contract' : null,
+                          actionText:
+                              _searchQuery.isEmpty ? 'Create Contract' : null,
                           onActionPressed: _searchQuery.isEmpty
                               ? () => context.push('/contracts/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount:
+                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
                             childAspectRatio: 1.35,
@@ -175,7 +179,8 @@ class _ContractCard extends ConsumerWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: statusColor.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(6),
@@ -192,10 +197,12 @@ class _ContractCard extends ConsumerWidget {
                     const SizedBox(width: 4),
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () => context.push('/contracts/${contract.id}/edit'),
+                      onPressed: () =>
+                          context.push('/contracts/${contract.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
@@ -205,11 +212,13 @@ class _ContractCard extends ConsumerWidget {
                                 'Are you sure you want to delete contract ${contract.contractNumber}?'),
                             actions: [
                               TextButton(
-                                onPressed: () => Navigator.of(context).pop(false),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(true),
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
                                   foregroundColor: Colors.white,
@@ -220,7 +229,9 @@ class _ContractCard extends ConsumerWidget {
                           ),
                         );
                         if (confirmed == true) {
-                          ref.read(contractListControllerProvider.notifier).deleteContract(contract.id);
+                          ref
+                              .read(contractListControllerProvider.notifier)
+                              .deleteContract(contract.id);
                         }
                       },
                     ),
