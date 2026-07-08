@@ -19,6 +19,8 @@ class DashboardStats {
   final int totalPartsCount;
   final int lowStockPartsCount;
   final double totalStockValue;
+  final int activeContractsCount;
+  final double outstandingInvoicesAmount;
 
   const DashboardStats({
     required this.activeFleetCount,
@@ -33,6 +35,8 @@ class DashboardStats {
     required this.totalPartsCount,
     required this.lowStockPartsCount,
     required this.totalStockValue,
+    required this.activeContractsCount,
+    required this.outstandingInvoicesAmount,
   });
 }
 
@@ -44,13 +48,17 @@ final dashboardStatsProvider =
   final customersAsync = ref.watch(customersStreamProvider);
   final vendorsAsync = ref.watch(vendorsStreamProvider);
   final partsAsync = ref.watch(partsStreamProvider);
+  final contractsAsync = ref.watch(contractsStreamProvider);
+  final invoicesAsync = ref.watch(invoicesStreamProvider);
 
   if (vehiclesAsync.isLoading ||
       tripsAsync.isLoading ||
       driversAsync.isLoading ||
       customersAsync.isLoading ||
       vendorsAsync.isLoading ||
-      partsAsync.isLoading) {
+      partsAsync.isLoading ||
+      contractsAsync.isLoading ||
+      invoicesAsync.isLoading) {
     return const AsyncValue.loading();
   }
 
@@ -72,6 +80,12 @@ final dashboardStatsProvider =
   if (partsAsync.hasError) {
     return AsyncValue.error(partsAsync.error!, partsAsync.stackTrace!);
   }
+  if (contractsAsync.hasError) {
+    return AsyncValue.error(contractsAsync.error!, contractsAsync.stackTrace!);
+  }
+  if (invoicesAsync.hasError) {
+    return AsyncValue.error(invoicesAsync.error!, invoicesAsync.stackTrace!);
+  }
 
   final vehicles = vehiclesAsync.value ?? [];
   final trips = tripsAsync.value ?? [];
@@ -79,6 +93,8 @@ final dashboardStatsProvider =
   final customers = customersAsync.value ?? [];
   final vendors = vendorsAsync.value ?? [];
   final parts = partsAsync.value ?? [];
+  final contracts = contractsAsync.value ?? [];
+  final invoices = invoicesAsync.value ?? [];
 
   // 1. Active Fleet Count
   final activeFleetCount = vehicles.where((v) => v.status == 'active').length;
@@ -125,6 +141,12 @@ final dashboardStatsProvider =
   final totalStockValue =
       parts.fold<double>(0.0, (sum, p) => sum + (p.quantity * p.unitCost));
 
+  // 8. Contract & Invoice Statistics
+  final activeContractsCount = contracts.where((c) => c.status == 'active').length;
+  final outstandingInvoicesAmount = invoices
+      .where((i) => i.status == 'sent')
+      .fold<double>(0.0, (sum, i) => sum + i.amount);
+
   return AsyncValue.data(DashboardStats(
     activeFleetCount: activeFleetCount,
     tripsScheduled: tripsScheduled,
@@ -138,5 +160,7 @@ final dashboardStatsProvider =
     totalPartsCount: totalPartsCount,
     lowStockPartsCount: lowStockPartsCount,
     totalStockValue: totalStockValue,
+    activeContractsCount: activeContractsCount,
+    outstandingInvoicesAmount: outstandingInvoicesAmount,
   ));
 });

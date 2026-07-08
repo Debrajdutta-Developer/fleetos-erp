@@ -3,48 +3,46 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
-import '../domain/customer_entity.dart';
+import '../domain/contract_entity.dart';
 import 'customer_providers.dart';
 
-class CustomerListScreen extends ConsumerStatefulWidget {
-  const CustomerListScreen({super.key});
+class ContractListScreen extends ConsumerStatefulWidget {
+  const ContractListScreen({super.key});
 
   @override
-  ConsumerState<CustomerListScreen> createState() => _CustomerListScreenState();
+  ConsumerState<ContractListScreen> createState() => _ContractListScreenState();
 }
 
-class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
+class _ContractListScreenState extends ConsumerState<ContractListScreen> {
   String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    final customersAsync = ref.watch(customersStreamProvider);
+    final contractsAsync = ref.watch(contractsStreamProvider);
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth > 992;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customer Accounts'),
+        title: const Text('Freight Rate Contracts'),
       ),
-      body: customersAsync.when(
+      body: contractsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(
           child: EmptyStateWidget(
-            title: 'Failed to sync customers',
+            title: 'Failed to sync contracts',
             description: err.toString(),
             icon: Icons.error_outline_rounded,
             actionText: 'Retry',
-            onActionPressed: () => ref.invalidate(customersStreamProvider),
+            onActionPressed: () => ref.invalidate(contractsStreamProvider),
           ),
         ),
-        data: (customers) {
-          final filtered = customers.where((c) {
+        data: (contracts) {
+          final filtered = contracts.where((c) {
             final query = _searchQuery.toLowerCase();
-            return c.name.toLowerCase().contains(query) ||
-                c.contactName.toLowerCase().contains(query) ||
-                c.phone.contains(query) ||
-                c.email.toLowerCase().contains(query);
+            return c.contractNumber.toLowerCase().contains(query) ||
+                c.customerName.toLowerCase().contains(query);
           }).toList();
 
           return Padding(
@@ -57,8 +55,7 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
                     Expanded(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText:
-                              'Search by customer name, contact, phone...',
+                          hintText: 'Search by contract number, customer name...',
                           prefixIcon: const Icon(Icons.search_rounded),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -73,9 +70,9 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
                     ),
                     const SizedBox(width: 16),
                     CustomButton(
-                      text: 'Add Customer',
+                      text: 'Create Contract',
                       icon: Icons.add_rounded,
-                      onPressed: () => context.push('/customers/new'),
+                      onPressed: () => context.push('/contracts/new'),
                     ),
                   ],
                 ),
@@ -83,30 +80,27 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
                 Expanded(
                   child: filtered.isEmpty
                       ? EmptyStateWidget(
-                          title: 'No Customers Found',
+                          title: 'No Contracts Found',
                           description: _searchQuery.isEmpty
-                              ? 'Get started by onboarding your first Billed Corporate Customer.'
-                              : 'No customers match your search query.',
-                          icon: Icons.people_outline_rounded,
-                          actionText:
-                              _searchQuery.isEmpty ? 'Add Customer' : null,
+                              ? 'Get started by creating your first Freight Contract.'
+                              : 'No contracts match your search query.',
+                          icon: Icons.article_outlined,
+                          actionText: _searchQuery.isEmpty ? 'Create Contract' : null,
                           onActionPressed: _searchQuery.isEmpty
-                              ? () => context.push('/customers/new')
+                              ? () => context.push('/contracts/new')
                               : null,
                         )
                       : GridView.builder(
                           itemCount: filtered.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: isDesktop ? 3 : (screenWidth > 600 ? 2 : 1),
                             crossAxisSpacing: 16,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 1.5,
+                            childAspectRatio: 1.35,
                           ),
                           itemBuilder: (context, index) {
-                            final customer = filtered[index];
-                            return _CustomerCard(customer: customer);
+                            final contract = filtered[index];
+                            return _ContractCard(contract: contract);
                           },
                         ),
                 ),
@@ -119,15 +113,30 @@ class _CustomerListScreenState extends ConsumerState<CustomerListScreen> {
   }
 }
 
-class _CustomerCard extends ConsumerWidget {
-  final CustomerEntity customer;
+class _ContractCard extends ConsumerWidget {
+  final ContractEntity contract;
 
-  const _CustomerCard({required this.customer});
+  const _ContractCard({required this.contract});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    Color statusColor;
+    switch (contract.status) {
+      case 'active':
+        statusColor = Colors.green;
+        break;
+      case 'expired':
+        statusColor = Colors.orange;
+        break;
+      case 'terminated':
+        statusColor = Colors.red;
+        break;
+      default:
+        statusColor = Colors.grey;
+    }
 
     return Card(
       child: Padding(
@@ -144,7 +153,7 @@ class _CustomerCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        customer.name,
+                        contract.contractNumber,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleLarge?.copyWith(
@@ -153,9 +162,11 @@ class _CustomerCard extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Contact: ${customer.contactName}',
+                        contract.customerName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurface.withOpacity(0.5),
+                          color: colorScheme.onSurface.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -163,42 +174,53 @@ class _CustomerCard extends ConsumerWidget {
                 ),
                 Row(
                   children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: statusColor.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        contract.status.toUpperCase(),
+                        style: TextStyle(
+                          color: statusColor,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 20),
-                      onPressed: () =>
-                          context.push('/customers/${customer.id}/edit'),
+                      onPressed: () => context.push('/contracts/${contract.id}/edit'),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded,
-                          size: 20, color: Colors.red),
+                      icon: const Icon(Icons.delete_outline_rounded, size: 20, color: Colors.red),
                       onPressed: () async {
                         final confirmed = await showDialog<bool>(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Delete Customer'),
+                            title: const Text('Delete Contract'),
                             content: Text(
-                                'Are you sure you want to delete ${customer.name}?'),
+                                'Are you sure you want to delete contract ${contract.contractNumber}?'),
                             actions: [
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(false),
+                                onPressed: () => Navigator.of(context).pop(false),
                                 child: const Text('Cancel'),
                               ),
                               ElevatedButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(true),
+                                onPressed: () => Navigator.of(context).pop(true),
                                 style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white),
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                ),
                                 child: const Text('Delete'),
                               ),
                             ],
                           ),
                         );
                         if (confirmed == true) {
-                          ref
-                              .read(customerListControllerProvider.notifier)
-                              .deleteCustomer(customer.id);
+                          ref.read(contractListControllerProvider.notifier).deleteContract(contract.id);
                         }
                       },
                     ),
@@ -209,9 +231,12 @@ class _CustomerCard extends ConsumerWidget {
             const Divider(height: 16),
             Row(
               children: [
-                const Icon(Icons.phone_rounded, size: 14),
+                const Icon(Icons.calendar_month_outlined, size: 14),
                 const SizedBox(width: 6),
-                Text(customer.phone, style: theme.textTheme.bodyMedium),
+                Text(
+                  '${contract.startDate.toLocal().toString().split(' ')[0]} to ${contract.endDate.toLocal().toString().split(' ')[0]}',
+                  style: theme.textTheme.bodyMedium,
+                ),
               ],
             ),
             const SizedBox(height: 6),
@@ -220,73 +245,34 @@ class _CustomerCard extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.credit_score_rounded, size: 14),
+                    const Icon(Icons.local_shipping_outlined, size: 14),
                     const SizedBox(width: 6),
                     Text(
-                      'Limit: \$${customer.creditLimit.toStringAsFixed(0)}',
+                      'Base Rate: \$${contract.defaultFreightRate}/ton',
                       style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.account_balance_wallet_outlined, size: 14),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Bal: \$${customer.outstandingBalance.toStringAsFixed(0)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: (customer.creditLimit > 0 && customer.outstandingBalance >= customer.creditLimit)
-                            ? Colors.red
-                            : colorScheme.primary,
-                      ),
                     ),
                   ],
                 ),
               ],
             ),
-            if (customer.contacts.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(Icons.people_alt_outlined, size: 14),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${customer.contacts.length} additional contacts',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.6),
-                    ),
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${contract.routeRates.length} route rates',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
-                ],
-              ),
-            ],
-            if (customer.email.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(Icons.email_outlined, size: 14),
-                  const SizedBox(width: 6),
-                  Text(customer.email, style: theme.textTheme.bodyMedium),
-                ],
-              ),
-            ],
-            if (customer.address.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  const Icon(Icons.location_on_outlined, size: 14),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      customer.address,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                ),
+                Text(
+                  '${contract.vehicleRates.length} vehicle rates',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.6),
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ],
         ),
       ),

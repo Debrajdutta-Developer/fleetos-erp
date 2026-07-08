@@ -35,6 +35,9 @@ import '../../features/inventory/presentation/supplier_list_screen.dart';
 import '../../features/inventory/presentation/supplier_form_screen.dart';
 import '../../features/inventory/presentation/transaction_list_screen.dart';
 import '../../features/inventory/presentation/transaction_form_screen.dart';
+import '../../features/customers/presentation/contract_list_screen.dart';
+import '../../features/customers/presentation/contract_form_screen.dart';
+import '../../features/customers/presentation/invoice_list_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -274,6 +277,25 @@ final routerProvider = Provider<GoRouter>((ref) {
           final partId = state.uri.queryParameters['partId'];
           return TransactionFormScreen(preSelectedPartId: partId);
         },
+      ),
+      GoRoute(
+        path: '/contracts',
+        builder: (context, state) => const ContractListScreen(),
+      ),
+      GoRoute(
+        path: '/contracts/new',
+        builder: (context, state) => const ContractFormScreen(),
+      ),
+      GoRoute(
+        path: '/contracts/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ContractFormScreen(contractId: id);
+        },
+      ),
+      GoRoute(
+        path: '/invoices',
+        builder: (context, state) => const InvoiceListScreen(),
       ),
     ],
     redirect: (context, state) {

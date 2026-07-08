@@ -21,7 +21,9 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
   late TextEditingController _phoneController;
   late TextEditingController _emailController;
   late TextEditingController _addressController;
+  late TextEditingController _creditLimitController;
 
+  List<ContactPerson> _contactsList = [];
   bool _initialized = false;
 
   @override
@@ -32,6 +34,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
     _addressController = TextEditingController();
+    _creditLimitController = TextEditingController(text: '0.0');
   }
 
   @override
@@ -41,6 +44,7 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
     _phoneController.dispose();
     _emailController.dispose();
     _addressController.dispose();
+    _creditLimitController.dispose();
     super.dispose();
   }
 
@@ -53,8 +57,27 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
       _phoneController.text = customer.phone;
       _emailController.text = customer.email;
       _addressController.text = customer.address;
+      _creditLimitController.text = customer.creditLimit.toString();
+      _contactsList = List.from(customer.contacts);
     }
     _initialized = true;
+  }
+
+  void _addContact() {
+    setState(() {
+      _contactsList.add(const ContactPerson(
+        name: '',
+        email: '',
+        phone: '',
+        role: 'Manager',
+      ));
+    });
+  }
+
+  void _removeContact(int index) {
+    setState(() {
+      _contactsList.removeAt(index);
+    });
   }
 
   Future<void> _submit() async {
@@ -67,6 +90,8 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
       phone: _phoneController.text.trim(),
       email: _emailController.text.trim(),
       address: _addressController.text.trim(),
+      creditLimit: double.tryParse(_creditLimitController.text.trim()) ?? 0.0,
+      contacts: _contactsList,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -131,43 +156,190 @@ class _CustomerFormScreenState extends ConsumerState<CustomerFormScreen> {
                           : null,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _contactController,
-                      decoration: const InputDecoration(
-                        labelText: 'Contact Person Name',
-                        prefixIcon: Icon(Icons.person_rounded),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _contactController,
+                            decoration: const InputDecoration(
+                              labelText: 'Primary Contact Person',
+                              prefixIcon: Icon(Icons.person_rounded),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _creditLimitController,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              labelText: 'Credit Limit ($)',
+                              prefixIcon: Icon(Icons.credit_card_rounded),
+                            ),
+                            validator: (val) {
+                              if (val == null || val.trim().isEmpty) return 'Enter credit limit';
+                              if (double.tryParse(val) == null) return 'Enter valid number';
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        prefixIcon: Icon(Icons.phone_rounded),
-                      ),
-                      validator: (val) => val == null || val.trim().isEmpty
-                          ? 'Enter phone number'
-                          : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: 'Email Address',
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              prefixIcon: Icon(Icons.phone_rounded),
+                            ),
+                            validator: (val) => val == null || val.trim().isEmpty
+                                ? 'Enter phone number'
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: 'Email Address',
+                              prefixIcon: Icon(Icons.email_outlined),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _addressController,
-                      maxLines: 3,
+                      maxLines: 2,
                       decoration: const InputDecoration(
                         labelText: 'Office Address',
                         prefixIcon: Icon(Icons.location_on_outlined),
                       ),
                     ),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Additional Contact Persons',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: _addContact,
+                          icon: const Icon(Icons.add_circle_outline_rounded),
+                          label: const Text('Add Contact'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    if (_contactsList.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text('No additional contacts added yet.', style: TextStyle(fontStyle: FontStyle.italic)),
+                      )
+                    else
+                      ...List.generate(_contactsList.length, (index) {
+                        final contact = _contactsList[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Contact #${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    IconButton(
+                                      icon: const Icon(Icons.remove_circle_outline_rounded, color: Colors.red),
+                                      onPressed: () => _removeContact(index),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: contact.name,
+                                        decoration: const InputDecoration(labelText: 'Name'),
+                                        onChanged: (val) {
+                                          _contactsList[index] = ContactPerson(
+                                            name: val,
+                                            email: _contactsList[index].email,
+                                            phone: _contactsList[index].phone,
+                                            role: _contactsList[index].role,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: contact.role,
+                                        decoration: const InputDecoration(labelText: 'Role/Designation'),
+                                        onChanged: (val) {
+                                          _contactsList[index] = ContactPerson(
+                                            name: _contactsList[index].name,
+                                            email: _contactsList[index].email,
+                                            phone: _contactsList[index].phone,
+                                            role: val,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: contact.phone,
+                                        decoration: const InputDecoration(labelText: 'Phone'),
+                                        onChanged: (val) {
+                                          _contactsList[index] = ContactPerson(
+                                            name: _contactsList[index].name,
+                                            email: _contactsList[index].email,
+                                            phone: val,
+                                            role: _contactsList[index].role,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextFormField(
+                                        initialValue: contact.email,
+                                        decoration: const InputDecoration(labelText: 'Email'),
+                                        onChanged: (val) {
+                                          _contactsList[index] = ContactPerson(
+                                            name: _contactsList[index].name,
+                                            email: val,
+                                            phone: _contactsList[index].phone,
+                                            role: _contactsList[index].role,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
                     const SizedBox(height: 32),
                     CustomButton(
                       text: isEditMode ? 'Update Customer' : 'Add Customer',

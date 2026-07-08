@@ -8,6 +8,10 @@ import '../domain/trip_repository.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../finance/presentation/finance_providers.dart';
 import '../../finance/domain/finance_transaction_entity.dart';
+import '../../customers/domain/customer_entity.dart';
+import '../../customers/domain/contract_entity.dart';
+import '../../customers/domain/invoice_entity.dart';
+import '../../customers/presentation/customer_providers.dart';
 
 /// Provider for TripRepository.
 final tripRepositoryProvider = Provider<TripRepository>((ref) {
@@ -169,6 +173,17 @@ class TripFormController extends StateNotifier<TripFormState> {
         );
       }
 
+      // Business Rule: Verify customer credit limit
+      final customerRepo = _ref.read(customerRepositoryProvider);
+      final customer = await customerRepo.getCustomerById(companyId, trip.customerId);
+      if (customer != null && customer.creditLimit > 0) {
+        if (customer.outstandingBalance + trip.freightAmount > customer.creditLimit) {
+          throw Exception(
+            'Validation Blocked: Customer credit limit of \$${customer.creditLimit.toStringAsFixed(2)} exceeded. Outstanding balance: \$${customer.outstandingBalance.toStringAsFixed(2)}.',
+          );
+        }
+      }
+
       // Create initial audit log
       final auditLog = AuditLogEntity(
         id: '',
@@ -269,14 +284,93 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
         if (newStatus == 'completed') {
           final financeRepo = _ref.read(financeRepositoryProvider);
 
-          // 1. Create Income transaction for freightAmount
+          // Retrieve active contract for customer and calculate freight pricing
+          final customerRepo = _ref.read(customerRepositoryProvider);
+          final contracts = await customerRepo.getContracts(companyId);
+          final nowTime = DateTime.now();
+          final activeContract = contracts.firstWhere(
+            (c) =>
+                c.customerId == trip.customerId &&
+                c.status == 'active' &&
+                c.startDate.isBefore(nowTime) &&
+                c.endDate.isAfter(nowTime),
+            orElse: () => ContractEntity(
+              id: '',
+              customerId: '',
+              customerName: '',
+              contractNumber: '',
+              startDate: DateTime.now(),
+              endDate: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+          );
+
+          double calculatedAmount = trip.freightAmount;
+          if (activeContract.id.isNotEmpty) {
+            // Check vehicle-wise pricing
+            final vehicleRate = activeContract.vehicleRates.firstWhere(
+              (v) => v.vehicleId == trip.vehicleId,
+              orElse: () => const VehicleRate(vehicleId: '', licensePlate: ''),
+            );
+
+            if (vehicleRate.vehicleId.isNotEmpty) {
+              calculatedAmount = vehicleRate.flatRate > 0
+                  ? vehicleRate.flatRate
+                  : (vehicleRate.ratePerTon * trip.coalQuantity);
+            } else {
+              // Check route-wise pricing
+              final routeRate = activeContract.routeRates.firstWhere(
+                (r) =>
+                    r.pickup.toLowerCase().trim() == trip.pickupLocation.toLowerCase().trim() &&
+                    r.delivery.toLowerCase().trim() == trip.deliveryLocation.toLowerCase().trim(),
+                orElse: () => const RouteRate(pickup: '', delivery: ''),
+              );
+
+              if (routeRate.pickup.isNotEmpty) {
+                calculatedAmount = routeRate.flatRate > 0
+                    ? routeRate.flatRate
+                    : (routeRate.ratePerTon * trip.coalQuantity);
+              } else if (activeContract.defaultFreightRate > 0) {
+                calculatedAmount = activeContract.defaultFreightRate * trip.coalQuantity;
+              }
+            }
+          }
+
+          // Generate Invoice Draft
+          final invoiceId = 'inv_$tripId';
+          final newInvoice = InvoiceEntity(
+            id: invoiceId,
+            tripId: tripId,
+            customerId: trip.customerId,
+            customerName: trip.customerName,
+            invoiceNumber: 'INV-${DateTime.now().millisecondsSinceEpoch}',
+            amount: calculatedAmount,
+            status: 'draft',
+            issueDate: DateTime.now(),
+            dueDate: DateTime.now().add(const Duration(days: 30)),
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+          await customerRepo.createInvoice(companyId, newInvoice);
+
+          // Update Customer outstanding balance
+          final customer = await customerRepo.getCustomerById(companyId, trip.customerId);
+          if (customer != null) {
+            final updatedCustomer = customer.copyWith(
+              outstandingBalance: customer.outstandingBalance + calculatedAmount,
+            );
+            await customerRepo.updateCustomer(companyId, updatedCustomer);
+          }
+
+          // 1. Create Income transaction for contract-calculated amount
           final incomeTxId = 'tx_inc_$tripId';
           final incomeTx = FinanceTransactionEntity(
             id: incomeTxId,
             companyId: companyId,
             type: 'income',
             category: 'income',
-            amount: trip.freightAmount,
+            amount: calculatedAmount,
             paymentMode: 'bank',
             tripId: trip.id,
             tripNumber: trip.id,
@@ -295,7 +389,7 @@ class TripListController extends StateNotifier<AsyncValue<void>> {
             entityId: incomeTxId,
             action: 'transaction_created',
             description:
-                'INCOME recorded for Category: INCOME with Amount: \$${trip.freightAmount.toStringAsFixed(2)}.',
+                'INCOME recorded for Category: INCOME with Amount: \$${calculatedAmount.toStringAsFixed(2)}.',
             userId: user.uid,
             userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
             timestamp: DateTime.now(),

@@ -121,6 +121,8 @@ void main() {
           customersStreamProvider.overrideWith((ref) => Stream.value([])),
           vendorsStreamProvider.overrideWith((ref) => Stream.value([])),
           partsStreamProvider.overrideWith((ref) => Stream.value([])),
+          contractsStreamProvider.overrideWith((ref) => Stream.value([])),
+          invoicesStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
 
@@ -131,6 +133,8 @@ void main() {
       await container.read(customersStreamProvider.future);
       await container.read(vendorsStreamProvider.future);
       await container.read(partsStreamProvider.future);
+      await container.read(contractsStreamProvider.future);
+      await container.read(invoicesStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
@@ -160,6 +164,10 @@ void main() {
       expect(stats.totalPartsCount, 0);
       expect(stats.lowStockPartsCount, 0);
       expect(stats.totalStockValue, 0.0);
+
+      // 7. Verify contract & invoice statistics
+      expect(stats.activeContractsCount, 0);
+      expect(stats.outstandingInvoicesAmount, 0.0);
     });
   });
 }

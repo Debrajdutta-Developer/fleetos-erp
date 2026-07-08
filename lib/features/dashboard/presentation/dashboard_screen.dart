@@ -203,6 +203,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           trend: 'Asset valuation',
           isPositive: true,
         ),
+        _StatCardData(
+          title: 'Active Contracts',
+          value: data.activeContractsCount.toString(),
+          subtitle: 'Service agreements',
+          icon: Icons.assignment_rounded,
+          trend: 'Pricing active',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Outstanding Invoices',
+          value: '\$${data.outstandingInvoicesAmount.toStringAsFixed(0)}',
+          subtitle: 'Receivables amount',
+          icon: Icons.receipt_rounded,
+          trend: 'Total outstanding',
+          isPositive: true,
+        ),
       ],
       loading: () => [
         _StatCardData(
@@ -282,6 +298,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             icon: Icons.attach_money_rounded,
             trend: '...',
             isPositive: true),
+        _StatCardData(
+            title: 'Active Contracts',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.assignment_rounded,
+            trend: '...',
+            isPositive: true),
+        _StatCardData(
+            title: 'Outstanding Invoices',
+            value: '...',
+            subtitle: 'Loading...',
+            icon: Icons.receipt_rounded,
+            trend: '...',
+            isPositive: true),
       ],
       error: (e, _) => [
         _StatCardData(
@@ -338,6 +368,41 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             value: 'ERR',
             subtitle: 'Error loading',
             icon: Icons.business_rounded,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Spare Parts Stock',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.build_outlined,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Low Stock Warnings',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.production_quantity_limits_rounded,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Inventory Total Value',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.attach_money_rounded,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Active Contracts',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.assignment_rounded,
+            trend: '...',
+            isPositive: false),
+        _StatCardData(
+            title: 'Outstanding Invoices',
+            value: 'ERR',
+            subtitle: 'Error loading',
+            icon: Icons.receipt_rounded,
             trend: '...',
             isPositive: false),
       ],
@@ -630,6 +695,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   onTap: () => context.push('/customers'),
                 ),
                 _SidebarNavItem(
+                  icon: Icons.assignment_rounded,
+                  label: 'Freight Contracts',
+                  onTap: () => context.push('/contracts'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.receipt_rounded,
+                  label: 'Customer Invoices',
+                  onTap: () => context.push('/invoices'),
+                ),
+                _SidebarNavItem(
                   icon: Icons.business_rounded,
                   label: 'Vendor Directory',
                   onTap: () => context.push('/vendors'),
@@ -799,6 +874,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/customers');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.assignment_rounded),
+                    title: const Text('Freight Contracts'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/contracts');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.receipt_rounded),
+                    title: const Text('Customer Invoices'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/invoices');
                     },
                   ),
                   ListTile(
