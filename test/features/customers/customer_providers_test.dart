@@ -12,6 +12,7 @@ import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
 import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
 import 'package:fleet_os_erp/features/trips/domain/audit_log_entity.dart';
 import 'package:fleet_os_erp/features/vehicles/domain/vehicle_entity.dart';
+import 'package:fleet_os_erp/features/vehicles/domain/vehicle_repository.dart';
 import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
 import 'package:fleet_os_erp/features/finance/domain/finance_repository.dart';
 import 'package:fleet_os_erp/features/finance/domain/finance_transaction_entity.dart';

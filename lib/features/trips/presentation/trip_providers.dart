@@ -8,7 +8,6 @@ import '../domain/trip_repository.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../finance/presentation/finance_providers.dart';
 import '../../finance/domain/finance_transaction_entity.dart';
-import '../../customers/domain/customer_entity.dart';
 import '../../customers/domain/contract_entity.dart';
 import '../../customers/domain/invoice_entity.dart';
 import '../../customers/presentation/customer_providers.dart';

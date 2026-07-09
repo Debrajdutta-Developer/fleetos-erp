@@ -312,9 +312,8 @@ class InvoiceFormController extends StateNotifier<CustomerFormState> {
       if (user?.companyId == null) throw Exception('No company authenticated.');
       final companyId = user!.companyId!;
 
-      InvoiceEntity savedInvoice;
       if (invoice.id.isEmpty) {
-        savedInvoice = await _repository.createInvoice(companyId, invoice);
+        await _repository.createInvoice(companyId, invoice);
       } else {
         throw Exception('Invoices are auto-drafted and status-updated only.');
       }

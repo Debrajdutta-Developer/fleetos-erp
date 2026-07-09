@@ -232,7 +232,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                 prefixIcon: Icon(Icons.calendar_today_rounded),
                               ),
                               child: Text(
-                                '${_startDate.toLocal().toString().split(' ')[0]}',
+                                _startDate.toLocal().toString().split(' ')[0],
                               ),
                             ),
                           ),
@@ -247,7 +247,7 @@ class _ContractFormScreenState extends ConsumerState<ContractFormScreen> {
                                 prefixIcon: Icon(Icons.calendar_today_rounded),
                               ),
                               child: Text(
-                                '${_endDate.toLocal().toString().split(' ')[0]}',
+                                _endDate.toLocal().toString().split(' ')[0],
                               ),
                             ),
                           ),
