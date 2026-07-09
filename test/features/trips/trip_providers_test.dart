@@ -26,50 +26,70 @@ class MockCustomerRepository implements CustomerRepository {
   MockCustomerRepository({required this.customers});
 
   @override
-  Stream<List<CustomerEntity>> watchCustomers(String companyId) => Stream.value(customers);
+  Stream<List<CustomerEntity>> watchCustomers(String companyId) =>
+      Stream.value(customers);
   @override
-  Future<List<CustomerEntity>> getCustomers(String companyId) async => customers;
+  Future<List<CustomerEntity>> getCustomers(String companyId) async =>
+      customers;
   @override
-  Future<CustomerEntity?> getCustomerById(String companyId, String customerId) async {
+  Future<CustomerEntity?> getCustomerById(
+      String companyId, String customerId) async {
     try {
       return customers.firstWhere((c) => c.id == customerId);
     } catch (_) {
       return null;
     }
   }
+
   @override
-  Future<CustomerEntity> createCustomer(String companyId, CustomerEntity customer) async => customer;
+  Future<CustomerEntity> createCustomer(
+          String companyId, CustomerEntity customer) async =>
+      customer;
   @override
-  Future<void> updateCustomer(String companyId, CustomerEntity customer) async {}
+  Future<void> updateCustomer(
+      String companyId, CustomerEntity customer) async {}
   @override
   Future<void> deleteCustomer(String companyId, String customerId) async {}
 
   @override
-  Stream<List<ContractEntity>> watchContracts(String companyId) => Stream.value(contracts);
+  Stream<List<ContractEntity>> watchContracts(String companyId) =>
+      Stream.value(contracts);
   @override
-  Future<List<ContractEntity>> getContracts(String companyId) async => contracts;
+  Future<List<ContractEntity>> getContracts(String companyId) async =>
+      contracts;
   @override
-  Future<ContractEntity?> getContractById(String companyId, String contractId) async => null;
+  Future<ContractEntity?> getContractById(
+          String companyId, String contractId) async =>
+      null;
   @override
-  Future<ContractEntity> createContract(String companyId, ContractEntity contract) async => contract;
+  Future<ContractEntity> createContract(
+          String companyId, ContractEntity contract) async =>
+      contract;
   @override
-  Future<void> updateContract(String companyId, ContractEntity contract) async {}
+  Future<void> updateContract(
+      String companyId, ContractEntity contract) async {}
   @override
   Future<void> deleteContract(String companyId, String contractId) async {}
 
   @override
-  Stream<List<InvoiceEntity>> watchInvoices(String companyId) => Stream.value(invoices);
+  Stream<List<InvoiceEntity>> watchInvoices(String companyId) =>
+      Stream.value(invoices);
   @override
   Future<List<InvoiceEntity>> getInvoices(String companyId) async => invoices;
   @override
-  Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId) async => null;
+  Future<InvoiceEntity?> getInvoiceById(
+          String companyId, String invoiceId) async =>
+      null;
   @override
-  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice) async {
+  Future<InvoiceEntity> createInvoice(
+      String companyId, InvoiceEntity invoice) async {
     invoices.add(invoice);
     return invoice;
   }
+
   @override
-  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status) async {}
+  Future<void> updateInvoiceStatus(
+      String companyId, String invoiceId, String status) async {}
   @override
   Future<void> deleteInvoice(String companyId, String invoiceId) async {}
 }
@@ -665,7 +685,8 @@ void main() {
               ),
             ),
             tripRepositoryProvider.overrideWithValue(repository),
-            customerRepositoryProvider.overrideWithValue(MockCustomerRepository(customers: [
+            customerRepositoryProvider
+                .overrideWithValue(MockCustomerRepository(customers: [
               CustomerEntity(
                 id: 'cust_1',
                 name: 'Walmart',
@@ -767,7 +788,8 @@ void main() {
             tripRepositoryProvider.overrideWithValue(tripRepository),
             vehicleRepositoryProvider.overrideWithValue(vehicleRepository),
             financeRepositoryProvider.overrideWithValue(financeRepository),
-            customerRepositoryProvider.overrideWithValue(MockCustomerRepository(customers: [
+            customerRepositoryProvider
+                .overrideWithValue(MockCustomerRepository(customers: [
               CustomerEntity(
                 id: 'cust_1',
                 name: 'Walmart',
