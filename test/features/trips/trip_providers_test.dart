@@ -12,6 +12,67 @@ import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.da
 import 'package:fleet_os_erp/features/finance/domain/finance_repository.dart';
 import 'package:fleet_os_erp/features/finance/presentation/finance_providers.dart';
 import 'package:fleet_os_erp/features/finance/domain/finance_transaction_entity.dart';
+import 'package:fleet_os_erp/features/customers/domain/customer_entity.dart';
+import 'package:fleet_os_erp/features/customers/domain/contract_entity.dart';
+import 'package:fleet_os_erp/features/customers/domain/invoice_entity.dart';
+import 'package:fleet_os_erp/features/customers/domain/customer_repository.dart';
+import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
+
+class MockCustomerRepository implements CustomerRepository {
+  final List<CustomerEntity> customers;
+  final List<ContractEntity> contracts = [];
+  final List<InvoiceEntity> invoices = [];
+
+  MockCustomerRepository({required this.customers});
+
+  @override
+  Stream<List<CustomerEntity>> watchCustomers(String companyId) => Stream.value(customers);
+  @override
+  Future<List<CustomerEntity>> getCustomers(String companyId) async => customers;
+  @override
+  Future<CustomerEntity?> getCustomerById(String companyId, String customerId) async {
+    try {
+      return customers.firstWhere((c) => c.id == customerId);
+    } catch (_) {
+      return null;
+    }
+  }
+  @override
+  Future<CustomerEntity> createCustomer(String companyId, CustomerEntity customer) async => customer;
+  @override
+  Future<void> updateCustomer(String companyId, CustomerEntity customer) async {}
+  @override
+  Future<void> deleteCustomer(String companyId, String customerId) async {}
+
+  @override
+  Stream<List<ContractEntity>> watchContracts(String companyId) => Stream.value(contracts);
+  @override
+  Future<List<ContractEntity>> getContracts(String companyId) async => contracts;
+  @override
+  Future<ContractEntity?> getContractById(String companyId, String contractId) async => null;
+  @override
+  Future<ContractEntity> createContract(String companyId, ContractEntity contract) async => contract;
+  @override
+  Future<void> updateContract(String companyId, ContractEntity contract) async {}
+  @override
+  Future<void> deleteContract(String companyId, String contractId) async {}
+
+  @override
+  Stream<List<InvoiceEntity>> watchInvoices(String companyId) => Stream.value(invoices);
+  @override
+  Future<List<InvoiceEntity>> getInvoices(String companyId) async => invoices;
+  @override
+  Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId) async => null;
+  @override
+  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice) async {
+    invoices.add(invoice);
+    return invoice;
+  }
+  @override
+  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status) async {}
+  @override
+  Future<void> deleteInvoice(String companyId, String invoiceId) async {}
+}
 
 class MockTripRepository implements TripRepository {
   final List<TripEntity> trips;
@@ -604,6 +665,20 @@ void main() {
               ),
             ),
             tripRepositoryProvider.overrideWithValue(repository),
+            customerRepositoryProvider.overrideWithValue(MockCustomerRepository(customers: [
+              CustomerEntity(
+                id: 'cust_1',
+                name: 'Walmart',
+                contactName: 'Alice',
+                phone: '123',
+                email: 'alice@walmart.com',
+                address: 'BOS',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+                creditLimit: 100000.0,
+                outstandingBalance: 0.0,
+              ),
+            ])),
           ],
         );
 
@@ -692,6 +767,20 @@ void main() {
             tripRepositoryProvider.overrideWithValue(tripRepository),
             vehicleRepositoryProvider.overrideWithValue(vehicleRepository),
             financeRepositoryProvider.overrideWithValue(financeRepository),
+            customerRepositoryProvider.overrideWithValue(MockCustomerRepository(customers: [
+              CustomerEntity(
+                id: 'cust_1',
+                name: 'Walmart',
+                contactName: 'Alice',
+                phone: '123',
+                email: 'alice@walmart.com',
+                address: 'BOS',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+                creditLimit: 100000.0,
+                outstandingBalance: 0.0,
+              ),
+            ])),
           ],
         );
 
