@@ -346,6 +346,7 @@ void main() {
           ),
           customerRepositoryProvider.overrideWithValue(customerRepo),
           tripRepositoryProvider.overrideWithValue(tripRepo),
+          vehicleRepositoryProvider.overrideWithValue(MockVehicleRepository()),
         ],
       );
 

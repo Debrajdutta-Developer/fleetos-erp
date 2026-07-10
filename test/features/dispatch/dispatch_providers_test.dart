@@ -38,8 +38,10 @@ class MockDispatchRepository implements DispatchRepository {
 
   @override
   Future<RouteEntity> createRoute(String companyId, RouteEntity route) async {
-    routes.add(route);
-    return route;
+    final id = route.id.isEmpty ? 'r_${DateTime.now().millisecondsSinceEpoch}' : route.id;
+    final newRoute = route.copyWith(id: id);
+    routes.add(newRoute);
+    return newRoute;
   }
 
   @override
@@ -78,8 +80,10 @@ class MockDispatchRepository implements DispatchRepository {
   @override
   Future<DispatchEntity> createDispatch(
       String companyId, DispatchEntity dispatch) async {
-    dispatches.add(dispatch);
-    return dispatch;
+    final id = dispatch.id.isEmpty ? 'disp_${DateTime.now().millisecondsSinceEpoch}' : dispatch.id;
+    final newDispatch = dispatch.copyWith(id: id);
+    dispatches.add(newDispatch);
+    return newDispatch;
   }
 
   @override

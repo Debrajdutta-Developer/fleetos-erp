@@ -97,9 +97,25 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
               companyId, vehicle.assignedDriverId!, null, null);
 
           // unlink from vehicle's side
-          updatedVehicle = vehicle.copyWith(
+          updatedVehicle = VehicleEntity(
+            id: vehicle.id,
+            vin: vehicle.vin,
+            licensePlate: vehicle.licensePlate,
+            make: vehicle.make,
+            model: vehicle.model,
+            year: vehicle.year,
+            status: vehicle.status,
+            fuelType: vehicle.fuelType,
+            odometer: vehicle.odometer,
+            lastServiceDate: vehicle.lastServiceDate,
+            insuranceExpiry: vehicle.insuranceExpiry,
+            pucExpiry: vehicle.pucExpiry,
+            fitnessExpiry: vehicle.fitnessExpiry,
             assignedDriverId: null,
             assignedDriverName: null,
+            createdAt: vehicle.createdAt,
+            updatedAt: vehicle.updatedAt,
+            deletedAt: vehicle.deletedAt,
           );
         }
       }
