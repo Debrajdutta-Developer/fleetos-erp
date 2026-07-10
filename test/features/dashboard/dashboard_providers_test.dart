@@ -9,6 +9,7 @@ import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/vendors/presentation/vendor_providers.dart';
 import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
+import 'package:fleet_os_erp/features/dispatch/presentation/dispatch_providers.dart';
 
 void main() {
   group('Dashboard Stats Provider Tests', () {
@@ -123,6 +124,8 @@ void main() {
           partsStreamProvider.overrideWith((ref) => Stream.value([])),
           contractsStreamProvider.overrideWith((ref) => Stream.value([])),
           invoicesStreamProvider.overrideWith((ref) => Stream.value([])),
+          routesStreamProvider.overrideWith((ref) => Stream.value([])),
+          dispatchesStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
 
@@ -135,6 +138,8 @@ void main() {
       await container.read(partsStreamProvider.future);
       await container.read(contractsStreamProvider.future);
       await container.read(invoicesStreamProvider.future);
+      await container.read(routesStreamProvider.future);
+      await container.read(dispatchesStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);

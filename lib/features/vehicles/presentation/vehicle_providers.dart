@@ -214,9 +214,12 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
       }
 
       // If vehicle status was idle, transition it to active
-      VehicleEntity updatedVehicle = vehicle;
+      VehicleEntity updatedVehicle = vehicle.copyWith(
+        assignedDriverId: driverId,
+        assignedDriverName: driverName,
+      );
       if (vehicle.status == 'idle') {
-        updatedVehicle = vehicle.copyWith(status: 'active');
+        updatedVehicle = updatedVehicle.copyWith(status: 'active');
       }
 
       await _repository.assignDriver(

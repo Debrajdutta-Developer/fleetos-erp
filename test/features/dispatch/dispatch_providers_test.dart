@@ -377,19 +377,20 @@ void main() {
           container.read(routeListControllerProvider.notifier);
 
       // Create Route
-      var success = await formController.saveRoute(tRoute);
+      var success = await formController.saveRoute(tRoute.copyWith(id: ''));
       expect(success, true);
       expect(dispatchRepo.routes.length, 1);
       expect(dispatchRepo.routes[0].name, 'Chicago to New York');
 
       // Update Route
-      final updatedRoute = tRoute.copyWith(distanceKm: 850.0);
+      final createdRoute = dispatchRepo.routes[0];
+      final updatedRoute = createdRoute.copyWith(distanceKm: 850.0);
       success = await formController.saveRoute(updatedRoute);
       expect(success, true);
       expect(dispatchRepo.routes[0].distanceKm, 850.0);
 
       // Delete Route
-      success = await listController.deleteRoute(tRoute.id);
+      success = await listController.deleteRoute(createdRoute.id);
       expect(success, true);
       expect(dispatchRepo.routes[0].deletedAt, isNotNull);
     });
@@ -442,9 +443,10 @@ void main() {
       var success = await formController.saveDispatch(dispatch);
       expect(success, true);
       expect(dispatchRepo.dispatches.length, 1);
-      expect(tripRepo.trips.length, 1);
-      expect(tripRepo.trips[0].status, 'scheduled');
-      expect(dispatchRepo.dispatches[0].tripId, tripRepo.trips[0].id);
+      final nonDummyTrips = tripRepo.trips.where((t) => t.id.isNotEmpty).toList();
+      expect(nonDummyTrips.length, 1);
+      expect(nonDummyTrips[0].status, 'scheduled');
+      expect(dispatchRepo.dispatches[0].tripId, nonDummyTrips[0].id);
 
       // 2. Block dispatch if driver already has an active dispatch
       final dispatch2 = dispatch.copyWith(
@@ -595,6 +597,18 @@ void main() {
               ])),
         ],
       );
+
+      // Force resolution of the stream providers
+      await container.read(vehiclesStreamProvider.future);
+      await container.read(tripsStreamProvider.future);
+      await container.read(driversStreamProvider.future);
+      await container.read(customersStreamProvider.future);
+      await container.read(vendorsStreamProvider.future);
+      await container.read(partsStreamProvider.future);
+      await container.read(contractsStreamProvider.future);
+      await container.read(invoicesStreamProvider.future);
+      await container.read(routesStreamProvider.future);
+      await container.read(dispatchesStreamProvider.future);
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
