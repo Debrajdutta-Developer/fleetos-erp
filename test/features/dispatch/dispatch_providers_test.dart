@@ -22,6 +22,8 @@ import 'package:fleet_os_erp/features/customers/domain/invoice_entity.dart';
 import 'package:fleet_os_erp/features/customers/domain/customer_repository.dart';
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/dashboard/presentation/dashboard_providers.dart';
+import 'package:fleet_os_erp/features/vendors/presentation/vendor_providers.dart';
+import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
 
 class MockDispatchRepository implements DispatchRepository {
   final List<RouteEntity> routes = [];
@@ -228,7 +230,12 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<void> deleteTrip(String companyId, String tripId) async {}
+  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
+
+  @override
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) {
+    return Stream.value(auditLogs.where((l) => l.entityId == tripId).toList());
+  }
 }
 
 class MockCustomerRepository implements CustomerRepository {

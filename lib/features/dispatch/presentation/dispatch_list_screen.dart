@@ -18,7 +18,6 @@ class _DispatchListScreenState extends ConsumerState<DispatchListScreen> {
   @override
   Widget build(BuildContext context) {
     final dispatchesAsync = ref.watch(dispatchesStreamProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
