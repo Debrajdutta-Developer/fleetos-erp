@@ -74,9 +74,20 @@ class MockDriverRepository implements DriverRepository {
   ) async {
     final idx = drivers.indexWhere((d) => d.id == driverId);
     if (idx != -1) {
-      drivers[idx] = drivers[idx].copyWith(
+      final d = drivers[idx];
+      drivers[idx] = DriverEntity(
+        id: d.id,
+        fullName: d.fullName,
+        phone: d.phone,
+        licenseNumber: d.licenseNumber,
+        licenseExpiry: d.licenseExpiry,
+        status: d.status,
+        safetyScore: d.safetyScore,
         assignedVehicleId: vehicleId,
         assignedVehicleLicensePlate: vehicleLicensePlate,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+        deletedAt: d.deletedAt,
       );
     }
   }
