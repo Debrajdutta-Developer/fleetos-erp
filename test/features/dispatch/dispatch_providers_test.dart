@@ -230,10 +230,12 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<void> deleteTrip(String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
+  Future<void> deleteTrip(
+      String companyId, String tripId, AuditLogEntity deleteAuditLog) async {}
 
   @override
-  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(String companyId, String tripId) {
+  Stream<List<AuditLogEntity>> watchAuditLogsForTrip(
+      String companyId, String tripId) {
     return Stream.value(auditLogs.where((l) => l.entityId == tripId).toList());
   }
 }
