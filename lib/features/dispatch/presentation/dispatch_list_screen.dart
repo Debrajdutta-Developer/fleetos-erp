@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/widgets/empty_state_widget.dart';
-import '../domain/dispatch_entity.dart';
 import 'dispatch_providers.dart';
 
 class DispatchListScreen extends ConsumerStatefulWidget {
