@@ -558,7 +558,7 @@ void main() {
       expect(driverRepo.drivers[0].status, 'available');
     });
 
-    test('should incorporate dispatch metrics in dashboard provider', () {
+    test('should incorporate dispatch metrics in dashboard provider', () async {
       final container = ProviderContainer(
         overrides: [
           currentUserProvider.overrideWith((ref) => UserEntity(
