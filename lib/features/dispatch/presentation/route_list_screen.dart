@@ -36,7 +36,8 @@ class RouteListScreen extends ConsumerWidget {
             return Center(
               child: EmptyStateWidget(
                 title: 'No routes declared',
-                description: 'Add point-to-point routes to begin dispatcher routing.',
+                description:
+                    'Add point-to-point routes to begin dispatcher routing.',
                 icon: Icons.map_outlined,
                 actionText: 'Declare First Route',
                 onActionPressed: () => context.push('/contracts/new'),
@@ -66,7 +67,8 @@ class RouteListScreen extends ConsumerWidget {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Confirm deletion'),
-                          content: const Text('Are you sure you want to delete this route?'),
+                          content: const Text(
+                              'Are you sure you want to delete this route?'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(context, false),

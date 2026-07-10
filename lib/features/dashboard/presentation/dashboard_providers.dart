@@ -99,7 +99,8 @@ final dashboardStatsProvider =
     return AsyncValue.error(routesAsync.error!, routesAsync.stackTrace!);
   }
   if (dispatchesAsync.hasError) {
-    return AsyncValue.error(dispatchesAsync.error!, dispatchesAsync.stackTrace!);
+    return AsyncValue.error(
+        dispatchesAsync.error!, dispatchesAsync.stackTrace!);
   }
 
   final vehicles = vehiclesAsync.value ?? [];
@@ -181,6 +182,7 @@ final dashboardStatsProvider =
     activeContractsCount: activeContractsCount,
     outstandingInvoicesAmount: outstandingInvoicesAmount,
     totalRoutesCount: routes.length,
-    activeDispatchesCount: dispatches.where((d) => d.status == 'in_transit').length,
+    activeDispatchesCount:
+        dispatches.where((d) => d.status == 'in_transit').length,
   ));
 });

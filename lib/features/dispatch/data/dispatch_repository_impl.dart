@@ -163,7 +163,8 @@ class DispatchRepositoryImpl implements DispatchRepository {
   }
 
   @override
-  Future<DispatchEntity> createDispatch(String companyId, DispatchEntity dispatch) async {
+  Future<DispatchEntity> createDispatch(
+      String companyId, DispatchEntity dispatch) async {
     try {
       final id = dispatch.id.isEmpty ? _uuid.v4() : dispatch.id;
       final newDispatch = dispatch.copyWith(
@@ -205,7 +206,8 @@ class DispatchRepositoryImpl implements DispatchRepository {
   }
 
   @override
-  Future<void> updateDispatchStatus(String companyId, String dispatchId, String status) async {
+  Future<void> updateDispatchStatus(
+      String companyId, String dispatchId, String status) async {
     try {
       await _firestore
           .collection('companies')

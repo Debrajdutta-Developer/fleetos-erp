@@ -54,7 +54,8 @@ class DispatchDetailScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     disp.dispatchNumber,
-                                    style: theme.textTheme.headlineSmall?.copyWith(
+                                    style:
+                                        theme.textTheme.headlineSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -84,10 +85,12 @@ class DispatchDetailScreen extends ConsumerWidget {
                       ListTile(
                         leading: const Icon(Icons.route_rounded),
                         title: Text(disp.routeName),
-                        subtitle: Text('Linked Trip ID: ${disp.tripId ?? "None"}'),
+                        subtitle:
+                            Text('Linked Trip ID: ${disp.tripId ?? "None"}'),
                       ),
                       const Divider(),
-                      Text('Resources Mappings', style: theme.textTheme.titleMedium),
+                      Text('Resources Mappings',
+                          style: theme.textTheme.titleMedium),
                       const SizedBox(height: 8),
                       ListTile(
                         leading: const Icon(Icons.person_rounded),
@@ -100,16 +103,20 @@ class DispatchDetailScreen extends ConsumerWidget {
                         subtitle: const Text('Scheduled Transport Asset'),
                       ),
                       const Divider(),
-                      Text('Scheduling Details', style: theme.textTheme.titleMedium),
+                      Text('Scheduling Details',
+                          style: theme.textTheme.titleMedium),
                       const SizedBox(height: 8),
                       ListTile(
                         leading: const Icon(Icons.event_note_rounded),
-                        title: Text(DateFormat.yMMMMd().add_jm().format(disp.scheduledTime)),
+                        title: Text(DateFormat.yMMMMd()
+                            .add_jm()
+                            .format(disp.scheduledTime)),
                         subtitle: const Text('Planned Departure Date & Time'),
                       ),
                       if (disp.notes != null && disp.notes!.isNotEmpty) ...[
                         const Divider(),
-                        Text('Dispatcher Notes', style: theme.textTheme.titleMedium),
+                        Text('Dispatcher Notes',
+                            style: theme.textTheme.titleMedium),
                         const SizedBox(height: 8),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -121,7 +128,8 @@ class DispatchDetailScreen extends ConsumerWidget {
                       ],
                       const SizedBox(height: 48),
                       // Status Action Buttons
-                      if (disp.status == 'scheduled' || disp.status == 'draft') ...[
+                      if (disp.status == 'scheduled' ||
+                          disp.status == 'draft') ...[
                         CustomButton(
                           text: 'Start Dispatch (Mark In-Transit)',
                           onPressed: () async {
@@ -143,7 +151,8 @@ class DispatchDetailScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                       ],
-                      if (disp.status != 'completed' && disp.status != 'cancelled') ...[
+                      if (disp.status != 'completed' &&
+                          disp.status != 'cancelled') ...[
                         CustomButton(
                           text: 'Cancel Dispatch',
                           onPressed: () async {
@@ -155,7 +164,8 @@ class DispatchDetailScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                       ],
-                      if (disp.status == 'completed' || disp.status == 'cancelled') ...[
+                      if (disp.status == 'completed' ||
+                          disp.status == 'cancelled') ...[
                         CustomButton(
                           text: 'Delete / Archive Record',
                           onPressed: () async {
@@ -167,11 +177,13 @@ class DispatchDetailScreen extends ConsumerWidget {
                                     'Are you sure you want to soft-delete this completed dispatch history?'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.pop(context, false),
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
                                     child: const Text('Cancel'),
                                   ),
                                   TextButton(
-                                    onPressed: () => Navigator.pop(context, true),
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
                                     child: const Text('Archive'),
                                   ),
                                 ],

@@ -72,7 +72,8 @@ class RouteEntity {
       startLocation: startLocation ?? this.startLocation,
       endLocation: endLocation ?? this.endLocation,
       distanceKm: distanceKm ?? this.distanceKm,
-      estimatedDurationMinutes: estimatedDurationMinutes ?? this.estimatedDurationMinutes,
+      estimatedDurationMinutes:
+          estimatedDurationMinutes ?? this.estimatedDurationMinutes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,

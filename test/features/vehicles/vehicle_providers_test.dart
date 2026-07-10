@@ -15,13 +15,15 @@ class MockVehicleRepository implements VehicleRepository {
   MockVehicleRepository({required this.vehicles});
 
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value(vehicles);
 
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
 
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async {
+  Future<VehicleEntity> createVehicle(
+      String companyId, VehicleEntity vehicle) async {
     vehicles.add(vehicle);
     return vehicle;
   }
@@ -38,12 +40,14 @@ class MockVehicleRepository implements VehicleRepository {
   Future<void> deleteVehicle(String companyId, String vehicleId) async {
     final idx = vehicles.indexWhere((v) => v.id == vehicleId);
     if (idx != -1) {
-      vehicles[idx] = vehicles[idx].copyWith(deletedAt: DateTime.now(), status: 'archived');
+      vehicles[idx] =
+          vehicles[idx].copyWith(deletedAt: DateTime.now(), status: 'archived');
     }
   }
 
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {
     final idx = vehicles.indexWhere((v) => v.id == vehicleId);
     if (idx != -1) {
       vehicles[idx] = vehicles[idx].copyWith(
@@ -54,7 +58,9 @@ class MockVehicleRepository implements VehicleRepository {
   }
 
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, dynamic file) async => '';
+  Future<String> uploadComplianceDocument(String companyId, String vehicleId,
+          String docType, dynamic file) async =>
+      '';
 }
 
 class MockDriverRepository implements DriverRepository {
@@ -63,7 +69,8 @@ class MockDriverRepository implements DriverRepository {
   MockDriverRepository({required this.drivers});
 
   @override
-  Stream<List<DriverEntity>> watchDrivers(String companyId) => Stream.value(drivers);
+  Stream<List<DriverEntity>> watchDrivers(String companyId) =>
+      Stream.value(drivers);
 
   @override
   Future<List<DriverEntity>> getDrivers(String companyId) async => drivers;
@@ -78,7 +85,8 @@ class MockDriverRepository implements DriverRepository {
   }
 
   @override
-  Future<DriverEntity> createDriver(String companyId, DriverEntity driver) async {
+  Future<DriverEntity> createDriver(
+      String companyId, DriverEntity driver) async {
     drivers.add(driver);
     return driver;
   }
@@ -95,10 +103,12 @@ class MockDriverRepository implements DriverRepository {
   Future<void> deleteDriver(String companyId, String driverId) async {}
 
   @override
-  Future<void> updateDriverStatus(String companyId, String driverId, String status) async {}
+  Future<void> updateDriverStatus(
+      String companyId, String driverId, String status) async {}
 
   @override
-  Future<void> linkVehicle(String companyId, String driverId, String? vehicleId, String? vehicleLicensePlate) async {
+  Future<void> linkVehicle(String companyId, String driverId, String? vehicleId,
+      String? vehicleLicensePlate) async {
     final idx = drivers.indexWhere((d) => d.id == driverId);
     if (idx != -1) {
       drivers[idx] = drivers[idx].copyWith(
@@ -139,10 +149,13 @@ void main() {
       status: 'active',
       fuelType: 'diesel',
       odometer: 200.0,
-      lastServiceDate: DateTime.now().subtract(const Duration(days: 200)), // Overdue
-      insuranceExpiry: DateTime.now().subtract(const Duration(days: 2)), // Expired
+      lastServiceDate:
+          DateTime.now().subtract(const Duration(days: 200)), // Overdue
+      insuranceExpiry:
+          DateTime.now().subtract(const Duration(days: 2)), // Expired
       pucExpiry: DateTime.now().subtract(const Duration(days: 5)), // Expired
-      fitnessExpiry: DateTime.now().subtract(const Duration(days: 10)), // Expired
+      fitnessExpiry:
+          DateTime.now().subtract(const Duration(days: 10)), // Expired
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -163,8 +176,10 @@ void main() {
 
     test('should identify document warning thresholds correctly', () {
       final warningVehicle = tActiveVehicle.copyWith(
-        insuranceExpiry: DateTime.now().add(const Duration(days: 10)), // Warning (0-30 days)
-        pucExpiry: DateTime.now().add(const Duration(days: 5)), // Warning (0-15 days)
+        insuranceExpiry:
+            DateTime.now().add(const Duration(days: 10)), // Warning (0-30 days)
+        pucExpiry:
+            DateTime.now().add(const Duration(days: 5)), // Warning (0-15 days)
       );
       expect(VehicleComplianceHelper.isInsuranceWarning(warningVehicle), true);
       expect(VehicleComplianceHelper.isPucWarning(warningVehicle), true);
@@ -242,7 +257,9 @@ void main() {
       updatedAt: now,
     );
 
-    test('should allow transition from registration to active when safety documents are valid', () async {
+    test(
+        'should allow transition from registration to active when safety documents are valid',
+        () async {
       final repo = MockVehicleRepository(vehicles: [tRegVehicle]);
       final container = ProviderContainer(
         overrides: [
@@ -266,7 +283,9 @@ void main() {
       expect(repo.vehicles[0].status, 'active');
     });
 
-    test('should block transition from registration to active if safety documents are expired', () async {
+    test(
+        'should block transition from registration to active if safety documents are expired',
+        () async {
       final repo = MockVehicleRepository(vehicles: [tExpiredVehicle]);
       final container = ProviderContainer(
         overrides: [
@@ -287,10 +306,13 @@ void main() {
 
       final success = await controller.saveVehicle(activeTarget);
       expect(success, false);
-      expect(container.read(vehicleFormControllerProvider).errorMessage, contains('expired or missing'));
+      expect(container.read(vehicleFormControllerProvider).errorMessage,
+          contains('expired or missing'));
     });
 
-    test('should decouple driver when vehicle status transitions to maintenance or sold', () async {
+    test(
+        'should decouple driver when vehicle status transitions to maintenance or sold',
+        () async {
       final vehicleWithDriver = tActiveVehicle.copyWith(
         assignedDriverId: 'd_1',
         assignedDriverName: 'Robert Jenkins',
@@ -327,7 +349,8 @@ void main() {
       );
 
       final controller = container.read(vehicleFormControllerProvider.notifier);
-      final maintenanceVehicle = vehicleWithDriver.copyWith(status: 'maintenance');
+      final maintenanceVehicle =
+          vehicleWithDriver.copyWith(status: 'maintenance');
 
       final success = await controller.saveVehicle(maintenanceVehicle);
       expect(success, true);
@@ -340,7 +363,9 @@ void main() {
       expect(driverRepo.drivers[0].assignedVehicleId, null);
     });
 
-    test('should block driver assignment if vehicle status is registration, sold, or maintenance', () async {
+    test(
+        'should block driver assignment if vehicle status is registration, sold, or maintenance',
+        () async {
       final repo = MockVehicleRepository(vehicles: [
         tRegVehicle,
         tActiveVehicle.copyWith(id: 'v_sold', status: 'sold'),
@@ -361,7 +386,8 @@ void main() {
         ],
       );
 
-      final listController = container.read(vehicleListControllerProvider.notifier);
+      final listController =
+          container.read(vehicleListControllerProvider.notifier);
 
       // 1. Block registration
       var success = await listController.assignDriver('v_reg', 'd_1', 'Robert');
@@ -376,7 +402,9 @@ void main() {
       expect(success, false);
     });
 
-    test('should transition status from idle to active automatically upon driver assignment', () async {
+    test(
+        'should transition status from idle to active automatically upon driver assignment',
+        () async {
       final repo = MockVehicleRepository(vehicles: [tIdleVehicle]);
       final container = ProviderContainer(
         overrides: [
@@ -392,8 +420,10 @@ void main() {
         ],
       );
 
-      final listController = container.read(vehicleListControllerProvider.notifier);
-      final success = await listController.assignDriver('v_idle', 'd_1', 'Robert Jenkins');
+      final listController =
+          container.read(vehicleListControllerProvider.notifier);
+      final success =
+          await listController.assignDriver('v_idle', 'd_1', 'Robert Jenkins');
 
       expect(success, true);
       expect(repo.vehicles[0].status, 'active');

@@ -10,7 +10,9 @@ import 'package:fleet_os_erp/features/auth/presentation/auth_providers.dart';
 import 'package:fleet_os_erp/features/auth/domain/user_entity.dart';
 
 void main() {
-  testWidgets('DispatchListScreen displays metrics and empty state when no dispatches exist', (WidgetTester tester) async {
+  testWidgets(
+      'DispatchListScreen displays metrics and empty state when no dispatches exist',
+      (WidgetTester tester) async {
     final now = DateTime.now();
     await tester.pumpWidget(
       ProviderScope(
@@ -49,7 +51,9 @@ void main() {
     expect(find.text('IN TRANSIT'), findsOneWidget);
   });
 
-  testWidgets('DispatchListScreen displays dispatches and summary statistics correctly', (WidgetTester tester) async {
+  testWidgets(
+      'DispatchListScreen displays dispatches and summary statistics correctly',
+      (WidgetTester tester) async {
     final now = DateTime.now();
     final tDispatch = DispatchEntity(
       id: 'disp_1',
@@ -78,7 +82,8 @@ void main() {
                 companyId: 'c_1',
                 createdAt: now,
               )),
-          dispatchesStreamProvider.overrideWith((ref) => Stream.value([tDispatch])),
+          dispatchesStreamProvider
+              .overrideWith((ref) => Stream.value([tDispatch])),
           vehiclesStreamProvider.overrideWith((ref) => Stream.value([])),
           driversStreamProvider.overrideWith((ref) => Stream.value([])),
           routesStreamProvider.overrideWith((ref) => Stream.value([])),
@@ -94,7 +99,8 @@ void main() {
 
     // Verify dispatch list item values
     expect(find.text('DISP-001 - Chicago to New York'), findsOneWidget);
-    expect(find.textContaining('Driver: Robert Jenkins • Vehicle: NY-884-OK'), findsOneWidget);
+    expect(find.textContaining('Driver: Robert Jenkins • Vehicle: NY-884-OK'),
+        findsOneWidget);
 
     // Verify Active summary card value (1 in transit)
     expect(find.text('Active (In Transit)'), findsOneWidget);

@@ -13,8 +13,10 @@ abstract class DispatchRepository {
   Stream<List<DispatchEntity>> watchDispatches(String companyId);
   Future<List<DispatchEntity>> getDispatches(String companyId);
   Future<DispatchEntity?> getDispatchById(String companyId, String id);
-  Future<DispatchEntity> createDispatch(String companyId, DispatchEntity dispatch);
+  Future<DispatchEntity> createDispatch(
+      String companyId, DispatchEntity dispatch);
   Future<void> updateDispatch(String companyId, DispatchEntity dispatch);
-  Future<void> updateDispatchStatus(String companyId, String dispatchId, String status);
+  Future<void> updateDispatchStatus(
+      String companyId, String dispatchId, String status);
   Future<void> deleteDispatch(String companyId, String id);
 }

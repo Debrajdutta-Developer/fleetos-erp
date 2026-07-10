@@ -43,9 +43,12 @@ class _DispatchListScreenState extends ConsumerState<DispatchListScreen> {
         ),
         data: (dispatches) {
           // Calculate stats
-          int activeCount = dispatches.where((d) => d.status == 'in_transit').length;
-          int scheduledCount = dispatches.where((d) => d.status == 'scheduled').length;
-          int completedCount = dispatches.where((d) => d.status == 'completed').length;
+          int activeCount =
+              dispatches.where((d) => d.status == 'in_transit').length;
+          int scheduledCount =
+              dispatches.where((d) => d.status == 'scheduled').length;
+          int completedCount =
+              dispatches.where((d) => d.status == 'completed').length;
 
           final filtered = dispatches.where((d) {
             if (_selectedStatus == 'all') return true;
@@ -105,7 +108,8 @@ class _DispatchListScreenState extends ConsumerState<DispatchListScreen> {
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ChoiceChip(
-                          label: Text(status.toUpperCase().replaceAll('_', ' ')),
+                          label:
+                              Text(status.toUpperCase().replaceAll('_', ' ')),
                           selected: isSelected,
                           onSelected: (val) {
                             if (val) {
@@ -121,7 +125,8 @@ class _DispatchListScreenState extends ConsumerState<DispatchListScreen> {
                 Expanded(
                   child: filtered.isEmpty
                       ? const Center(
-                          child: Text('No dispatches matches this status filter.'),
+                          child:
+                              Text('No dispatches matches this status filter.'),
                         )
                       : ListView.builder(
                           itemCount: filtered.length,
@@ -131,20 +136,24 @@ class _DispatchListScreenState extends ConsumerState<DispatchListScreen> {
                               margin: const EdgeInsets.only(bottom: 12),
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor: _getStatusColor(disp.status).withOpacity(0.12),
+                                  backgroundColor: _getStatusColor(disp.status)
+                                      .withOpacity(0.12),
                                   child: Icon(
                                     _getStatusIcon(disp.status),
                                     color: _getStatusColor(disp.status),
                                   ),
                                 ),
-                                title: Text('${disp.dispatchNumber} - ${disp.routeName}'),
+                                title: Text(
+                                    '${disp.dispatchNumber} - ${disp.routeName}'),
                                 subtitle: Text(
                                   'Driver: ${disp.driverName} • Vehicle: ${disp.vehicleLicensePlate}\n'
                                   'Scheduled: ${DateFormat.yMd().add_jm().format(disp.scheduledTime)}',
                                 ),
                                 isThreeLine: true,
-                                trailing: const Icon(Icons.chevron_right_rounded),
-                                onTap: () => context.push('/dispatches/${disp.id}'),
+                                trailing:
+                                    const Icon(Icons.chevron_right_rounded),
+                                onTap: () =>
+                                    context.push('/dispatches/${disp.id}'),
                               ),
                             );
                           },

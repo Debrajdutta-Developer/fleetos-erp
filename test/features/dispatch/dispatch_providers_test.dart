@@ -28,7 +28,8 @@ class MockDispatchRepository implements DispatchRepository {
   final List<DispatchEntity> dispatches = [];
 
   @override
-  Stream<List<RouteEntity>> watchRoutes(String companyId) => Stream.value(routes);
+  Stream<List<RouteEntity>> watchRoutes(String companyId) =>
+      Stream.value(routes);
 
   @override
   Future<List<RouteEntity>> getRoutes(String companyId) async => routes;
@@ -56,10 +57,12 @@ class MockDispatchRepository implements DispatchRepository {
   }
 
   @override
-  Stream<List<DispatchEntity>> watchDispatches(String companyId) => Stream.value(dispatches);
+  Stream<List<DispatchEntity>> watchDispatches(String companyId) =>
+      Stream.value(dispatches);
 
   @override
-  Future<List<DispatchEntity>> getDispatches(String companyId) async => dispatches;
+  Future<List<DispatchEntity>> getDispatches(String companyId) async =>
+      dispatches;
 
   @override
   Future<DispatchEntity?> getDispatchById(String companyId, String id) async {
@@ -71,7 +74,8 @@ class MockDispatchRepository implements DispatchRepository {
   }
 
   @override
-  Future<DispatchEntity> createDispatch(String companyId, DispatchEntity dispatch) async {
+  Future<DispatchEntity> createDispatch(
+      String companyId, DispatchEntity dispatch) async {
     dispatches.add(dispatch);
     return dispatch;
   }
@@ -85,7 +89,8 @@ class MockDispatchRepository implements DispatchRepository {
   }
 
   @override
-  Future<void> updateDispatchStatus(String companyId, String dispatchId, String status) async {
+  Future<void> updateDispatchStatus(
+      String companyId, String dispatchId, String status) async {
     final idx = dispatches.indexWhere((d) => d.id == dispatchId);
     if (idx != -1) {
       dispatches[idx] = dispatches[idx].copyWith(status: status);
@@ -107,13 +112,15 @@ class MockVehicleRepository implements VehicleRepository {
   MockVehicleRepository({required this.vehicles});
 
   @override
-  Stream<List<VehicleEntity>> watchVehicles(String companyId) => Stream.value(vehicles);
+  Stream<List<VehicleEntity>> watchVehicles(String companyId) =>
+      Stream.value(vehicles);
 
   @override
   Future<List<VehicleEntity>> getVehicles(String companyId) async => vehicles;
 
   @override
-  Future<VehicleEntity> createVehicle(String companyId, VehicleEntity vehicle) async {
+  Future<VehicleEntity> createVehicle(
+      String companyId, VehicleEntity vehicle) async {
     vehicles.add(vehicle);
     return vehicle;
   }
@@ -130,10 +137,13 @@ class MockVehicleRepository implements VehicleRepository {
   Future<void> deleteVehicle(String companyId, String vehicleId) async {}
 
   @override
-  Future<void> assignDriver(String companyId, String vehicleId, String? driverId, String? driverName) async {}
+  Future<void> assignDriver(String companyId, String vehicleId,
+      String? driverId, String? driverName) async {}
 
   @override
-  Future<String> uploadComplianceDocument(String companyId, String vehicleId, String docType, dynamic file) async => '';
+  Future<String> uploadComplianceDocument(String companyId, String vehicleId,
+          String docType, dynamic file) async =>
+      '';
 }
 
 class MockDriverRepository implements DriverRepository {
@@ -142,16 +152,21 @@ class MockDriverRepository implements DriverRepository {
   MockDriverRepository({required this.drivers});
 
   @override
-  Stream<List<DriverEntity>> watchDrivers(String companyId) => Stream.value(drivers);
+  Stream<List<DriverEntity>> watchDrivers(String companyId) =>
+      Stream.value(drivers);
 
   @override
   Future<List<DriverEntity>> getDrivers(String companyId) async => drivers;
 
   @override
-  Future<DriverEntity?> getDriverById(String companyId, String driverId) async => null;
+  Future<DriverEntity?> getDriverById(
+          String companyId, String driverId) async =>
+      null;
 
   @override
-  Future<DriverEntity> createDriver(String companyId, DriverEntity driver) async => driver;
+  Future<DriverEntity> createDriver(
+          String companyId, DriverEntity driver) async =>
+      driver;
 
   @override
   Future<void> updateDriver(String companyId, DriverEntity driver) async {}
@@ -160,7 +175,8 @@ class MockDriverRepository implements DriverRepository {
   Future<void> deleteDriver(String companyId, String driverId) async {}
 
   @override
-  Future<void> updateDriverStatus(String companyId, String driverId, String status) async {
+  Future<void> updateDriverStatus(
+      String companyId, String driverId, String status) async {
     final idx = drivers.indexWhere((d) => d.id == driverId);
     if (idx != -1) {
       drivers[idx] = drivers[idx].copyWith(status: status);
@@ -168,7 +184,8 @@ class MockDriverRepository implements DriverRepository {
   }
 
   @override
-  Future<void> linkVehicle(String companyId, String driverId, String? vehicleId, String? vehicleLicensePlate) async {}
+  Future<void> linkVehicle(String companyId, String driverId, String? vehicleId,
+      String? vehicleLicensePlate) async {}
 }
 
 class MockTripRepository implements TripRepository {
@@ -193,14 +210,17 @@ class MockTripRepository implements TripRepository {
   }
 
   @override
-  Future<TripEntity> createTrip(String companyId, TripEntity trip, AuditLogEntity initialAuditLog) async {
+  Future<TripEntity> createTrip(
+      String companyId, TripEntity trip, AuditLogEntity initialAuditLog) async {
     trips.add(trip);
     auditLogs.add(initialAuditLog);
     return trip;
   }
 
   @override
-  Future<void> updateTripStatus(String companyId, String tripId, String newStatus, String changedByUserId, String changedByUserName, {String? notes}) async {
+  Future<void> updateTripStatus(String companyId, String tripId,
+      String newStatus, String changedByUserId, String changedByUserName,
+      {String? notes}) async {
     final idx = trips.indexWhere((t) => t.id == tripId);
     if (idx != -1) {
       trips[idx] = trips[idx].copyWith(status: newStatus);
@@ -217,44 +237,64 @@ class MockCustomerRepository implements CustomerRepository {
   final List<InvoiceEntity> invoices = [];
 
   @override
-  Stream<List<CustomerEntity>> watchCustomers(String companyId) => Stream.value(customers);
+  Stream<List<CustomerEntity>> watchCustomers(String companyId) =>
+      Stream.value(customers);
   @override
-  Future<List<CustomerEntity>> getCustomers(String companyId) async => customers;
+  Future<List<CustomerEntity>> getCustomers(String companyId) async =>
+      customers;
   @override
-  Future<CustomerEntity?> getCustomerById(String companyId, String customerId) async => null;
+  Future<CustomerEntity?> getCustomerById(
+          String companyId, String customerId) async =>
+      null;
   @override
-  Future<CustomerEntity> createCustomer(String companyId, CustomerEntity customer) async => customer;
+  Future<CustomerEntity> createCustomer(
+          String companyId, CustomerEntity customer) async =>
+      customer;
   @override
-  Future<void> updateCustomer(String companyId, CustomerEntity customer) async {}
+  Future<void> updateCustomer(
+      String companyId, CustomerEntity customer) async {}
   @override
   Future<void> deleteCustomer(String companyId, String customerId) async {}
 
   @override
-  Stream<List<ContractEntity>> watchContracts(String companyId) => Stream.value(contracts);
+  Stream<List<ContractEntity>> watchContracts(String companyId) =>
+      Stream.value(contracts);
   @override
-  Future<List<ContractEntity>> getContracts(String companyId) async => contracts;
+  Future<List<ContractEntity>> getContracts(String companyId) async =>
+      contracts;
   @override
-  Future<ContractEntity?> getContractById(String companyId, String contractId) async => null;
+  Future<ContractEntity?> getContractById(
+          String companyId, String contractId) async =>
+      null;
   @override
-  Future<ContractEntity> createContract(String companyId, ContractEntity contract) async => contract;
+  Future<ContractEntity> createContract(
+          String companyId, ContractEntity contract) async =>
+      contract;
   @override
-  Future<void> updateContract(String companyId, ContractEntity contract) async {}
+  Future<void> updateContract(
+      String companyId, ContractEntity contract) async {}
   @override
   Future<void> deleteContract(String companyId, String contractId) async {}
 
   @override
-  Stream<List<InvoiceEntity>> watchInvoices(String companyId) => Stream.value(invoices);
+  Stream<List<InvoiceEntity>> watchInvoices(String companyId) =>
+      Stream.value(invoices);
   @override
   Future<List<InvoiceEntity>> getInvoices(String companyId) async => invoices;
   @override
-  Future<InvoiceEntity?> getInvoiceById(String companyId, String invoiceId) async => null;
+  Future<InvoiceEntity?> getInvoiceById(
+          String companyId, String invoiceId) async =>
+      null;
   @override
-  Future<InvoiceEntity> createInvoice(String companyId, InvoiceEntity invoice) async {
+  Future<InvoiceEntity> createInvoice(
+      String companyId, InvoiceEntity invoice) async {
     invoices.add(invoice);
     return invoice;
   }
+
   @override
-  Future<void> updateInvoiceStatus(String companyId, String invoiceId, String status) async {}
+  Future<void> updateInvoiceStatus(
+      String companyId, String invoiceId, String status) async {}
   @override
   Future<void> deleteInvoice(String companyId, String invoiceId) async {}
 }
@@ -322,8 +362,10 @@ void main() {
         ],
       );
 
-      final formController = container.read(routeFormControllerProvider.notifier);
-      final listController = container.read(routeListControllerProvider.notifier);
+      final formController =
+          container.read(routeFormControllerProvider.notifier);
+      final listController =
+          container.read(routeListControllerProvider.notifier);
 
       // Create Route
       var success = await formController.saveRoute(tRoute);
@@ -368,7 +410,8 @@ void main() {
         ],
       );
 
-      final formController = container.read(dispatchFormControllerProvider.notifier);
+      final formController =
+          container.read(dispatchFormControllerProvider.notifier);
 
       final dispatch = DispatchEntity(
         id: '',
@@ -395,19 +438,29 @@ void main() {
       expect(dispatchRepo.dispatches[0].tripId, tripRepo.trips[0].id);
 
       // 2. Block dispatch if driver already has an active dispatch
-      final dispatch2 = dispatch.copyWith(dispatchNumber: 'DISP-002', vehicleId: 'v_other', vehicleLicensePlate: 'LP-OTHER');
+      final dispatch2 = dispatch.copyWith(
+          dispatchNumber: 'DISP-002',
+          vehicleId: 'v_other',
+          vehicleLicensePlate: 'LP-OTHER');
       success = await formController.saveDispatch(dispatch2);
       expect(success, false);
-      expect(container.read(dispatchFormControllerProvider).errorMessage, contains('Driver is already assigned'));
+      expect(container.read(dispatchFormControllerProvider).errorMessage,
+          contains('Driver is already assigned'));
 
       // 3. Block dispatch if vehicle already has an active dispatch
-      final dispatch3 = dispatch.copyWith(dispatchNumber: 'DISP-003', driverId: 'd_other', driverName: 'Driver Other');
+      final dispatch3 = dispatch.copyWith(
+          dispatchNumber: 'DISP-003',
+          driverId: 'd_other',
+          driverName: 'Driver Other');
       success = await formController.saveDispatch(dispatch3);
       expect(success, false);
-      expect(container.read(dispatchFormControllerProvider).errorMessage, contains('Vehicle is already assigned'));
+      expect(container.read(dispatchFormControllerProvider).errorMessage,
+          contains('Vehicle is already assigned'));
     });
 
-    test('should propagate dispatch status transitions to driver, vehicle, and trips', () async {
+    test(
+        'should propagate dispatch status transitions to driver, vehicle, and trips',
+        () async {
       final dispatch = DispatchEntity(
         id: 'disp_123',
         dispatchNumber: 'DISP-001',
@@ -468,11 +521,13 @@ void main() {
           vehicleRepositoryProvider.overrideWithValue(vehicleRepo),
           driverRepositoryProvider.overrideWithValue(driverRepo),
           tripRepositoryProvider.overrideWithValue(tripRepo),
-          tripListControllerProvider.overrideWith((ref) => TripListController(repository: tripRepo, ref: ref)),
+          tripListControllerProvider.overrideWith(
+              (ref) => TripListController(repository: tripRepo, ref: ref)),
         ],
       );
 
-      final listController = container.read(dispatchListControllerProvider.notifier);
+      final listController =
+          container.read(dispatchListControllerProvider.notifier);
 
       // Transition to In Transit
       var success = await listController.updateStatus('disp_123', 'in_transit');
@@ -510,30 +565,31 @@ void main() {
           partsStreamProvider.overrideWith((ref) => Stream.value([])),
           contractsStreamProvider.overrideWith((ref) => Stream.value([])),
           invoicesStreamProvider.overrideWith((ref) => Stream.value([])),
-          routesStreamProvider.overrideWith((ref) => Stream.value([tRoute, tRoute])),
+          routesStreamProvider
+              .overrideWith((ref) => Stream.value([tRoute, tRoute])),
           dispatchesStreamProvider.overrideWith((ref) => Stream.value([
-            DispatchEntity(
-              id: 'd_1',
-              dispatchNumber: 'D1',
-              companyId: 'c_1',
-              vehicleId: 'v_1',
-              vehicleLicensePlate: 'LP1',
-              driverId: 'dr_1',
-              driverName: 'Dr 1',
-              routeId: 'r_1',
-              routeName: 'R 1',
-              status: 'in_transit',
-              scheduledTime: now,
-              createdAt: now,
-              updatedAt: now,
-            )
-          ])),
+                DispatchEntity(
+                  id: 'd_1',
+                  dispatchNumber: 'D1',
+                  companyId: 'c_1',
+                  vehicleId: 'v_1',
+                  vehicleLicensePlate: 'LP1',
+                  driverId: 'dr_1',
+                  driverName: 'Dr 1',
+                  routeId: 'r_1',
+                  routeName: 'R 1',
+                  status: 'in_transit',
+                  scheduledTime: now,
+                  createdAt: now,
+                  updatedAt: now,
+                )
+              ])),
         ],
       );
 
       final statsAsync = container.read(dashboardStatsProvider);
       expect(statsAsync.hasValue, true);
-      
+
       final stats = statsAsync.value!;
       expect(stats.totalRoutesCount, 2);
       expect(stats.activeDispatchesCount, 1);

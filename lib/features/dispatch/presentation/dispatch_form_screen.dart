@@ -87,7 +87,8 @@ class _DispatchFormScreenState extends ConsumerState<DispatchFormScreen> {
         _selectedDriverId == null ||
         _selectedRouteId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select vehicle, driver, and route.')),
+        const SnackBar(
+            content: Text('Please select vehicle, driver, and route.')),
       );
       return;
     }
@@ -183,7 +184,8 @@ class _DispatchFormScreenState extends ConsumerState<DispatchFormScreen> {
                           _selectedRouteName = r.name;
                         });
                       },
-                      validator: (value) => value == null ? 'Route is required' : null,
+                      validator: (value) =>
+                          value == null ? 'Route is required' : null,
                     ),
                     const SizedBox(height: 16),
                     // Driver Selection Dropdown
@@ -200,13 +202,15 @@ class _DispatchFormScreenState extends ConsumerState<DispatchFormScreen> {
                         );
                       }).toList(),
                       onChanged: (val) {
-                        final d = drivers.firstWhere((driver) => driver.id == val);
+                        final d =
+                            drivers.firstWhere((driver) => driver.id == val);
                         setState(() {
                           _selectedDriverId = val;
                           _selectedDriverName = d.fullName;
                         });
                       },
-                      validator: (value) => value == null ? 'Driver is required' : null,
+                      validator: (value) =>
+                          value == null ? 'Driver is required' : null,
                     ),
                     const SizedBox(height: 16),
                     // Vehicle Selection Dropdown
@@ -229,14 +233,16 @@ class _DispatchFormScreenState extends ConsumerState<DispatchFormScreen> {
                           _selectedVehiclePlate = v.licensePlate;
                         });
                       },
-                      validator: (value) => value == null ? 'Vehicle is required' : null,
+                      validator: (value) =>
+                          value == null ? 'Vehicle is required' : null,
                     ),
                     const SizedBox(height: 16),
                     // Scheduled Date and Time
                     ListTile(
                       leading: const Icon(Icons.calendar_today_rounded),
                       title: const Text('Scheduled Departure Time'),
-                      subtitle: Text(DateFormat.yMd().add_jm().format(_scheduledTime)),
+                      subtitle: Text(
+                          DateFormat.yMd().add_jm().format(_scheduledTime)),
                       trailing: const Icon(Icons.arrow_drop_down_rounded),
                       onTap: _selectDateTime,
                     ),

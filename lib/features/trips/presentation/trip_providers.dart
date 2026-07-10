@@ -176,7 +176,8 @@ class TripFormController extends StateNotifier<TripFormState> {
         // Auto transition from idle to active
         if (currentVehicle.status == 'idle') {
           final vehicleRepo = _ref.read(vehicleRepositoryProvider);
-          await vehicleRepo.updateVehicle(companyId, currentVehicle.copyWith(status: 'active'));
+          await vehicleRepo.updateVehicle(
+              companyId, currentVehicle.copyWith(status: 'active'));
         }
       }
 

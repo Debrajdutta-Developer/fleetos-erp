@@ -26,7 +26,9 @@ final dispatchesStreamProvider =
     StreamProvider.autoDispose<List<DispatchEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
-  return ref.watch(dispatchRepositoryProvider).watchDispatches(user!.companyId!);
+  return ref
+      .watch(dispatchRepositoryProvider)
+      .watchDispatches(user!.companyId!);
 });
 
 // --- Route Form State & Controller ---
@@ -59,7 +61,8 @@ class RouteFormController extends StateNotifier<RouteFormState> {
   final DispatchRepository _repository;
   final Ref _ref;
 
-  RouteFormController({required DispatchRepository repository, required Ref ref})
+  RouteFormController(
+      {required DispatchRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const RouteFormState());
@@ -118,7 +121,8 @@ class RouteFormController extends StateNotifier<RouteFormState> {
 }
 
 final routeFormControllerProvider =
-    StateNotifierProvider.autoDispose<RouteFormController, RouteFormState>((ref) {
+    StateNotifierProvider.autoDispose<RouteFormController, RouteFormState>(
+        (ref) {
   final repository = ref.watch(dispatchRepositoryProvider);
   return RouteFormController(repository: repository, ref: ref);
 });
@@ -129,7 +133,8 @@ class RouteListController extends StateNotifier<AsyncValue<void>> {
   final DispatchRepository _repository;
   final Ref _ref;
 
-  RouteListController({required DispatchRepository repository, required Ref ref})
+  RouteListController(
+      {required DispatchRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -168,7 +173,8 @@ class RouteListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final routeListControllerProvider =
-    StateNotifierProvider.autoDispose<RouteListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<RouteListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(dispatchRepositoryProvider);
   return RouteListController(repository: repository, ref: ref);
 });
@@ -179,7 +185,8 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
   final DispatchRepository _repository;
   final Ref _ref;
 
-  DispatchFormController({required DispatchRepository repository, required Ref ref})
+  DispatchFormController(
+      {required DispatchRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const RouteFormState());
@@ -209,7 +216,8 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
           d.id != dispatch.id);
 
       if (activeDispatches.any((d) => d.driverId == dispatch.driverId)) {
-        throw Exception('Validation Blocked: Driver is already assigned to another active dispatch.');
+        throw Exception(
+            'Validation Blocked: Driver is already assigned to another active dispatch.');
       }
 
       final tripRepo = _ref.read(tripRepositoryProvider);
@@ -220,15 +228,18 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
           t.id != dispatch.tripId);
 
       if (activeTrips.any((t) => t.driverId == dispatch.driverId)) {
-        throw Exception('Validation Blocked: Driver is already assigned to another active trip.');
+        throw Exception(
+            'Validation Blocked: Driver is already assigned to another active trip.');
       }
 
       // 2. Vehicle Availability Validation & State Machine Enforcements
       if (activeDispatches.any((d) => d.vehicleId == dispatch.vehicleId)) {
-        throw Exception('Validation Blocked: Vehicle is already assigned to another active dispatch.');
+        throw Exception(
+            'Validation Blocked: Vehicle is already assigned to another active dispatch.');
       }
       if (activeTrips.any((t) => t.vehicleId == dispatch.vehicleId)) {
-        throw Exception('Validation Blocked: Vehicle is already assigned to another active trip.');
+        throw Exception(
+            'Validation Blocked: Vehicle is already assigned to another active trip.');
       }
 
       final vehicleRepo = _ref.read(vehicleRepositoryProvider);
@@ -238,18 +249,22 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
       final vehicle = vehicles[vehicleIdx];
 
       if (vehicle.status == 'registration') {
-        throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is in registration status.');
+        throw Exception(
+            'Validation Blocked: Cannot assign vehicle. Vehicle is in registration status.');
       }
       if (vehicle.status == 'sold') {
-        throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is decommissioned (sold).');
+        throw Exception(
+            'Validation Blocked: Cannot assign vehicle. Vehicle is decommissioned (sold).');
       }
       if (vehicle.status == 'maintenance') {
-        throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is in maintenance.');
+        throw Exception(
+            'Validation Blocked: Cannot assign vehicle. Vehicle is in maintenance.');
       }
 
       // Auto transition from idle to active
       if (vehicle.status == 'idle') {
-        await vehicleRepo.updateVehicle(companyId, vehicle.copyWith(status: 'active'));
+        await vehicleRepo.updateVehicle(
+            companyId, vehicle.copyWith(status: 'active'));
       }
 
       // 3. Create or Update associated TripEntity to maintain synchronization
@@ -258,8 +273,10 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
         finalTripId = 'trip_disp_${DateTime.now().millisecondsSinceEpoch}';
         final customerRepo = _ref.read(customerRepositoryProvider);
         final customers = await customerRepo.getCustomers(companyId);
-        final customerId = customers.isNotEmpty ? customers.first.id : 'cust_default';
-        final customerName = customers.isNotEmpty ? customers.first.name : 'Default Customer';
+        final customerId =
+            customers.isNotEmpty ? customers.first.id : 'cust_default';
+        final customerName =
+            customers.isNotEmpty ? customers.first.name : 'Default Customer';
 
         final initialTrip = TripEntity(
           id: finalTripId,
@@ -271,7 +288,9 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
           customerId: customerId,
           customerName: customerName,
           pickupLocation: dispatch.routeName.split(' to ')[0],
-          deliveryLocation: dispatch.routeName.split(' to ').length > 1 ? dispatch.routeName.split(' to ')[1] : dispatch.routeName,
+          deliveryLocation: dispatch.routeName.split(' to ').length > 1
+              ? dispatch.routeName.split(' to ')[1]
+              : dispatch.routeName,
           cargoType: 'Coal',
           coalQuantity: 25.0,
           freightAmount: 1200.0,
@@ -289,7 +308,8 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
           entityType: 'trip',
           entityId: finalTripId,
           action: 'trip_created',
-          description: 'Linked Trip for Dispatch ${dispatch.dispatchNumber} auto-created.',
+          description:
+              'Linked Trip for Dispatch ${dispatch.dispatchNumber} auto-created.',
           userId: user.uid,
           userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
           timestamp: DateTime.now(),
@@ -302,7 +322,8 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
 
       DispatchEntity savedDispatch;
       if (dispatch.id.isEmpty) {
-        savedDispatch = await _repository.createDispatch(companyId, updatedDispatch);
+        savedDispatch =
+            await _repository.createDispatch(companyId, updatedDispatch);
       } else {
         await _repository.updateDispatch(companyId, updatedDispatch);
         savedDispatch = updatedDispatch;
@@ -333,7 +354,8 @@ class DispatchFormController extends StateNotifier<RouteFormState> {
 }
 
 final dispatchFormControllerProvider =
-    StateNotifierProvider.autoDispose<DispatchFormController, RouteFormState>((ref) {
+    StateNotifierProvider.autoDispose<DispatchFormController, RouteFormState>(
+        (ref) {
   final repository = ref.watch(dispatchRepositoryProvider);
   return DispatchFormController(repository: repository, ref: ref);
 });
@@ -344,7 +366,8 @@ class DispatchListController extends StateNotifier<AsyncValue<void>> {
   final DispatchRepository _repository;
   final Ref _ref;
 
-  DispatchListController({required DispatchRepository repository, required Ref ref})
+  DispatchListController(
+      {required DispatchRepository repository, required Ref ref})
       : _repository = repository,
         _ref = ref,
         super(const AsyncValue.data(null));
@@ -380,16 +403,20 @@ class DispatchListController extends StateNotifier<AsyncValue<void>> {
         final vehicles = await vehicleRepo.getVehicles(companyId);
         final vIdx = vehicles.indexWhere((v) => v.id == dispatch.vehicleId);
         if (vIdx != -1) {
-          await vehicleRepo.updateVehicle(companyId, vehicles[vIdx].copyWith(status: 'inTransit'));
+          await vehicleRepo.updateVehicle(
+              companyId, vehicles[vIdx].copyWith(status: 'inTransit'));
         }
-        await driverRepo.updateDriverStatus(companyId, dispatch.driverId, 'on_duty');
+        await driverRepo.updateDriverStatus(
+            companyId, dispatch.driverId, 'on_duty');
       } else if (status == 'completed' || status == 'cancelled') {
         final vehicles = await vehicleRepo.getVehicles(companyId);
         final vIdx = vehicles.indexWhere((v) => v.id == dispatch.vehicleId);
         if (vIdx != -1) {
-          await vehicleRepo.updateVehicle(companyId, vehicles[vIdx].copyWith(status: 'active'));
+          await vehicleRepo.updateVehicle(
+              companyId, vehicles[vIdx].copyWith(status: 'active'));
         }
-        await driverRepo.updateDriverStatus(companyId, dispatch.driverId, 'available');
+        await driverRepo.updateDriverStatus(
+            companyId, dispatch.driverId, 'available');
       }
 
       // Write Audit Log
@@ -400,7 +427,8 @@ class DispatchListController extends StateNotifier<AsyncValue<void>> {
         entityType: 'dispatch',
         entityId: dispatchId,
         action: 'dispatch_status_changed',
-        description: 'Dispatch ${dispatch.dispatchNumber} status updated to ${status.toUpperCase()}.',
+        description:
+            'Dispatch ${dispatch.dispatchNumber} status updated to ${status.toUpperCase()}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -449,7 +477,8 @@ class DispatchListController extends StateNotifier<AsyncValue<void>> {
 }
 
 final dispatchListControllerProvider =
-    StateNotifierProvider.autoDispose<DispatchListController, AsyncValue<void>>((ref) {
+    StateNotifierProvider.autoDispose<DispatchListController, AsyncValue<void>>(
+        (ref) {
   final repository = ref.watch(dispatchRepositoryProvider);
   return DispatchListController(repository: repository, ref: ref);
 });

@@ -75,22 +75,27 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
       }
 
       // Check transition to 'active' from 'registration'
-      if (vehicle.status == 'active' && (existingVehicle == null || existingVehicle.status == 'registration')) {
+      if (vehicle.status == 'active' &&
+          (existingVehicle == null ||
+              existingVehicle.status == 'registration')) {
         if (vehicle.insuranceExpiry.isBefore(DateTime.now()) ||
             vehicle.pucExpiry.isBefore(DateTime.now()) ||
             vehicle.fitnessExpiry.isBefore(DateTime.now())) {
-          throw Exception('Validation Blocked: Cannot transition to Active. Safety documents (Insurance/PUC/Fitness) are expired or missing.');
+          throw Exception(
+              'Validation Blocked: Cannot transition to Active. Safety documents (Insurance/PUC/Fitness) are expired or missing.');
         }
       }
 
       // If status transitions to 'maintenance' or 'sold', unlink the driver
       VehicleEntity updatedVehicle = vehicle;
       if (vehicle.status == 'maintenance' || vehicle.status == 'sold') {
-        if (vehicle.assignedDriverId != null && vehicle.assignedDriverId!.isNotEmpty) {
+        if (vehicle.assignedDriverId != null &&
+            vehicle.assignedDriverId!.isNotEmpty) {
           // unlink from driver's side
           final driverRepo = _ref.read(driverRepositoryProvider);
-          await driverRepo.linkVehicle(companyId, vehicle.assignedDriverId!, null, null);
-          
+          await driverRepo.linkVehicle(
+              companyId, vehicle.assignedDriverId!, null, null);
+
           // unlink from vehicle's side
           updatedVehicle = vehicle.copyWith(
             assignedDriverId: null,
@@ -108,7 +113,8 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
       state = const VehicleFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = VehicleFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = VehicleFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -195,13 +201,16 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
       final vehicle = vehicles[vehicleIdx];
 
       if (vehicle.status == 'registration') {
-        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is in registration status.');
+        throw Exception(
+            'Validation Blocked: Cannot assign driver. Vehicle is in registration status.');
       }
       if (vehicle.status == 'sold') {
-        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is decommissioned (sold).');
+        throw Exception(
+            'Validation Blocked: Cannot assign driver. Vehicle is decommissioned (sold).');
       }
       if (vehicle.status == 'maintenance') {
-        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is in maintenance.');
+        throw Exception(
+            'Validation Blocked: Cannot assign driver. Vehicle is in maintenance.');
       }
 
       // If vehicle status was idle, transition it to active

@@ -810,17 +810,20 @@ void main() {
 
         final resultReg = await controller.saveTrip(tripReg);
         expect(resultReg, false);
-        expect(container.read(tripFormControllerProvider).errorMessage, contains('registration status'));
+        expect(container.read(tripFormControllerProvider).errorMessage,
+            contains('registration status'));
 
         final tripMaint = tripReg.copyWith(id: 't_maint', vehicleId: 'v_maint');
         final resultMaint = await controller.saveTrip(tripMaint);
         expect(resultMaint, false);
-        expect(container.read(tripFormControllerProvider).errorMessage, contains('maintenance'));
+        expect(container.read(tripFormControllerProvider).errorMessage,
+            contains('maintenance'));
 
         final tripSold = tripReg.copyWith(id: 't_sold', vehicleId: 'v_sold');
         final resultSold = await controller.saveTrip(tripSold);
         expect(resultSold, false);
-        expect(container.read(tripFormControllerProvider).errorMessage, contains('decommissioned'));
+        expect(container.read(tripFormControllerProvider).errorMessage,
+            contains('decommissioned'));
       },
     );
 
