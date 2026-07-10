@@ -443,7 +443,8 @@ void main() {
       var success = await formController.saveDispatch(dispatch);
       expect(success, true);
       expect(dispatchRepo.dispatches.length, 1);
-      final nonDummyTrips = tripRepo.trips.where((t) => t.id.isNotEmpty).toList();
+      final nonDummyTrips =
+          tripRepo.trips.where((t) => t.id.isNotEmpty).toList();
       expect(nonDummyTrips.length, 1);
       expect(nonDummyTrips[0].status, 'scheduled');
       expect(dispatchRepo.dispatches[0].tripId, nonDummyTrips[0].id);
