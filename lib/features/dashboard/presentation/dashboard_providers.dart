@@ -5,6 +5,7 @@ import '../../drivers/presentation/driver_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
 import '../../vendors/presentation/vendor_providers.dart';
 import '../../inventory/presentation/inventory_providers.dart';
+import '../../dispatch/presentation/dispatch_providers.dart';
 
 class DashboardStats {
   final int activeFleetCount;
@@ -21,6 +22,8 @@ class DashboardStats {
   final double totalStockValue;
   final int activeContractsCount;
   final double outstandingInvoicesAmount;
+  final int totalRoutesCount;
+  final int activeDispatchesCount;
 
   const DashboardStats({
     required this.activeFleetCount,
@@ -37,6 +40,8 @@ class DashboardStats {
     required this.totalStockValue,
     required this.activeContractsCount,
     required this.outstandingInvoicesAmount,
+    required this.totalRoutesCount,
+    required this.activeDispatchesCount,
   });
 }
 
@@ -50,6 +55,8 @@ final dashboardStatsProvider =
   final partsAsync = ref.watch(partsStreamProvider);
   final contractsAsync = ref.watch(contractsStreamProvider);
   final invoicesAsync = ref.watch(invoicesStreamProvider);
+  final routesAsync = ref.watch(routesStreamProvider);
+  final dispatchesAsync = ref.watch(dispatchesStreamProvider);
 
   if (vehiclesAsync.isLoading ||
       tripsAsync.isLoading ||
@@ -58,7 +65,9 @@ final dashboardStatsProvider =
       vendorsAsync.isLoading ||
       partsAsync.isLoading ||
       contractsAsync.isLoading ||
-      invoicesAsync.isLoading) {
+      invoicesAsync.isLoading ||
+      routesAsync.isLoading ||
+      dispatchesAsync.isLoading) {
     return const AsyncValue.loading();
   }
 
@@ -86,6 +95,12 @@ final dashboardStatsProvider =
   if (invoicesAsync.hasError) {
     return AsyncValue.error(invoicesAsync.error!, invoicesAsync.stackTrace!);
   }
+  if (routesAsync.hasError) {
+    return AsyncValue.error(routesAsync.error!, routesAsync.stackTrace!);
+  }
+  if (dispatchesAsync.hasError) {
+    return AsyncValue.error(dispatchesAsync.error!, dispatchesAsync.stackTrace!);
+  }
 
   final vehicles = vehiclesAsync.value ?? [];
   final trips = tripsAsync.value ?? [];
@@ -95,6 +110,8 @@ final dashboardStatsProvider =
   final parts = partsAsync.value ?? [];
   final contracts = contractsAsync.value ?? [];
   final invoices = invoicesAsync.value ?? [];
+  final routes = routesAsync.value ?? [];
+  final dispatches = dispatchesAsync.value ?? [];
 
   // 1. Active Fleet Count
   final activeFleetCount = vehicles.where((v) => v.status == 'active').length;
@@ -163,5 +180,7 @@ final dashboardStatsProvider =
     totalStockValue: totalStockValue,
     activeContractsCount: activeContractsCount,
     outstandingInvoicesAmount: outstandingInvoicesAmount,
+    totalRoutesCount: routes.length,
+    activeDispatchesCount: dispatches.where((d) => d.status == 'in_transit').length,
   ));
 });

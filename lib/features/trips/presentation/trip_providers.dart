@@ -119,31 +119,64 @@ class TripFormController extends StateNotifier<TripFormState> {
       final companyId = user!.companyId!;
 
       // 1. Validation Rule: Expired insurance, PUC, fitness, or permit must block trip creation.
-      if (selectedVehicle != null) {
+      VehicleEntity? currentVehicle = selectedVehicle;
+      if (currentVehicle == null && trip.vehicleId.isNotEmpty) {
+        final vehicleRepo = _ref.read(vehicleRepositoryProvider);
+        final vehicles = await vehicleRepo.getVehicles(companyId);
+        final idx = vehicles.indexWhere((v) => v.id == trip.vehicleId);
+        if (idx != -1) {
+          currentVehicle = vehicles[idx];
+        }
+      }
+
+      if (currentVehicle != null) {
         final now = DateTime.now();
 
-        if (selectedVehicle.insuranceExpiry.isBefore(now)) {
+        if (currentVehicle.insuranceExpiry.isBefore(now)) {
           throw Exception(
-            'Validation Blocked: Assigned vehicle insurance is expired (${selectedVehicle.insuranceExpiry.toLocal().toString().split(' ')[0]}).',
+            'Validation Blocked: Assigned vehicle insurance is expired (${currentVehicle.insuranceExpiry.toLocal().toString().split(' ')[0]}).',
           );
         }
-        if (selectedVehicle.pucExpiry.isBefore(now)) {
+        if (currentVehicle.pucExpiry.isBefore(now)) {
           throw Exception(
-            'Validation Blocked: Assigned vehicle PUC compliance is expired (${selectedVehicle.pucExpiry.toLocal().toString().split(' ')[0]}).',
+            'Validation Blocked: Assigned vehicle PUC compliance is expired (${currentVehicle.pucExpiry.toLocal().toString().split(' ')[0]}).',
           );
         }
-        if (selectedVehicle.fitnessExpiry.isBefore(now)) {
+        if (currentVehicle.fitnessExpiry.isBefore(now)) {
           throw Exception(
-            'Validation Blocked: Assigned vehicle fitness certificate is expired (${selectedVehicle.fitnessExpiry.toLocal().toString().split(' ')[0]}).',
+            'Validation Blocked: Assigned vehicle fitness certificate is expired (${currentVehicle.fitnessExpiry.toLocal().toString().split(' ')[0]}).',
           );
         }
-        if (VehiclePermitValidator.isPermitExpired(selectedVehicle.id)) {
+        if (VehiclePermitValidator.isPermitExpired(currentVehicle.id)) {
           final permitExpiry = VehiclePermitValidator.getPermitExpiry(
-            selectedVehicle.id,
+            currentVehicle.id,
           );
           throw Exception(
             'Validation Blocked: Assigned vehicle permit is expired (${permitExpiry.toLocal().toString().split(' ')[0]}).',
           );
+        }
+
+        // Vehicle Lifecycle State Machine checks
+        if (currentVehicle.status == 'registration') {
+          throw Exception(
+            'Validation Blocked: Cannot schedule trip. Vehicle is in registration status.',
+          );
+        }
+        if (currentVehicle.status == 'maintenance') {
+          throw Exception(
+            'Validation Blocked: Cannot schedule trip. Vehicle is in maintenance.',
+          );
+        }
+        if (currentVehicle.status == 'sold') {
+          throw Exception(
+            'Validation Blocked: Cannot schedule trip. Vehicle is decommissioned (sold).',
+          );
+        }
+
+        // Auto transition from idle to active
+        if (currentVehicle.status == 'idle') {
+          final vehicleRepo = _ref.read(vehicleRepositoryProvider);
+          await vehicleRepo.updateVehicle(companyId, currentVehicle.copyWith(status: 'active'));
         }
       }
 

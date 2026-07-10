@@ -207,6 +207,26 @@ class DriverListController extends StateNotifier<AsyncValue<void>> {
 
       // 2. Unlink new vehicle from any other driver if vehicle is non-null
       if (vehicleId != null && vehicleId.isNotEmpty) {
+        final vehicles = await vehicleRepo.getVehicles(companyId);
+        final vehicleIdx = vehicles.indexWhere((v) => v.id == vehicleId);
+        if (vehicleIdx == -1) throw Exception('Vehicle not found.');
+        final vehicle = vehicles[vehicleIdx];
+
+        if (vehicle.status == 'registration') {
+          throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is in registration status.');
+        }
+        if (vehicle.status == 'sold') {
+          throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is decommissioned (sold).');
+        }
+        if (vehicle.status == 'maintenance') {
+          throw Exception('Validation Blocked: Cannot assign vehicle. Vehicle is in maintenance.');
+        }
+
+        // If vehicle status was idle, transition it to active
+        if (vehicle.status == 'idle') {
+          await vehicleRepo.updateVehicle(companyId, vehicle.copyWith(status: 'active'));
+        }
+
         // Find if another driver is linked to this vehicle
         for (final otherDriver in drivers) {
           if (otherDriver.id != driverId &&

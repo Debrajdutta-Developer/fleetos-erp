@@ -4,6 +4,7 @@ import '../../auth/presentation/auth_providers.dart';
 import '../data/vehicle_repository_impl.dart';
 import '../domain/vehicle_entity.dart';
 import '../domain/vehicle_repository.dart';
+import '../../drivers/presentation/driver_providers.dart';
 
 /// Provider for VehicleRepository.
 final vehicleRepositoryProvider = Provider<VehicleRepository>((ref) {
@@ -62,17 +63,52 @@ class VehicleFormController extends StateNotifier<VehicleFormState> {
     try {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null) throw Exception('No company authenticated.');
+      final companyId = user!.companyId!;
 
-      if (vehicle.id.isEmpty) {
-        await _repository.createVehicle(user!.companyId!, vehicle);
+      VehicleEntity? existingVehicle;
+      if (vehicle.id.isNotEmpty) {
+        final vehicles = await _repository.getVehicles(companyId);
+        final idx = vehicles.indexWhere((v) => v.id == vehicle.id);
+        if (idx != -1) {
+          existingVehicle = vehicles[idx];
+        }
+      }
+
+      // Check transition to 'active' from 'registration'
+      if (vehicle.status == 'active' && (existingVehicle == null || existingVehicle.status == 'registration')) {
+        if (vehicle.insuranceExpiry.isBefore(DateTime.now()) ||
+            vehicle.pucExpiry.isBefore(DateTime.now()) ||
+            vehicle.fitnessExpiry.isBefore(DateTime.now())) {
+          throw Exception('Validation Blocked: Cannot transition to Active. Safety documents (Insurance/PUC/Fitness) are expired or missing.');
+        }
+      }
+
+      // If status transitions to 'maintenance' or 'sold', unlink the driver
+      VehicleEntity updatedVehicle = vehicle;
+      if (vehicle.status == 'maintenance' || vehicle.status == 'sold') {
+        if (vehicle.assignedDriverId != null && vehicle.assignedDriverId!.isNotEmpty) {
+          // unlink from driver's side
+          final driverRepo = _ref.read(driverRepositoryProvider);
+          await driverRepo.linkVehicle(companyId, vehicle.assignedDriverId!, null, null);
+          
+          // unlink from vehicle's side
+          updatedVehicle = vehicle.copyWith(
+            assignedDriverId: null,
+            assignedDriverName: null,
+          );
+        }
+      }
+
+      if (updatedVehicle.id.isEmpty) {
+        await _repository.createVehicle(companyId, updatedVehicle);
       } else {
-        await _repository.updateVehicle(user!.companyId!, vehicle);
+        await _repository.updateVehicle(companyId, updatedVehicle);
       }
 
       state = const VehicleFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = VehicleFormState(errorMessage: e.toString());
+      state = VehicleFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -151,13 +187,40 @@ class VehicleListController extends StateNotifier<AsyncValue<void>> {
     try {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null) throw Exception('No company authenticated.');
+      final companyId = user!.companyId!;
+
+      final vehicles = await _repository.getVehicles(companyId);
+      final vehicleIdx = vehicles.indexWhere((v) => v.id == vehicleId);
+      if (vehicleIdx == -1) throw Exception('Vehicle not found.');
+      final vehicle = vehicles[vehicleIdx];
+
+      if (vehicle.status == 'registration') {
+        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is in registration status.');
+      }
+      if (vehicle.status == 'sold') {
+        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is decommissioned (sold).');
+      }
+      if (vehicle.status == 'maintenance') {
+        throw Exception('Validation Blocked: Cannot assign driver. Vehicle is in maintenance.');
+      }
+
+      // If vehicle status was idle, transition it to active
+      VehicleEntity updatedVehicle = vehicle;
+      if (vehicle.status == 'idle') {
+        updatedVehicle = vehicle.copyWith(status: 'active');
+      }
 
       await _repository.assignDriver(
-        user!.companyId!,
+        companyId,
         vehicleId,
         driverId,
         driverName,
       );
+
+      if (vehicle.status == 'idle') {
+        await _repository.updateVehicle(companyId, updatedVehicle);
+      }
+
       state = const AsyncValue.data(null);
       return true;
     } catch (e, st) {

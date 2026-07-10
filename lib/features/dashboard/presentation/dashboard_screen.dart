@@ -705,6 +705,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   onTap: () => context.push('/invoices'),
                 ),
                 _SidebarNavItem(
+                  icon: Icons.schedule_rounded,
+                  label: 'Dispatches & Scheduling',
+                  onTap: () => context.push('/dispatches'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.route_rounded,
+                  label: 'Routes Catalog',
+                  onTap: () => context.push('/routes'),
+                ),
+                _SidebarNavItem(
                   icon: Icons.business_rounded,
                   label: 'Vendor Directory',
                   onTap: () => context.push('/vendors'),
@@ -890,6 +900,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/invoices');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.schedule_rounded),
+                    title: const Text('Dispatches & Scheduling'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/dispatches');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.route_rounded),
+                    title: const Text('Routes Catalog'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/routes');
                     },
                   ),
                   ListTile(

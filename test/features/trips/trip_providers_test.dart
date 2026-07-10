@@ -743,6 +743,157 @@ void main() {
     );
 
     test(
+      'should block trip creation if assigned vehicle status is registration, maintenance, or sold',
+      () async {
+        final repository = MockTripRepository(trips: []);
+        final vehicleRepository = MockVehicleRepository(vehicles: [
+          tValidVehicle.copyWith(id: 'v_reg', status: 'registration'),
+          tValidVehicle.copyWith(id: 'v_maint', status: 'maintenance'),
+          tValidVehicle.copyWith(id: 'v_sold', status: 'sold'),
+        ]);
+
+        final container = ProviderContainer(
+          overrides: [
+            currentUserProvider.overrideWith(
+              (ref) => UserEntity(
+                uid: 'user_1',
+                email: 'test@company.com',
+                displayName: 'Operator John',
+                role: 'admin',
+                companyId: 'comp_1',
+                createdAt: DateTime.now(),
+              ),
+            ),
+            tripRepositoryProvider.overrideWithValue(repository),
+            vehicleRepositoryProvider.overrideWithValue(vehicleRepository),
+            customerRepositoryProvider
+                .overrideWithValue(MockCustomerRepository(customers: [
+              CustomerEntity(
+                id: 'cust_1',
+                name: 'Walmart',
+                contactName: 'Alice',
+                phone: '123',
+                email: 'alice@walmart.com',
+                address: 'BOS',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+                creditLimit: 100000.0,
+                outstandingBalance: 0.0,
+              ),
+            ])),
+          ],
+        );
+
+        final controller = container.read(tripFormControllerProvider.notifier);
+
+        final tripReg = TripEntity(
+          id: 't_reg',
+          companyId: 'comp_1',
+          vehicleId: 'v_reg',
+          vehicleLicensePlate: 'LP_REG',
+          driverId: 'driver_1',
+          driverName: 'Robert Jenkins',
+          customerId: 'cust_1',
+          customerName: 'Walmart',
+          pickupLocation: 'NY',
+          deliveryLocation: 'BOS',
+          cargoType: 'Coal',
+          coalQuantity: 20,
+          freightAmount: 1000,
+          advancePayment: 0,
+          permitExpense: 0,
+          status: 'scheduled',
+          statusHistory: [],
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        final resultReg = await controller.saveTrip(tripReg);
+        expect(resultReg, false);
+        expect(container.read(tripFormControllerProvider).errorMessage, contains('registration status'));
+
+        final tripMaint = tripReg.copyWith(id: 't_maint', vehicleId: 'v_maint');
+        final resultMaint = await controller.saveTrip(tripMaint);
+        expect(resultMaint, false);
+        expect(container.read(tripFormControllerProvider).errorMessage, contains('maintenance'));
+
+        final tripSold = tripReg.copyWith(id: 't_sold', vehicleId: 'v_sold');
+        final resultSold = await controller.saveTrip(tripSold);
+        expect(resultSold, false);
+        expect(container.read(tripFormControllerProvider).errorMessage, contains('decommissioned'));
+      },
+    );
+
+    test(
+      'should automatically transition vehicle status from idle to active when trip is scheduled',
+      () async {
+        final repository = MockTripRepository(trips: []);
+        final vehicleRepository = MockVehicleRepository(vehicles: [
+          tValidVehicle.copyWith(id: 'v_idle', status: 'idle'),
+        ]);
+
+        final container = ProviderContainer(
+          overrides: [
+            currentUserProvider.overrideWith(
+              (ref) => UserEntity(
+                uid: 'user_1',
+                email: 'test@company.com',
+                displayName: 'Operator John',
+                role: 'admin',
+                companyId: 'comp_1',
+                createdAt: DateTime.now(),
+              ),
+            ),
+            tripRepositoryProvider.overrideWithValue(repository),
+            vehicleRepositoryProvider.overrideWithValue(vehicleRepository),
+            customerRepositoryProvider
+                .overrideWithValue(MockCustomerRepository(customers: [
+              CustomerEntity(
+                id: 'cust_1',
+                name: 'Walmart',
+                contactName: 'Alice',
+                phone: '123',
+                email: 'alice@walmart.com',
+                address: 'BOS',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+                creditLimit: 100000.0,
+                outstandingBalance: 0.0,
+              ),
+            ])),
+          ],
+        );
+
+        final controller = container.read(tripFormControllerProvider.notifier);
+        final trip = TripEntity(
+          id: 't_idle',
+          companyId: 'comp_1',
+          vehicleId: 'v_idle',
+          vehicleLicensePlate: 'LP_IDLE',
+          driverId: 'driver_1',
+          driverName: 'Robert Jenkins',
+          customerId: 'cust_1',
+          customerName: 'Walmart',
+          pickupLocation: 'NY',
+          deliveryLocation: 'BOS',
+          cargoType: 'Coal',
+          coalQuantity: 20,
+          freightAmount: 1000,
+          advancePayment: 0,
+          permitExpense: 0,
+          status: 'scheduled',
+          statusHistory: [],
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        final result = await controller.saveTrip(trip);
+        expect(result, true);
+        expect(vehicleRepository.vehicles[0].status, 'active');
+      },
+    );
+
+    test(
       'should update vehicle status and generate finance transactions when trip is completed',
       () async {
         final existingTrip = TripEntity(

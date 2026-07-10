@@ -38,6 +38,10 @@ import '../../features/inventory/presentation/transaction_form_screen.dart';
 import '../../features/customers/presentation/contract_list_screen.dart';
 import '../../features/customers/presentation/contract_form_screen.dart';
 import '../../features/customers/presentation/invoice_list_screen.dart';
+import '../../features/dispatch/presentation/dispatch_list_screen.dart';
+import '../../features/dispatch/presentation/dispatch_form_screen.dart';
+import '../../features/dispatch/presentation/dispatch_detail_screen.dart';
+import '../../features/dispatch/presentation/route_list_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -296,6 +300,32 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/invoices',
         builder: (context, state) => const InvoiceListScreen(),
+      ),
+      GoRoute(
+        path: '/dispatches',
+        builder: (context, state) => const DispatchListScreen(),
+      ),
+      GoRoute(
+        path: '/dispatches/new',
+        builder: (context, state) => const DispatchFormScreen(),
+      ),
+      GoRoute(
+        path: '/dispatches/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return DispatchDetailScreen(dispatchId: id);
+        },
+      ),
+      GoRoute(
+        path: '/dispatches/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return DispatchFormScreen(dispatchId: id);
+        },
+      ),
+      GoRoute(
+        path: '/routes',
+        builder: (context, state) => const RouteListScreen(),
       ),
     ],
     redirect: (context, state) {
