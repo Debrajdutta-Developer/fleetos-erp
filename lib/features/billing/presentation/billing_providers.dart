@@ -331,7 +331,7 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
   }
 }
 
-final invoiceFormControllerProvider =
+final billingInvoiceFormControllerProvider =
     StateNotifierProvider.autoDispose<InvoiceFormController, InvoiceFormState>(
         (ref) {
   return InvoiceFormController(
@@ -388,6 +388,7 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         _invoiceRepo = invoiceRepo,
         _ledgerRepo = ledgerRepo,
         _customerRepo = customerRepo,
+        _tripRepo = tripRepo,
         _ref = ref,
         super(const PaymentFormState());
 

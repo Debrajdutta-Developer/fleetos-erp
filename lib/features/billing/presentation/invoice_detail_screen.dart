@@ -36,14 +36,11 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final invoicesAsync = ref.watch(billingInvoicesProvider);
     final paymentsAsync = ref.watch(billingPaymentsProvider);
 
-    final formController = ref.read(invoiceFormControllerProvider.notifier);
-    final paymentController = ref.read(paymentFormControllerProvider.notifier);
-
     // Watch loading states
-    final invoiceState = ref.watch(invoiceFormControllerProvider);
+    final invoiceState = ref.watch(billingInvoiceFormControllerProvider);
     final paymentState = ref.watch(paymentFormControllerProvider);
 
-    ref.listen<InvoiceFormState>(invoiceFormControllerProvider, (prev, next) {
+    ref.listen<InvoiceFormState>(billingInvoiceFormControllerProvider, (prev, next) {
       if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -222,12 +219,12 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                 Text(
                   'GRAND TOTAL',
                   style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.black, color: colorScheme.primary),
+                      fontWeight: FontWeight.w900, color: colorScheme.primary),
                 ),
                 Text(
                   '\$${invoice.grandTotal.toStringAsFixed(2)}',
                   style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.black, color: colorScheme.primary),
+                      fontWeight: FontWeight.w900, color: colorScheme.primary),
                 ),
               ],
             ),
@@ -465,7 +462,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     _paymentNotesController.clear();
     _paymentRefController.clear();
 
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -577,7 +574,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   void _confirmIssue(BuildContext context, String invoiceId) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Issue'),
@@ -591,7 +588,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             onPressed: () {
               Navigator.pop(context);
               ref
-                  .read(invoiceFormControllerProvider.notifier)
+                  .read(billingInvoiceFormControllerProvider.notifier)
                   .issueInvoice(invoiceId);
             },
             child: const Text('Issue'),
@@ -602,7 +599,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   void _confirmDelete(BuildContext context, String invoiceId) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Invoice'),
@@ -616,9 +613,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
             onPressed: () async {
               Navigator.pop(context);
               final success = await ref
-                  .read(invoiceFormControllerProvider.notifier)
+                  .read(billingInvoiceFormControllerProvider.notifier)
                   .deleteInvoice(invoiceId);
-              if (success) {
+              if (success && context.mounted) {
                 context.pop();
               }
             },
@@ -630,7 +627,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   void _confirmRefund(BuildContext context, String paymentId) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Refund Transaction'),

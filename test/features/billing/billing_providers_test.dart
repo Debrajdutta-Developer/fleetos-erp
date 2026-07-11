@@ -284,7 +284,7 @@ void main() {
     });
 
     test('should prevent saving invoice with negative totals', () async {
-      final controller = container.read(invoiceFormControllerProvider.notifier);
+      final controller = container.read(billingInvoiceFormControllerProvider.notifier);
 
       final invalidInvoice = InvoiceEntity(
         id: '',
@@ -301,12 +301,12 @@ void main() {
 
       final success = await controller.saveInvoice(invalidInvoice);
       expect(success, false);
-      expect(container.read(invoiceFormControllerProvider).errorMessage,
+      expect(container.read(billingInvoiceFormControllerProvider).errorMessage,
           contains('cannot be negative'));
     });
 
     test('should prevent duplicate invoice numbers', () async {
-      final controller = container.read(invoiceFormControllerProvider.notifier);
+      final controller = container.read(billingInvoiceFormControllerProvider.notifier);
 
       final inv1 = InvoiceEntity(
         id: 'inv_1',
@@ -338,7 +338,7 @@ void main() {
 
       final success = await controller.saveInvoice(inv2);
       expect(success, false);
-      expect(container.read(invoiceFormControllerProvider).errorMessage,
+      expect(container.read(billingInvoiceFormControllerProvider).errorMessage,
           contains('already in use'));
     });
 
@@ -363,7 +363,7 @@ void main() {
       );
 
       final controller =
-          operatorContainer.read(invoiceFormControllerProvider.notifier);
+          operatorContainer.read(billingInvoiceFormControllerProvider.notifier);
 
       final paidInvoice = InvoiceEntity(
         id: 'inv_paid',
@@ -386,12 +386,12 @@ void main() {
       final modified = paidInvoice.copyWith(notes: 'Trying to edit notes');
       final success = await controller.saveInvoice(modified);
       expect(success, false);
-      expect(operatorContainer.read(invoiceFormControllerProvider).errorMessage,
+      expect(operatorContainer.read(billingInvoiceFormControllerProvider).errorMessage,
           contains('Only Administrators can modify'));
     });
 
     test('should issue invoice, record ledger entries and log audit', () async {
-      final controller = container.read(invoiceFormControllerProvider.notifier);
+      final controller = container.read(billingInvoiceFormControllerProvider.notifier);
 
       final draftInvoice = InvoiceEntity(
         id: 'inv_draft',

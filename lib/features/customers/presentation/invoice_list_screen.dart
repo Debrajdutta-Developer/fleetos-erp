@@ -907,7 +907,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   }
 
   void _triggerIssueInvoice(String id) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Issue'),
@@ -920,7 +920,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ref.read(invoiceFormControllerProvider.notifier).issueInvoice(id);
+              ref.read(billingInvoiceFormControllerProvider.notifier).issueInvoice(id);
             },
             child: const Text('Issue'),
           ),
@@ -930,7 +930,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   }
 
   void _confirmPaymentRefund(String paymentId) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Refund'),
