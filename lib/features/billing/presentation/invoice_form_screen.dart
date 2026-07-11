@@ -422,7 +422,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                                       .textTheme
                                       .headlineLarge
                                       ?.copyWith(
-                                        fontWeight: FontWeight.black,
+                                        fontWeight: FontWeight.w900,
                                         color: Theme.of(context)
                                             .colorScheme
                                             .primary,

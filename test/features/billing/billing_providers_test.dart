@@ -6,6 +6,7 @@ import 'package:fleet_os_erp/features/customers/domain/customer_entity.dart';
 import 'package:fleet_os_erp/features/customers/domain/customer_repository.dart';
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/customers/domain/invoice_entity.dart';
+import 'package:fleet_os_erp/features/customers/domain/contract_entity.dart';
 import 'package:fleet_os_erp/features/trips/domain/audit_log_entity.dart';
 import 'package:fleet_os_erp/features/trips/domain/trip_repository.dart';
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';

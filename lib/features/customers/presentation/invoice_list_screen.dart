@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../auth/presentation/auth_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
 import '../../customers/domain/invoice_entity.dart';
 import '../domain/customer_entity.dart';
@@ -841,7 +840,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       color: color.withOpacity(0.04),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.12)),
+        side: BorderSide(color: color.withOpacity(0.12)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
