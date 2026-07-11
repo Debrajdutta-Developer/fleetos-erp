@@ -278,7 +278,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _freightCharge.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'Freight Charge ($)',
+                            labelText: 'Freight Charge (\$)',
                             prefixIcon: Icon(Icons.attach_money_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -290,7 +290,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _fuelCharge.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'Fuel Charge/Surcharge ($)',
+                            labelText: 'Fuel Charge/Surcharge (\$)',
                             prefixIcon: Icon(Icons.local_gas_station_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -302,7 +302,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _tollCharge.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'Toll Expense ($)',
+                            labelText: 'Toll Expense (\$)',
                             prefixIcon: Icon(Icons.toll_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -321,7 +321,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _extraCharges.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'Demurrage / Extras ($)',
+                            labelText: 'Demurrage / Extras (\$)',
                             prefixIcon: Icon(Icons.add_circle_outline_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -333,7 +333,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _discount.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'Contract Discount ($)',
+                            labelText: 'Contract Discount (\$)',
                             prefixIcon: Icon(Icons.remove_circle_outline_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -345,7 +345,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                         TextFormField(
                           initialValue: _gstVat.toStringAsFixed(2),
                           decoration: const InputDecoration(
-                            labelText: 'GST / VAT Tax ($)',
+                            labelText: 'GST / VAT Tax (\$)',
                             prefixIcon: Icon(Icons.percent_rounded),
                           ),
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),

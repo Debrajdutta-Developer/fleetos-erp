@@ -437,7 +437,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     TextFormField(
                       initialValue: _paymentAmount.toStringAsFixed(2),
                       decoration: const InputDecoration(
-                        labelText: 'Payment Amount ($)',
+                        labelText: 'Payment Amount (\$)',
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       validator: (val) {
