@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
+import '../../customers/presentation/customer_providers.dart';
 import '../domain/document_entity.dart';
 import 'document_providers.dart';
 
@@ -35,11 +37,13 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
   
   bool _initialized = false;
 
-  // Attachment mock state
+  // File Picker simulator state
   bool _fileAttached = false;
   String _fileName = '';
-  String _fileSize = '';
-  String _mockUrl = '';
+  String _fileSizeStr = '';
+  int _fileSize = 0;
+  String _mimeType = '';
+  Uint8List? _mockBytes;
 
   @override
   void initState() {
@@ -61,19 +65,18 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
     if (_initialized) return;
     if (widget.documentId != null) {
       final doc = list.firstWhere((d) => d.id == widget.documentId);
-      _nameController.text = doc.name;
+      _nameController.text = doc.fileName;
       _numberController.text = doc.documentNumber;
       _notesController.text = doc.notes ?? '';
       _category = doc.category;
       _type = doc.type;
-      _selectedEntityId = doc.entityId;
+      _selectedEntityId = doc.relatedEntityId;
       _selectedEntityName = doc.entityName;
-      _mockUrl = doc.fileUrl;
-      _fileAttached = doc.fileUrl.isNotEmpty;
-      if (_fileAttached) {
-        _fileName = doc.name.toLowerCase().replaceAll(' ', '_') + '.pdf';
-        _fileSize = '1.8 MB';
-      }
+      _fileAttached = doc.downloadUrl.isNotEmpty;
+      _fileSize = doc.fileSize;
+      _fileSizeStr = '${(doc.fileSize / (1024 * 1024)).toStringAsFixed(1)} MB';
+      _mimeType = doc.mimeType;
+      _fileName = doc.originalFileName;
       if (doc.expiryDate != null) {
         _hasExpiry = true;
         _expiryDate = doc.expiryDate!;
@@ -84,13 +87,30 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
     _initialized = true;
   }
 
-  void _simulateFileSelection() {
+  void _simulateFileSelection(String extension) {
     setState(() {
       _fileAttached = true;
       final typeLabel = _type.replaceAll('_', '');
-      _fileName = 'uploaded_${typeLabel}_${math.Random().nextInt(999)}.pdf';
-      _fileSize = '${(math.Random().nextDouble() * 3 + 0.5).toStringAsFixed(1)} MB';
-      _mockUrl = 'https://firebasestorage.googleapis.com/v0/b/fleetos-erp/o/documents%2F${_fileName}';
+      _fileName = 'doc_${typeLabel}_${math.Random().nextInt(999)}.$extension';
+      
+      // Random size up to 12MB to test size validations
+      final isLarge = math.Random().nextBool() && math.Random().nextBool(); // 25% chance of large file
+      final mb = isLarge ? (math.Random().nextDouble() * 5 + 10.1) : (math.Random().nextDouble() * 3 + 0.2);
+      _fileSize = (mb * 1024 * 1024).toInt();
+      _fileSizeStr = '${mb.toStringAsFixed(1)} MB';
+
+      switch (extension) {
+        case 'png': _mimeType = 'image/png'; break;
+        case 'jpg': _mimeType = 'image/jpeg'; break;
+        case 'docx': _mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; break;
+        case 'xlsx': _mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; break;
+        case 'pdf':
+        default:
+          _mimeType = 'application/pdf';
+          break;
+      }
+      
+      _mockBytes = Uint8List.fromList(List.generate(100, (i) => i));
     });
   }
 
@@ -98,7 +118,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (!_fileAttached) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select or attach a document file.')),
+        const SnackBar(content: Text('Please upload or drag a file to the dropzone first.')),
       );
       return;
     }
@@ -106,23 +126,27 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
     final doc = DocumentEntity(
       id: widget.documentId ?? '',
       companyId: '', // Filled in controller
-      name: _nameController.text.trim(),
+      relatedEntityId: _category == 'company' ? null : _selectedEntityId,
+      relatedEntityType: _category == 'company' ? null : _category,
       category: _category,
-      type: _type,
-      fileUrl: _mockUrl,
-      entityId: _category == 'company' ? null : _selectedEntityId,
-      entityName: _category == 'company' ? null : _selectedEntityName,
-      documentNumber: _numberController.text.trim(),
+      fileName: _nameController.text.trim(),
+      originalFileName: _fileName,
+      fileSize: _fileSize,
+      mimeType: _mimeType,
+      storagePath: 'documents/$_fileName',
+      downloadUrl: widget.documentId != null ? 'https://mock-url/$_fileName' : '', // populated by upload
+      uploadDate: DateTime.now(),
       expiryDate: _hasExpiry ? _expiryDate : null,
-      status: widget.documentId != null ? 'pending_verification' : 'pending_verification',
+      status: 'pending_verification',
       notes: _notesController.text.trim(),
+      uploadedBy: '', // Filled in controller
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
 
     final success = await ref
         .read(documentFormControllerProvider.notifier)
-        .saveDocument(doc);
+        .saveDocument(doc, fileBytes: _mockBytes);
 
     if (success && mounted) {
       context.pop();
@@ -138,6 +162,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
     final documents = ref.watch(documentsStreamProvider).valueOrNull ?? [];
     final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
     final drivers = ref.watch(driversStreamProvider).valueOrNull ?? [];
+    final customers = ref.watch(customersStreamProvider).valueOrNull ?? [];
 
     if (widget.documentId != null && documents.isNotEmpty) {
       _initializeValues(documents);
@@ -147,7 +172,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Modify Document Details' : 'Upload Vault Document'),
+        title: Text(isEditMode ? 'Modify Vault Metadata' : 'New Vault Upload'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -160,14 +185,109 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isEditMode ? 'Modify metadata parameters' : 'Attach enterprise compliance documents',
+                    isEditMode ? 'Modify metadata parameters' : 'Drag & Drop files to verify and upload to company vault',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.onBackground.withOpacity(0.6),
                     ),
                   ),
                   const SizedBox(height: 24),
 
-                  // 1. Category Selector
+                  // 1. Drag & Drop Mock Dropzone Visual Area
+                  Text('Document File Input', style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      // Trigger file picker dialog sheet
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (ctx) => SafeArea(
+                          child: Wrap(
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+                                title: const Text('Pick PDF Document'),
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _simulateFileSelection('pdf');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.image, color: Colors.blue),
+                                title: const Text('Pick PNG/JPG Image'),
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _simulateFileSelection('png');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.table_view_outlined, color: Colors.green),
+                                title: const Text('Pick Excel Spreadsheet (XLSX)'),
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  _simulateFileSelection('xlsx');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 180,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: _fileAttached
+                            ? colorScheme.primary.withOpacity(0.04)
+                            : colorScheme.surfaceVariant.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: _fileAttached ? colorScheme.primary : colorScheme.outline.withOpacity(0.3),
+                          style: BorderStyle.solid,
+                          width: _fileAttached ? 2 : 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: _fileAttached
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _mimeType == 'application/pdf'
+                                        ? Icons.picture_as_pdf
+                                        : (_mimeType.startsWith('image')
+                                            ? Icons.image
+                                            : Icons.table_view_outlined),
+                                    size: 48,
+                                    color: colorScheme.primary,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _fileName,
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text('Size: $_fileSizeStr | Format: ${_mimeType.toUpperCase()}'),
+                                ],
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.cloud_download_outlined, size: 48, color: Colors.grey),
+                                  const SizedBox(height: 8),
+                                  const Text('Click or Drag & Drop File Here'),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Supports: PDF, JPG, PNG, DOCX, XLSX (Max 10MB)',
+                                    style: TextStyle(color: colorScheme.onSurfaceVariant.withOpacity(0.6), fontSize: 11),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 2. Category Selector
                   Text('Document Category', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
@@ -176,7 +296,9 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                     items: const [
                       DropdownMenuItem(value: 'company', child: Text('Company Level Document')),
                       DropdownMenuItem(value: 'vehicle', child: Text('Vehicle Compliance Document')),
-                      DropdownMenuItem(value: 'driver', child: Text('Driver Licensing / National ID')),
+                      DropdownMenuItem(value: 'driver', child: Text('Driver Licensing / Certificate')),
+                      DropdownMenuItem(value: 'customer', child: Text('Customer Agreements & KYC')),
+                      DropdownMenuItem(value: 'finance', child: Text('Finance Invoices & Bills')),
                     ],
                     onChanged: (val) {
                       if (val != null) {
@@ -188,13 +310,15 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                           if (val == 'company') _type = 'gst_certificate';
                           if (val == 'vehicle') _type = 'rc';
                           if (val == 'driver') _type = 'driving_license';
+                          if (val == 'customer') _type = 'contract';
+                          if (val == 'finance') _type = 'invoice';
                         });
                       }
                     },
                   ),
                   const SizedBox(height: 20),
 
-                  // 2. Type Selector
+                  // 3. Type Selector
                   Text('Document Type', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
@@ -211,7 +335,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // 3. Dynamic Entity Selection (if Vehicle or Driver)
+                  // 4. Associated Entity Selector
                   if (_category == 'vehicle') ...[
                     Text('Associated Vehicle', style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
@@ -260,8 +384,32 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                     const SizedBox(height: 20),
                   ],
 
-                  // 4. Basic Metadata Form
-                  Text('Document Name', style: theme.textTheme.titleSmall),
+                  if (_category == 'customer') ...[
+                    Text('Associated Customer', style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: _selectedEntityId,
+                      decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Select Customer'),
+                      items: customers.map((c) => DropdownMenuItem(
+                        value: c.id,
+                        child: Text(c.name),
+                      )).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          final cObj = customers.firstWhere((cust) => cust.id == val);
+                          setState(() {
+                            _selectedEntityId = val;
+                            _selectedEntityName = cObj.name;
+                          });
+                        }
+                      },
+                      validator: (value) => value == null ? 'Please select a customer' : null,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // 5. Basic Metadata Form
+                  Text('Document Display Name', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _nameController,
@@ -285,7 +433,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // 5. Expiration tracking
+                  // Expiration tracking
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -332,77 +480,46 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // 6. Attachment Panel
-                  Text('File Attachment', style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  Card(
-                    elevation: 0,
-                    color: colorScheme.surfaceVariant.withOpacity(0.2),
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
-                      borderRadius: BorderRadius.circular(12),
+                  // 6. Upload progress bar indicator
+                  if (formState.isLoading && formState.uploadProgress > 0.0) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Uploading to Cloud Vault...', style: theme.textTheme.bodySmall),
+                        Text('${(formState.uploadProgress * 100).toStringAsFixed(0)}%', style: theme.textTheme.bodySmall),
+                      ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
+                    const SizedBox(height: 8),
+                    LinearProgressIndicator(value: formState.uploadProgress),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // 7. Error messages (warnings)
+                  if (formState.errorMessage != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: colorScheme.error),
+                      ),
+                      child: Row(
                         children: [
-                          if (_fileAttached) ...[
-                            Row(
-                              children: [
-                                Icon(Icons.picture_as_pdf, color: colorScheme.primary, size: 40),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        _fileName,
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(_fileSize),
-                                    ],
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete_outline, color: Colors.red),
-                                  onPressed: () => setState(() {
-                                    _fileAttached = false;
-                                    _fileName = '';
-                                    _fileSize = '';
-                                    _mockUrl = '';
-                                  }),
-                                ),
-                              ],
+                          Icon(Icons.error_outline, color: colorScheme.error),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              formState.errorMessage!,
+                              style: TextStyle(color: colorScheme.onErrorContainer, fontSize: 13),
                             ),
-                          ] else ...[
-                            const Icon(Icons.upload_file, size: 48, color: Colors.grey),
-                            const SizedBox(height: 12),
-                            const Text('No file attached. Max limit 10MB.'),
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              icon: const Icon(Icons.attach_file),
-                              label: const Text('Simulate File Upload (PDF/JPG)'),
-                              onPressed: _simulateFileSelection,
-                            ),
-                          ]
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // 7. Submit Action
-                  if (formState.errorMessage != null) ...[
-                    Text(
-                      formState.errorMessage!,
-                      style: TextStyle(color: colorScheme.error),
-                    ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 20),
                   ],
 
+                  // 8. Action button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 54),
@@ -428,7 +545,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
       return const [
         DropdownMenuItem(value: 'gst_certificate', child: Text('GST Certificate')),
         DropdownMenuItem(value: 'pan', child: Text('PAN Card')),
-        DropdownMenuItem(value: 'trade_license', child: Text('Trade License')),
+        DropdownMenuItem(value: 'trade_license', child: Text('Trade License / Registration')),
         DropdownMenuItem(value: 'company_logo', child: Text('Company Logo')),
         DropdownMenuItem(value: 'other', child: Text('Other')),
       ];
@@ -442,10 +559,28 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
         DropdownMenuItem(value: 'road_tax', child: Text('Road Tax Receipt')),
         DropdownMenuItem(value: 'other', child: Text('Other')),
       ];
-    } else {
+    } else if (_category == 'driver') {
       return const [
         DropdownMenuItem(value: 'driving_license', child: Text('Driving License (DL)')),
         DropdownMenuItem(value: 'national_id', child: Text('Aadhaar / National ID')),
+        DropdownMenuItem(value: 'medical_certificate', child: Text('Medical Certificate')),
+        DropdownMenuItem(value: 'training_certificate', child: Text('Training Certificate')),
+        DropdownMenuItem(value: 'other', child: Text('Other')),
+      ];
+    } else if (_category == 'customer') {
+      return const [
+        DropdownMenuItem(value: 'contract', child: Text('Freight Contract')),
+        DropdownMenuItem(value: 'agreement', child: Text('SLA / Agreement')),
+        DropdownMenuItem(value: 'purchase_order', child: Text('Purchase Order (PO)')),
+        DropdownMenuItem(value: 'kyc_document', child: Text('KYC / Corporate ID')),
+        DropdownMenuItem(value: 'other', child: Text('Other')),
+      ];
+    } else {
+      return const [
+        DropdownMenuItem(value: 'invoice', child: Text('Invoice')),
+        DropdownMenuItem(value: 'receipt', child: Text('Receipt')),
+        DropdownMenuItem(value: 'expense_bill', child: Text('Expense Bill')),
+        DropdownMenuItem(value: 'payment_proof', child: Text('Payment Proof')),
         DropdownMenuItem(value: 'other', child: Text('Other')),
       ];
     }

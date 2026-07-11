@@ -5,13 +5,14 @@ import 'package:fleet_os_erp/features/auth/presentation/auth_providers.dart';
 import 'package:fleet_os_erp/features/auth/domain/user_entity.dart';
 import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
 import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart';
+import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/documents/domain/document_entity.dart';
 import 'package:fleet_os_erp/features/documents/presentation/document_list_screen.dart';
 import 'package:fleet_os_erp/features/documents/presentation/document_providers.dart';
 import 'documents_providers_test.dart' show MockDocumentRepository;
 
 void main() {
-  testWidgets('DocumentListScreen renders document vault filters and tabs',
+  testWidgets('DocumentListScreen renders Material 3 widgets, sorting, and drag drop mock',
       (WidgetTester tester) async {
     final now = DateTime.now();
 
@@ -19,10 +20,15 @@ void main() {
       id: 'doc_1',
       companyId: 'c_1',
       name: 'GST Certificate 2026',
+      fileName: 'GST Certificate 2026',
       category: 'company',
       type: 'gst_certificate',
-      fileUrl: 'https://test-storage/gst.pdf',
-      documentNumber: 'GST-9988-12',
+      originalFileName: 'gst.pdf',
+      fileSize: 150000,
+      mimeType: 'application/pdf',
+      storagePath: 'documents/gst.pdf',
+      downloadUrl: 'https://mock-storage/gst.pdf',
+      uploadDate: now,
       status: 'pending_verification',
       createdAt: now,
       updatedAt: now,
@@ -45,6 +51,7 @@ void main() {
           documentRepositoryProvider.overrideWithValue(mockRepo),
           vehiclesStreamProvider.overrideWith((ref) => Stream.value([])),
           driversStreamProvider.overrideWith((ref) => Stream.value([])),
+          customersStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
         child: const MaterialApp(
           home: DocumentListScreen(),
@@ -55,22 +62,37 @@ void main() {
     // Let UI render
     await tester.pumpAndSettle();
 
-    // Verify main screen title
+    // 1. Verify main screen title
     expect(find.text('Enterprise Document Vault'), findsOneWidget);
 
-    // Verify tabs are present
-    expect(find.textContaining('All Documents'), findsOneWidget);
+    // 2. Verify Tab headers
+    expect(find.textContaining('All Vault Documents'), findsOneWidget);
     expect(find.textContaining('Vault Expirations'), findsOneWidget);
     expect(find.textContaining('Approval Inbox'), findsOneWidget);
 
-    // Verify document name is listed in card
-    expect(find.text('GST Certificate 2026'), findsOneWidget);
+    // 3. Verify Dashboard Widget Cards
+    expect(find.text('Total Documents'), findsOneWidget);
+    expect(find.text('Expiring Soon (30d)'), findsOneWidget);
+    expect(find.text('Expired Documents'), findsOneWidget);
 
-    // Verify reference number and type are printed
-    expect(find.text('Reference: GST-9988-12'), findsOneWidget);
+    // 4. Verify Document Card is listed in list view
+    expect(find.text('GST Certificate 2026'), findsOneWidget);
     expect(find.text('Type: GST Certificate'), findsOneWidget);
 
-    // Verify upload button exists
-    expect(find.text('Upload Document'), findsOneWidget);
+    // 5. Verify Filter and Sort dropdown indicators
+    expect(find.text('All Categories'), findsOneWidget);
+    expect(find.text('Date Uploaded (Newest)'), findsOneWidget);
+
+    // 6. Verify Drag & Drop visual panel is present on desktop sizes
+    // We simulate a desktop layout width by setting the screen size
+    tester.view.physicalSize = const Size(1200, 800);
+    tester.view.devicePixelRatio = 1.0;
+    
+    await tester.pump();
+    expect(find.text('Drag & Drop Files Here'), findsOneWidget);
+
+    // Reset layout size
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
   });
 }

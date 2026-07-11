@@ -18,7 +18,6 @@ class DocumentRepositoryImpl implements DocumentRepository {
         .collection('companies')
         .doc(companyId)
         .collection('documents')
-        .where('deletedAt', isNull: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
@@ -34,7 +33,6 @@ class DocumentRepositoryImpl implements DocumentRepository {
           .collection('companies')
           .doc(companyId)
           .collection('documents')
-          .where('deletedAt', isNull: true)
           .get();
 
       return snapshot.docs
@@ -59,7 +57,7 @@ class DocumentRepositoryImpl implements DocumentRepository {
 
       if (!doc.exists) return null;
       final data = doc.data();
-      if (data == null || data['deletedAt'] != null) return null;
+      if (data == null) return null;
       return DocumentEntity.fromMap(data);
     } on FirebaseException catch (e) {
       throw ServerFailure.fromFirebaseException(e.code, e.message);
@@ -122,7 +120,80 @@ class DocumentRepositoryImpl implements DocumentRepository {
           .doc(companyId)
           .collection('documents')
           .doc(documentId)
-          .update({'deletedAt': DateTime.now().toIso8601String()});
+          .update({
+        'deletedAt': DateTime.now().toIso8601String(),
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+    } on FirebaseException catch (e) {
+      throw ServerFailure.fromFirebaseException(e.code, e.message);
+    } catch (e) {
+      throw ServerFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<void> restoreDocument(String companyId, String documentId) async {
+    try {
+      await _firestore
+          .collection('companies')
+          .doc(companyId)
+          .collection('documents')
+          .doc(documentId)
+          .update({
+        'deletedAt': null,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+    } on FirebaseException catch (e) {
+      throw ServerFailure.fromFirebaseException(e.code, e.message);
+    } catch (e) {
+      throw ServerFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<void> renameDocument(String companyId, String documentId, String newName) async {
+    try {
+      await _firestore
+          .collection('companies')
+          .doc(companyId)
+          .collection('documents')
+          .doc(documentId)
+          .update({
+        'fileName': newName,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+    } on FirebaseException catch (e) {
+      throw ServerFailure.fromFirebaseException(e.code, e.message);
+    } catch (e) {
+      throw ServerFailure(e.toString());
+    }
+  }
+
+  @override
+  Future<void> replaceDocumentFile(
+    String companyId,
+    String documentId, {
+    required String newDownloadUrl,
+    required String newStoragePath,
+    required int newSize,
+    required String newMimeType,
+    required String newOriginalName,
+  }) async {
+    try {
+      await _firestore
+          .collection('companies')
+          .doc(companyId)
+          .collection('documents')
+          .doc(documentId)
+          .update({
+        'downloadUrl': newDownloadUrl,
+        'storagePath': newStoragePath,
+        'fileSize': newSize,
+        'mimeType': newMimeType,
+        'originalFileName': newOriginalName,
+        'uploadDate': DateTime.now().toIso8601String(),
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
     } on FirebaseException catch (e) {
       throw ServerFailure.fromFirebaseException(e.code, e.message);
     } catch (e) {

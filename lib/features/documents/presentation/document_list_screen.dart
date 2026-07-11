@@ -47,6 +47,16 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
       case 'road_tax': return 'Road Tax receipt';
       case 'driving_license': return 'Driving License (DL)';
       case 'national_id': return 'Aadhaar / National ID';
+      case 'medical_certificate': return 'Medical Certificate';
+      case 'training_certificate': return 'Training Certificate';
+      case 'contract': return 'signed Contract';
+      case 'agreement': return 'SLA / Agreement';
+      case 'purchase_order': return 'Purchase Order (PO)';
+      case 'kyc_document': return 'KYC Document';
+      case 'invoice': return 'Finance Invoice';
+      case 'receipt': return 'Receipt Log';
+      case 'expense_bill': return 'Expense Bill';
+      case 'payment_proof': return 'Payment Proof';
       default: return 'Other Document';
     }
   }
@@ -61,6 +71,17 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     }
   }
 
+  IconData _getCategoryIcon(String cat) {
+    switch (cat) {
+      case 'company': return Icons.business_rounded;
+      case 'vehicle': return Icons.local_shipping_rounded;
+      case 'driver': return Icons.badge_rounded;
+      case 'customer': return Icons.people_rounded;
+      case 'finance': return Icons.account_balance_wallet_rounded;
+      default: return Icons.article_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -70,16 +91,30 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     final filteredDocs = ref.watch(filteredDocumentsProvider);
     final selectedCategory = ref.watch(selectedDocumentCategoryProvider);
     final selectedType = ref.watch(selectedDocumentTypeProvider);
+    final showDeleted = ref.watch(showDeletedDocumentsProvider);
+    final sort = ref.watch(documentSortOptionProvider);
 
-    // Compute expiry alerts (expired, or expiring within 30 days)
+    // Compute Expiry Metrics
     final now = DateTime.now();
-    final expiryAlerts = allDocs.where((doc) {
-      if (doc.expiryDate == null) return false;
-      return doc.status == 'expired' || doc.expiryDate!.difference(now).inDays <= 30;
+    final expiredDocs = allDocs.where((doc) => doc.deletedAt == null && doc.expiryDate != null && doc.expiryDate!.isBefore(now)).toList();
+    final expiringSoonDocs = allDocs.where((doc) {
+      if (doc.deletedAt != null || doc.expiryDate == null) return false;
+      final diff = doc.expiryDate!.difference(now).inDays;
+      return diff >= 0 && diff <= 30;
     }).toList();
 
-    // Compute pending verification
-    final pendingDocs = allDocs.where((doc) => doc.status == 'pending_verification').toList();
+    // Sort active documents by upload date to get recently uploaded list
+    final activeDocs = allDocs.where((doc) => doc.deletedAt == null).toList();
+    activeDocs.sort((a, b) => b.uploadDate.compareTo(a.uploadDate));
+    final recentlyUploaded = activeDocs.take(5).toList();
+
+    // Pending verification list
+    final pendingDocs = allDocs.where((doc) => doc.deletedAt == null && doc.status == 'pending_verification').toList();
+
+    // Determine layout width for responsiveness
+    final width = MediaQuery.of(context).size.width;
+    final isDesktop = width > 1024;
+    final isTablet = width > 640 && width <= 1024;
 
     return Scaffold(
       appBar: AppBar(
@@ -91,28 +126,35 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
           tabs: [
             Tab(
               icon: const Icon(Icons.inventory_2_outlined),
-              text: 'All Documents (${allDocs.length})',
+              text: 'All Vault Documents (${activeDocs.length})',
             ),
             Tab(
               icon: const Icon(Icons.warning_amber_rounded),
-              text: 'Vault Expirations (${expiryAlerts.length})',
+              text: 'Vault Expirations (${expiredDocs.length + expiringSoonDocs.length})',
             ),
             Tab(
-              icon: const Icon(Icons.verified_user_outlined),
+              icon: const Icon(Icons.rate_review_outlined),
               text: 'Approval Inbox (${pendingDocs.length})',
             ),
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          // 1. All Documents Tab
-          _buildAllDocumentsTab(context, filteredDocs, selectedCategory, selectedType, colorScheme, theme),
-          // 2. Expirations Tab
-          _buildExpirationsTab(context, expiryAlerts, colorScheme, theme),
-          // 3. Approval Inbox Tab
-          _buildApprovalInboxTab(context, pendingDocs, colorScheme, theme),
+          // 1. Dashboard Metrics Panel
+          _buildDashboardMetricsPanel(context, activeDocs.length, expiringSoonDocs.length, expiredDocs.length, recentlyUploaded, colorScheme, theme, isDesktop),
+
+          // 2. Tab Views
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildAllDocumentsTab(context, filteredDocs, selectedCategory, selectedType, showDeleted, sort, colorScheme, theme, isDesktop, isTablet),
+                _buildExpirationsTab(context, expiringSoonDocs, expiredDocs, colorScheme, theme),
+                _buildApprovalInboxTab(context, pendingDocs, colorScheme, theme),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -123,81 +165,320 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     );
   }
 
+  // --- DASHBOARD METRICS PANEL ---
+  Widget _buildDashboardMetricsPanel(
+    BuildContext context,
+    int totalCount,
+    int expiringCount,
+    int expiredCount,
+    List<DocumentEntity> recentlyUploaded,
+    ColorScheme colorScheme,
+    ThemeData theme,
+    bool isDesktop,
+  ) {
+    final cardPadding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
+
+    return Container(
+      color: colorScheme.surfaceVariant.withOpacity(0.12),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Metric Card 1: Total
+              Expanded(
+                child: Card(
+                  elevation: 0,
+                  color: colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: cardPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Total Documents', style: theme.textTheme.bodySmall),
+                        const SizedBox(height: 8),
+                        Text('$totalCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Metric Card 2: Expiring Soon
+              Expanded(
+                child: Card(
+                  elevation: 0,
+                  color: colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: cardPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Expiring Soon (30d)', style: theme.textTheme.bodySmall),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text('$expiringCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange)),
+                            const SizedBox(width: 8),
+                            if (expiringCount > 0)
+                              const Tooltip(
+                                message: 'Compliance alert prepared for Reminder engine.',
+                                child: Icon(Icons.notifications_active_outlined, color: Colors.orange, size: 18),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Metric Card 3: Expired
+              Expanded(
+                child: Card(
+                  elevation: 0,
+                  color: colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: cardPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Expired Documents', style: theme.textTheme.bodySmall),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text('$expiredCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+                            const SizedBox(width: 8),
+                            if (expiredCount > 0)
+                              const Tooltip(
+                                message: 'Warning alert triggered.',
+                                child: Icon(Icons.error_outline_rounded, color: Colors.red, size: 18),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Desktop: Show Recently Uploaded panel inline
+              if (isDesktop) ...[
+                const SizedBox(width: 16),
+                Container(
+                  width: 320,
+                  height: 90,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: colorScheme.outline.withOpacity(0.15)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Recently Uploaded', style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 6),
+                      Expanded(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recentlyUploaded.length,
+                          itemBuilder: (ctx, idx) {
+                            final doc = recentlyUploaded[idx];
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Chip(
+                                avatar: Icon(_getCategoryIcon(doc.category), size: 14),
+                                label: Text(doc.fileName, style: const TextStyle(fontSize: 10)),
+                                padding: EdgeInsets.zero,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   // --- ALL DOCUMENTS TAB ---
   Widget _buildAllDocumentsTab(
     BuildContext context,
     List<DocumentEntity> list,
     String category,
     String type,
+    bool showDeleted,
+    String sort,
     ColorScheme colorScheme,
     ThemeData theme,
+    bool isDesktop,
+    bool isTablet,
   ) {
-    return Column(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Filter toolbar
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+        Expanded(
+          child: Column(
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Search by document name, number, or license plate...',
-                    border: OutlineInputBorder(),
-                  ),
+              // Filters & Search Toolbar
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // Search Bar
+                    SizedBox(
+                      width: 280,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search by file name or code...',
+                          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+
+                    // Category dropdown
+                    DropdownButton<String>(
+                      value: category,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: 'all', child: Text('All Categories')),
+                        DropdownMenuItem(value: 'company', child: Text('Company Docs')),
+                        DropdownMenuItem(value: 'vehicle', child: Text('Vehicle Docs')),
+                        DropdownMenuItem(value: 'driver', child: Text('Driver Docs')),
+                        DropdownMenuItem(value: 'customer', child: Text('Customer Docs')),
+                        DropdownMenuItem(value: 'finance', child: Text('Finance Docs')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          ref.read(selectedDocumentCategoryProvider.notifier).state = val;
+                          ref.read(selectedDocumentTypeProvider.notifier).state = 'all'; // reset type filter
+                        }
+                      },
+                    ),
+
+                    // Sort dropdown
+                    DropdownButton<String>(
+                      value: sort,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: 'date_uploaded_desc', child: Text('Date Uploaded (Newest)')),
+                        DropdownMenuItem(value: 'name_asc', child: Text('File Name (A-Z)')),
+                        DropdownMenuItem(value: 'name_desc', child: Text('File Name (Z-A)')),
+                        DropdownMenuItem(value: 'expiry_asc', child: Text('Expiry (Expiring First)')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          ref.read(documentSortOptionProvider.notifier).state = val;
+                        }
+                      },
+                    ),
+
+                    // Show soft-deleted toggle
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: showDeleted,
+                          onChanged: (val) {
+                            if (val != null) {
+                              ref.read(showDeletedDocumentsProvider.notifier).state = val;
+                            }
+                          },
+                        ),
+                        Text('Show Soft Deleted Vault', style: theme.textTheme.bodySmall),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 16),
-              DropdownButton<String>(
-                value: category,
-                items: const [
-                  DropdownMenuItem(value: 'all', child: Text('All Categories')),
-                  DropdownMenuItem(value: 'company', child: Text('Company Docs')),
-                  DropdownMenuItem(value: 'vehicle', child: Text('Vehicle Docs')),
-                  DropdownMenuItem(value: 'driver', child: Text('Driver Docs')),
-                ],
-                onChanged: (val) {
-                  if (val != null) {
-                    ref.read(selectedDocumentCategoryProvider.notifier).state = val;
-                    ref.read(selectedDocumentTypeProvider.notifier).state = 'all'; // reset type filter
-                  }
-                },
-              ),
-              const SizedBox(width: 16),
-              DropdownButton<String>(
-                value: type,
-                items: _getTypeDropdownItems(category),
-                onChanged: (val) {
-                  if (val != null) {
-                    ref.read(selectedDocumentTypeProvider.notifier).state = val;
-                  }
-                },
+
+              // Grid list
+              Expanded(
+                child: list.isEmpty
+                    ? Center(child: Text(showDeleted ? 'No soft-deleted vault items.' : 'No documents matching criteria.'))
+                    : GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 380,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          mainAxisExtent: 220,
+                        ),
+                        itemCount: list.length,
+                        itemBuilder: (ctx, idx) {
+                          final doc = list[idx];
+                          return _buildDocumentCard(context, doc, colorScheme, theme);
+                        },
+                      ),
               ),
             ],
           ),
         ),
 
-        // Grid list
-        Expanded(
-          child: list.isEmpty
-              ? const Center(child: Text('No vault documents found matching selection.'))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 380,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    mainAxisExtent: 220,
+        // Desktop visual Drag & Drop simulation panel
+        if (isDesktop) ...[
+          Container(
+            width: 240,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              border: Border(left: BorderSide(color: colorScheme.outline.withOpacity(0.15))),
+              color: colorScheme.surfaceVariant.withOpacity(0.05),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.drive_folder_upload, size: 64, color: colorScheme.primary.withOpacity(0.5)),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Drag & Drop Files Here',
+                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  itemCount: list.length,
-                  itemBuilder: (ctx, idx) {
-                    final doc = list[idx];
-                    return _buildDocumentCard(context, doc, colorScheme, theme);
-                  },
-                ),
-        ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Quickly drop PDF, Image, or spreadsheet files to start uploading to the vault.',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => context.push('/documents/new'),
+                    child: const Text('Pick Files'),
+                  ),
+                ],
+              ),
+            ),
+          )
+        ]
       ],
     );
   }
@@ -205,10 +486,13 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
   // --- EXSPIRATIONS TAB ---
   Widget _buildExpirationsTab(
     BuildContext context,
-    List<DocumentEntity> list,
+    List<DocumentEntity> expiring,
+    List<DocumentEntity> expired,
     ColorScheme colorScheme,
     ThemeData theme,
   ) {
+    final list = [...expired, ...expiring];
+
     if (list.isEmpty) {
       return const Center(
         child: Column(
@@ -216,7 +500,7 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
           children: [
             Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
             SizedBox(height: 16),
-            Text('Vault verified. Zero document expiration alerts!'),
+            Text('Compliance verified. Zero document expiration alerts!'),
           ],
         ),
       );
@@ -239,11 +523,11 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
             color: isExpired ? Colors.red.shade800 : Colors.orange,
             size: 32,
           ),
-          title: Text(doc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(doc.fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${_getFriendlyTypeName(doc.type)} | Attached to: ${doc.entityName ?? "Company"}'),
+              Text('${_getFriendlyTypeName(doc.type)} | Scope: ${doc.relatedEntityType?.toUpperCase() ?? "Company"}'),
               Text(
                 isExpired ? 'EXPIRED' : 'Expiring in $days days (${DateFormat('yMMMd').format(doc.expiryDate!)})',
                 style: TextStyle(
@@ -291,9 +575,9 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
 
         return ListTile(
           leading: const Icon(Icons.rate_review_outlined, color: Colors.orange, size: 32),
-          title: Text(doc.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(doc.fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(
-            'Type: ${_getFriendlyTypeName(doc.type)} | Attached to: ${doc.entityName ?? "Company"} | No: ${doc.documentNumber}',
+            'Type: ${_getFriendlyTypeName(doc.type)} | Scope: ${doc.relatedEntityType?.toUpperCase() ?? "Company"} | Ref: ${doc.documentNumber}',
           ),
           trailing: ElevatedButton(
             onPressed: () => context.push('/documents/${doc.id}'),
@@ -304,7 +588,7 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     );
   }
 
-  // --- INDIVIDUAL CARD BUILDING ---
+  // --- CARD BUILDER ---
   Widget _buildDocumentCard(
     BuildContext context,
     DocumentEntity doc,
@@ -312,6 +596,7 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     ThemeData theme,
   ) {
     final statusColor = _getStatusColor(doc.status, colorScheme);
+    final sizeKb = (doc.fileSize / 1024).toStringAsFixed(1);
 
     return Card(
       elevation: 0,
@@ -327,15 +612,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Card Top: Icon and Status Badge
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(
-                    _getCategoryIcon(doc.category),
-                    color: colorScheme.primary,
-                    size: 28,
-                  ),
+                  Icon(_getCategoryIcon(doc.category), color: colorScheme.primary, size: 28),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
                     decoration: BoxDecoration(
@@ -355,47 +635,33 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                 ],
               ),
               const Spacer(),
-
-              // Card Title & Subtitle
               Text(
-                doc.name,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                doc.fileName,
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Text(
                 'Type: ${_getFriendlyTypeName(doc.type)}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant.withOpacity(0.8),
-                ),
+                style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),
               Text(
-                'Reference: ${doc.documentNumber}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant.withOpacity(0.8),
-                ),
+                'Size: ${sizeKb} KB | Reference: ${doc.documentNumber}',
+                style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),
               const Spacer(),
-
               const Divider(),
-              // Card Bottom: Entity Mapping and Expiry Status
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     doc.entityName ?? 'Company Level',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 11,
-                      color: colorScheme.primary,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11, color: colorScheme.primary),
                   ),
                   Text(
                     doc.expiryDate == null
-                        ? 'No Expiration'
+                        ? 'No Expiry'
                         : 'Expires: ${DateFormat('MM/dd/yy').format(doc.expiryDate!)}',
                     style: TextStyle(
                       fontSize: 11,
@@ -414,47 +680,5 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
         ),
       ),
     );
-  }
-
-  IconData _getCategoryIcon(String cat) {
-    switch (cat) {
-      case 'company': return Icons.business_rounded;
-      case 'vehicle': return Icons.local_shipping_rounded;
-      case 'driver': return Icons.badge_rounded;
-      default: return Icons.article_rounded;
-    }
-  }
-
-  List<DropdownMenuItem<String>> _getTypeDropdownItems(String category) {
-    final list = [
-      const DropdownMenuItem(value: 'all', child: Text('All Types')),
-    ];
-
-    if (category == 'all' || category == 'company') {
-      list.addAll([
-        const DropdownMenuItem(value: 'gst_certificate', child: Text('GST Certificate')),
-        const DropdownMenuItem(value: 'pan', child: Text('PAN Card')),
-        const DropdownMenuItem(value: 'trade_license', child: Text('Trade License')),
-        const DropdownMenuItem(value: 'company_logo', child: Text('Company Logo')),
-      ]);
-    }
-    if (category == 'all' || category == 'vehicle') {
-      list.addAll([
-        const DropdownMenuItem(value: 'rc', child: Text('Registration (RC)')),
-        const DropdownMenuItem(value: 'insurance', child: Text('Insurance Policy')),
-        const DropdownMenuItem(value: 'fitness', child: Text('Fitness Certificate')),
-        const DropdownMenuItem(value: 'puc', child: Text('Pollution Certificate')),
-        const DropdownMenuItem(value: 'permit', child: Text('State Permit')),
-        const DropdownMenuItem(value: 'road_tax', child: Text('Road Tax Receipt')),
-      ]);
-    }
-    if (category == 'all' || category == 'driver') {
-      list.addAll([
-        const DropdownMenuItem(value: 'driving_license', child: Text('Driving License (DL)')),
-        const DropdownMenuItem(value: 'national_id', child: Text('Aadhaar / National ID')),
-      ]);
-    }
-
-    return list;
   }
 }
