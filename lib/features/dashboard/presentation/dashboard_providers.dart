@@ -25,6 +25,15 @@ class DashboardStats {
   final int totalRoutesCount;
   final int activeDispatchesCount;
 
+  // Billing & Invoicing Sprint 2.8 additions
+  final double totalRevenue;
+  final double revenueToday;
+  final double revenueThisMonth;
+  final double outstandingAmount;
+  final int overdueInvoicesCount;
+  final int paidInvoicesCount;
+  final double collectionRate;
+
   const DashboardStats({
     required this.activeFleetCount,
     required this.tripsScheduled,
@@ -42,6 +51,13 @@ class DashboardStats {
     required this.outstandingInvoicesAmount,
     required this.totalRoutesCount,
     required this.activeDispatchesCount,
+    required this.totalRevenue,
+    required this.revenueToday,
+    required this.revenueThisMonth,
+    required this.outstandingAmount,
+    required this.overdueInvoicesCount,
+    required this.paidInvoicesCount,
+    required this.collectionRate,
   });
 }
 
@@ -166,6 +182,40 @@ final dashboardStatsProvider =
       .where((i) => i.status == 'sent')
       .fold<double>(0.0, (sum, i) => sum + i.amount);
 
+  // Billing & Invoicing Sprint 2.8 additions
+  final totalRevenue = invoices
+      .where((i) => i.status != 'draft' && i.status != 'cancelled')
+      .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+
+  final now = DateTime.now();
+  final revenueToday = invoices
+      .where((i) => i.status != 'draft' && i.status != 'cancelled' &&
+                    i.issueDate.year == now.year && i.issueDate.month == now.month && i.issueDate.day == now.day)
+      .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+
+  final revenueThisMonth = invoices
+      .where((i) => i.status != 'draft' && i.status != 'cancelled' &&
+                    i.issueDate.year == now.year && i.issueDate.month == now.month)
+      .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+
+  final outstandingAmount = invoices
+      .where((i) => i.status != 'cancelled' && i.status != 'draft')
+      .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
+
+  final overdueInvoicesCount = invoices
+      .where((i) => i.status == 'overdue' || (i.status != 'paid' && i.status != 'cancelled' && i.dueDate.isBefore(now)))
+      .length;
+
+  final paidInvoicesCount = invoices.where((i) => i.status == 'paid').length;
+
+  double collectionRate = 100.0;
+  final totalPaidAmount = invoices
+      .where((i) => i.status != 'draft' && i.status != 'cancelled')
+      .fold<double>(0.0, (sum, i) => sum + i.amountPaid);
+  if (totalRevenue > 0.0) {
+    collectionRate = (totalPaidAmount / totalRevenue) * 100;
+  }
+
   return AsyncValue.data(DashboardStats(
     activeFleetCount: activeFleetCount,
     tripsScheduled: tripsScheduled,
@@ -184,5 +234,12 @@ final dashboardStatsProvider =
     totalRoutesCount: routes.length,
     activeDispatchesCount:
         dispatches.where((d) => d.status == 'in_transit').length,
+    totalRevenue: totalRevenue,
+    revenueToday: revenueToday,
+    revenueThisMonth: revenueThisMonth,
+    outstandingAmount: outstandingAmount,
+    overdueInvoicesCount: overdueInvoicesCount,
+    paidInvoicesCount: paidInvoicesCount,
+    collectionRate: collectionRate,
   ));
 });

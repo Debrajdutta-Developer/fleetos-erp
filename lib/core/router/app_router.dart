@@ -38,6 +38,8 @@ import '../../features/inventory/presentation/transaction_form_screen.dart';
 import '../../features/customers/presentation/contract_list_screen.dart';
 import '../../features/customers/presentation/contract_form_screen.dart';
 import '../../features/customers/presentation/invoice_list_screen.dart';
+import '../../features/billing/presentation/invoice_form_screen.dart';
+import '../../features/billing/presentation/invoice_detail_screen.dart';
 import '../../features/dispatch/presentation/dispatch_list_screen.dart';
 import '../../features/dispatch/presentation/dispatch_form_screen.dart';
 import '../../features/dispatch/presentation/dispatch_detail_screen.dart';
@@ -300,6 +302,24 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/invoices',
         builder: (context, state) => const InvoiceListScreen(),
+      ),
+      GoRoute(
+        path: '/invoices/new',
+        builder: (context, state) => const InvoiceFormScreen(),
+      ),
+      GoRoute(
+        path: '/invoices/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return InvoiceDetailScreen(invoiceId: id);
+        },
+      ),
+      GoRoute(
+        path: '/invoices/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return InvoiceFormScreen(invoiceId: id);
+        },
       ),
       GoRoute(
         path: '/dispatches',
