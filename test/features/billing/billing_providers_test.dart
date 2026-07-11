@@ -7,22 +7,13 @@ import 'package:fleet_os_erp/features/customers/domain/customer_repository.dart'
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/customers/domain/invoice_entity.dart';
 import 'package:fleet_os_erp/features/customers/domain/contract_entity.dart';
-import 'package:fleet_os_erp/features/trips/domain/audit_log_entity.dart';
-import 'package:fleet_os_erp/features/trips/domain/trip_repository.dart';
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
-import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
 import 'package:fleet_os_erp/features/billing/domain/invoice_repository.dart';
 import 'package:fleet_os_erp/features/billing/domain/payment_entity.dart';
 import 'package:fleet_os_erp/features/billing/domain/payment_repository.dart';
 import 'package:fleet_os_erp/features/billing/domain/ledger_entity.dart';
 import 'package:fleet_os_erp/features/billing/domain/ledger_repository.dart';
 import 'package:fleet_os_erp/features/billing/presentation/billing_providers.dart';
-import 'package:fleet_os_erp/features/dashboard/presentation/dashboard_providers.dart';
-import 'package:fleet_os_erp/features/vehicles/presentation/vehicle_providers.dart';
-import 'package:fleet_os_erp/features/drivers/presentation/driver_providers.dart';
-import 'package:fleet_os_erp/features/vendors/presentation/vendor_providers.dart';
-import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
-import 'package:fleet_os_erp/features/dispatch/presentation/dispatch_providers.dart';
 import '../dispatch/dispatch_providers_test.dart' show MockTripRepository;
 
 class MockInvoiceRepository implements InvoiceRepository {

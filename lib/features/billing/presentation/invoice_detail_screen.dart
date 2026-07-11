@@ -268,7 +268,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         children: [
           Text(label),
           Text(
-            (isNegative ? '' : '') + '\$${value.toStringAsFixed(2)}',
+            '\$${value.toStringAsFixed(2)}',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: isNegative ? Colors.red : null,
@@ -454,7 +454,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.toLocal().toString().split(' ')[0]}';
+    return date.toLocal().toString().split(' ')[0];
   }
 
   void _showRecordPaymentDialog(BuildContext context, InvoiceEntity invoice) {

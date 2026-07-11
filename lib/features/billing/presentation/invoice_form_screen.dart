@@ -536,7 +536,7 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
           prefixIcon: const Icon(Icons.calendar_today_rounded),
         ),
         child: Text(
-          '${selectedDate.toLocal().toString().split(' ')[0]}',
+          selectedDate.toLocal().toString().split(' ')[0],
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
