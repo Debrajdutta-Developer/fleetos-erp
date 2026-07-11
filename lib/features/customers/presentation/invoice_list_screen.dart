@@ -457,7 +457,10 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Aged Accounts Receivable (Total Outstanding: \$${totalOutstanding.toStringAsFixed(2)})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+              'Aged Accounts Receivable (Total Outstanding: \$${totalOutstanding.toStringAsFixed(2)})',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           // Aging Cards Grid
           Row(
