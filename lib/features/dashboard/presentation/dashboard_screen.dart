@@ -256,7 +256,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           value: data.overdueInvoicesCount.toString(),
           subtitle: 'Overdue items',
           icon: Icons.gpp_maybe_outlined,
-          trend: data.overdueInvoicesCount > 0 ? 'Urgent attention' : 'No overdue',
+          trend:
+              data.overdueInvoicesCount > 0 ? 'Urgent attention' : 'No overdue',
           isPositive: data.overdueInvoicesCount == 0,
         ),
         _StatCardData(

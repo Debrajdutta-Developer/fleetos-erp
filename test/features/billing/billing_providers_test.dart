@@ -198,14 +198,15 @@ class MockCustomerRepositoryB implements CustomerRepository {
   Future<List<ContractEntity>> getContracts(String companyId) async => [];
   @override
   Future<ContractEntity?> getContractById(
-      String companyId, String contractId) async =>
+          String companyId, String contractId) async =>
       null;
   @override
   Future<ContractEntity> createContract(
-      String companyId, ContractEntity contract) async =>
+          String companyId, ContractEntity contract) async =>
       contract;
   @override
-  Future<void> updateContract(String companyId, ContractEntity contract) async {}
+  Future<void> updateContract(
+      String companyId, ContractEntity contract) async {}
   @override
   Future<void> deleteContract(String companyId, String contractId) async {}
   @override
@@ -215,11 +216,11 @@ class MockCustomerRepositoryB implements CustomerRepository {
   Future<List<InvoiceEntity>> getInvoices(String companyId) async => [];
   @override
   Future<InvoiceEntity?> getInvoiceById(
-      String companyId, String invoiceId) async =>
+          String companyId, String invoiceId) async =>
       null;
   @override
   Future<InvoiceEntity> createInvoice(
-      String companyId, InvoiceEntity invoice) async =>
+          String companyId, InvoiceEntity invoice) async =>
       invoice;
   @override
   Future<void> updateInvoiceStatus(
@@ -361,7 +362,8 @@ void main() {
         ],
       );
 
-      final controller = operatorContainer.read(invoiceFormControllerProvider.notifier);
+      final controller =
+          operatorContainer.read(invoiceFormControllerProvider.notifier);
 
       final paidInvoice = InvoiceEntity(
         id: 'inv_paid',
@@ -428,7 +430,9 @@ void main() {
       expect(tripRepo.auditLogs[0].action, 'invoice_issued');
     });
 
-    test('should record payments, automatically update outstanding amount and customer balance', () async {
+    test(
+        'should record payments, automatically update outstanding amount and customer balance',
+        () async {
       final controller = container.read(paymentFormControllerProvider.notifier);
 
       final issuedInvoice = InvoiceEntity(

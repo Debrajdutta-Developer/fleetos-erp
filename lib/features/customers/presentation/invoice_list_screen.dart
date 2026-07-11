@@ -93,7 +93,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
             children: [
               _buildInvoicesTab(invoices, isDesktop, colorScheme, theme),
               _buildPaymentsTab(payments, isDesktop, colorScheme, theme),
-              _buildReportsTab(invoices, payments, auditLogs, customers, isDesktop, colorScheme, theme),
+              _buildReportsTab(invoices, payments, auditLogs, customers,
+                  isDesktop, colorScheme, theme),
             ],
           );
         },
@@ -103,14 +104,22 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
 
   // --- TAB 1: INVOICES ---
 
-  Widget _buildInvoicesTab(List<InvoiceEntity> invoices, bool isDesktop, ColorScheme colorScheme, ThemeData theme) {
+  Widget _buildInvoicesTab(List<InvoiceEntity> invoices, bool isDesktop,
+      ColorScheme colorScheme, ThemeData theme) {
     // Metric Calculations
     final totalReceivables = invoices
-        .where((i) => i.status == 'issued' || i.status == 'partially_paid' || i.status == 'overdue')
+        .where((i) =>
+            i.status == 'issued' ||
+            i.status == 'partially_paid' ||
+            i.status == 'overdue')
         .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
     final totalDrafts = invoices.where((i) => i.status == 'draft').length;
     final totalOverdue = invoices
-        .where((i) => i.status == 'overdue' || (i.status != 'paid' && i.status != 'cancelled' && i.dueDate.isBefore(DateTime.now())))
+        .where((i) =>
+            i.status == 'overdue' ||
+            (i.status != 'paid' &&
+                i.status != 'cancelled' &&
+                i.dueDate.isBefore(DateTime.now())))
         .length;
 
     final filteredInvoices = invoices.where((inv) {
@@ -165,10 +174,12 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                   DropdownMenuItem(value: 'all', child: Text('All Invoices')),
                   DropdownMenuItem(value: 'draft', child: Text('Drafts')),
                   DropdownMenuItem(value: 'issued', child: Text('Issued')),
-                  DropdownMenuItem(value: 'partially_paid', child: Text('Partially Paid')),
+                  DropdownMenuItem(
+                      value: 'partially_paid', child: Text('Partially Paid')),
                   DropdownMenuItem(value: 'paid', child: Text('Paid')),
                   DropdownMenuItem(value: 'overdue', child: Text('Overdue')),
-                  DropdownMenuItem(value: 'cancelled', child: Text('Cancelled')),
+                  DropdownMenuItem(
+                      value: 'cancelled', child: Text('Cancelled')),
                 ],
                 onChanged: (val) {
                   if (val != null) {
@@ -182,16 +193,18 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
           // Table / List View
           Expanded(
             child: filteredInvoices.isEmpty
-                ? const Center(child: Text('No invoices match the selected filter.'))
-                : _buildInvoicesListOrTable(filteredInvoices, isDesktop, theme, colorScheme),
+                ? const Center(
+                    child: Text('No invoices match the selected filter.'))
+                : _buildInvoicesListOrTable(
+                    filteredInvoices, isDesktop, theme, colorScheme),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInvoicesListOrTable(
-      List<InvoiceEntity> list, bool isDesktop, ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildInvoicesListOrTable(List<InvoiceEntity> list, bool isDesktop,
+      ThemeData theme, ColorScheme colorScheme) {
     if (isDesktop) {
       return Card(
         clipBehavior: Clip.antiAlias,
@@ -209,11 +222,15 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
             ],
             rows: list.map((inv) {
               return DataRow(cells: [
-                DataCell(Text(inv.invoiceNumber, style: const TextStyle(fontWeight: FontWeight.bold))),
+                DataCell(Text(inv.invoiceNumber,
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
                 DataCell(Text(inv.customerName)),
                 DataCell(Text('\$${inv.grandTotal.toStringAsFixed(2)}')),
                 DataCell(Text('\$${inv.outstandingAmount.toStringAsFixed(2)}',
-                    style: TextStyle(color: inv.outstandingAmount > 0 ? Colors.red : Colors.green))),
+                    style: TextStyle(
+                        color: inv.outstandingAmount > 0
+                            ? Colors.red
+                            : Colors.green))),
                 DataCell(_buildBadge(inv.status)),
                 DataCell(Text(inv.dueDate.toLocal().toString().split(' ')[0])),
                 DataCell(
@@ -244,16 +261,23 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
-              title: Text(inv.invoiceNumber, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text('${inv.customerName}\nGrand Total: \$${inv.grandTotal.toStringAsFixed(2)}\nDue: ${inv.dueDate.toLocal().toString().split(' ')[0]}'),
+              title: Text(inv.invoiceNumber,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(
+                  '${inv.customerName}\nGrand Total: \$${inv.grandTotal.toStringAsFixed(2)}\nDue: ${inv.dueDate.toLocal().toString().split(' ')[0]}'),
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   _buildBadge(inv.status),
                   const SizedBox(height: 4),
-                  Text('\$${inv.outstandingAmount.toStringAsFixed(2)} outstanding',
-                      style: TextStyle(fontSize: 11, color: inv.outstandingAmount > 0 ? Colors.red : Colors.green)),
+                  Text(
+                      '\$${inv.outstandingAmount.toStringAsFixed(2)} outstanding',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: inv.outstandingAmount > 0
+                              ? Colors.red
+                              : Colors.green)),
                 ],
               ),
               onTap: () => context.push('/invoices/${inv.id}'),
@@ -266,7 +290,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
 
   // --- TAB 2: PAYMENTS LOGS ---
 
-  Widget _buildPaymentsTab(List<PaymentEntity> payments, bool isDesktop, ColorScheme colorScheme, ThemeData theme) {
+  Widget _buildPaymentsTab(List<PaymentEntity> payments, bool isDesktop,
+      ColorScheme colorScheme, ThemeData theme) {
     final filteredPayments = payments.where((p) {
       if (_paymentFilterMethod == 'all') return true;
       return p.paymentMethod == _paymentFilterMethod;
@@ -283,9 +308,11 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
               DropdownButton<String>(
                 value: _paymentFilterMethod,
                 items: const [
-                  DropdownMenuItem(value: 'all', child: Text('All Payment Modes')),
+                  DropdownMenuItem(
+                      value: 'all', child: Text('All Payment Modes')),
                   DropdownMenuItem(value: 'cash', child: Text('Cash')),
-                  DropdownMenuItem(value: 'bank_transfer', child: Text('Bank Transfer')),
+                  DropdownMenuItem(
+                      value: 'bank_transfer', child: Text('Bank Transfer')),
                   DropdownMenuItem(value: 'upi', child: Text('UPI')),
                   DropdownMenuItem(value: 'card', child: Text('Card')),
                   DropdownMenuItem(value: 'cheque', child: Text('Cheque')),
@@ -309,13 +336,20 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                       final p = filteredPayments[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: p.status == 'completed' ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                          backgroundColor: p.status == 'completed'
+                              ? Colors.green.withOpacity(0.1)
+                              : Colors.red.withOpacity(0.1),
                           child: Icon(
-                            p.status == 'completed' ? Icons.check_circle_outline : Icons.replay_circle_filled_outlined,
-                            color: p.status == 'completed' ? Colors.green : Colors.red,
+                            p.status == 'completed'
+                                ? Icons.check_circle_outline
+                                : Icons.replay_circle_filled_outlined,
+                            color: p.status == 'completed'
+                                ? Colors.green
+                                : Colors.red,
                           ),
                         ),
-                        title: Text('\$${p.amount.toStringAsFixed(2)} - ${p.paymentMethod.toUpperCase()}'),
+                        title: Text(
+                            '\$${p.amount.toStringAsFixed(2)} - ${p.paymentMethod.toUpperCase()}'),
                         subtitle: Text(
                           'Payment Date: ${p.paymentDate.toLocal().toString().split(' ')[0]}\nRef: ${p.referenceNumber ?? "N/A"}\nStatus: ${p.status.toUpperCase()}',
                         ),
@@ -325,14 +359,18 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                                 child: const Text('Refund'),
                               )
                             : Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Text(
                                   'REFUNDED',
-                                  style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                       );
@@ -346,8 +384,14 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
 
   // --- TAB 3: REPORTS & LEDGERS ---
 
-  Widget _buildReportsTab(List<InvoiceEntity> invoices, List<PaymentEntity> payments, List<AuditLogEntity> auditLogs,
-      List<CustomerEntity> customers, bool isDesktop, ColorScheme colorScheme, ThemeData theme) {
+  Widget _buildReportsTab(
+      List<InvoiceEntity> invoices,
+      List<PaymentEntity> payments,
+      List<AuditLogEntity> auditLogs,
+      List<CustomerEntity> customers,
+      bool isDesktop,
+      ColorScheme colorScheme,
+      ThemeData theme) {
     return DefaultTabController(
       length: 4,
       child: Column(
@@ -367,7 +411,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
               children: [
                 _buildOutstandingReportSubTab(invoices, customers, theme),
                 _buildRevenueSummarySubTab(invoices, theme),
-                _buildCustomerLedgerSubTab(invoices, payments, customers, theme),
+                _buildCustomerLedgerSubTab(
+                    invoices, payments, customers, theme),
                 _buildAuditLogsSubTab(auditLogs, theme),
               ],
             ),
@@ -378,7 +423,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   }
 
   // --- 3.1 Outstanding Receivables Aging Report ---
-  Widget _buildOutstandingReportSubTab(List<InvoiceEntity> invoices, List<CustomerEntity> customers, ThemeData theme) {
+  Widget _buildOutstandingReportSubTab(List<InvoiceEntity> invoices,
+      List<CustomerEntity> customers, ThemeData theme) {
     final now = DateTime.now();
     double current = 0.0;
     double overdue1To30 = 0.0;
@@ -386,7 +432,9 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
     double overdue60Plus = 0.0;
 
     for (final inv in invoices) {
-      if (inv.status == 'cancelled' || inv.status == 'draft' || inv.outstandingAmount == 0.0) continue;
+      if (inv.status == 'cancelled' ||
+          inv.status == 'draft' ||
+          inv.outstandingAmount == 0.0) continue;
       if (inv.dueDate.isAfter(now)) {
         current += inv.outstandingAmount;
       } else {
@@ -401,29 +449,54 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       }
     }
 
-    final totalOutstanding = current + overdue1To30 + overdue31To60 + overdue60Plus;
+    final totalOutstanding =
+        current + overdue1To30 + overdue31To60 + overdue60Plus;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Aged Accounts Receivable (Outstanding Summary)', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text('Aged Accounts Receivable (Outstanding Summary)',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           // Aging Cards Grid
           Row(
             children: [
-              Expanded(child: _buildMetricCard('Current (Not Due)', '\$${current.toStringAsFixed(2)}', Icons.schedule, Colors.blue)),
+              Expanded(
+                  child: _buildMetricCard(
+                      'Current (Not Due)',
+                      '\$${current.toStringAsFixed(2)}',
+                      Icons.schedule,
+                      Colors.blue)),
               const SizedBox(width: 8),
-              Expanded(child: _buildMetricCard('1-30 Days Overdue', '\$${overdue1To30.toStringAsFixed(2)}', Icons.warning_amber_rounded, Colors.orange)),
+              Expanded(
+                  child: _buildMetricCard(
+                      '1-30 Days Overdue',
+                      '\$${overdue1To30.toStringAsFixed(2)}',
+                      Icons.warning_amber_rounded,
+                      Colors.orange)),
               const SizedBox(width: 8),
-              Expanded(child: _buildMetricCard('31-60 Days Overdue', '\$${overdue31To60.toStringAsFixed(2)}', Icons.error_outline_rounded, Colors.redAccent)),
+              Expanded(
+                  child: _buildMetricCard(
+                      '31-60 Days Overdue',
+                      '\$${overdue31To60.toStringAsFixed(2)}',
+                      Icons.error_outline_rounded,
+                      Colors.redAccent)),
               const SizedBox(width: 8),
-              Expanded(child: _buildMetricCard('60+ Days Overdue', '\$${overdue60Plus.toStringAsFixed(2)}', Icons.dangerous_outlined, Colors.red)),
+              Expanded(
+                  child: _buildMetricCard(
+                      '60+ Days Overdue',
+                      '\$${overdue60Plus.toStringAsFixed(2)}',
+                      Icons.dangerous_outlined,
+                      Colors.red)),
             ],
           ),
           const SizedBox(height: 32),
-          Text('Outstanding Balance by Customer', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text('Outstanding Balance by Customer',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Card(
             child: ListView.separated(
@@ -433,16 +506,22 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (context, index) {
                 final c = customers[index];
-                final creditUsage = c.creditLimit > 0 ? (c.outstandingBalance / c.creditLimit) * 100 : 0.0;
+                final creditUsage = c.creditLimit > 0
+                    ? (c.outstandingBalance / c.creditLimit) * 100
+                    : 0.0;
                 return ListTile(
-                  title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Credit Limit: \$${c.creditLimit.toStringAsFixed(2)} (${creditUsage.toStringAsFixed(1)}% used)'),
+                  title: Text(c.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                      'Credit Limit: \$${c.creditLimit.toStringAsFixed(2)} (${creditUsage.toStringAsFixed(1)}% used)'),
                   trailing: Text(
                     '\$${c.outstandingBalance.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: c.outstandingBalance > c.creditLimit ? Colors.red : Colors.orange,
+                      color: c.outstandingBalance > c.creditLimit
+                          ? Colors.red
+                          : Colors.orange,
                     ),
                   ),
                 );
@@ -455,23 +534,39 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   }
 
   // --- 3.2 Revenue Summary ---
-  Widget _buildRevenueSummarySubTab(List<InvoiceEntity> invoices, ThemeData theme) {
-    final issuedInvoices = invoices.where((i) => i.status != 'cancelled' && i.status != 'draft').toList();
+  Widget _buildRevenueSummarySubTab(
+      List<InvoiceEntity> invoices, ThemeData theme) {
+    final issuedInvoices = invoices
+        .where((i) => i.status != 'cancelled' && i.status != 'draft')
+        .toList();
 
-    final double grossFreight = issuedInvoices.fold(0.0, (sum, i) => sum + i.freightCharge);
-    final double grossFuel = issuedInvoices.fold(0.0, (sum, i) => sum + i.fuelCharge);
-    final double grossToll = issuedInvoices.fold(0.0, (sum, i) => sum + i.tollCharge);
-    final double grossExtras = issuedInvoices.fold(0.0, (sum, i) => sum + i.extraCharges);
-    final double grossDiscount = issuedInvoices.fold(0.0, (sum, i) => sum + i.discount);
-    final double grossGst = issuedInvoices.fold(0.0, (sum, i) => sum + i.gstVat);
-    final double netRevenue = grossFreight + grossFuel + grossToll + grossExtras - grossDiscount + grossGst;
+    final double grossFreight =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.freightCharge);
+    final double grossFuel =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.fuelCharge);
+    final double grossToll =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.tollCharge);
+    final double grossExtras =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.extraCharges);
+    final double grossDiscount =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.discount);
+    final double grossGst =
+        issuedInvoices.fold(0.0, (sum, i) => sum + i.gstVat);
+    final double netRevenue = grossFreight +
+        grossFuel +
+        grossToll +
+        grossExtras -
+        grossDiscount +
+        grossGst;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Revenue Breakdown Summary', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text('Revenue Breakdown Summary',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Card(
             child: Padding(
@@ -482,14 +577,21 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                   _buildBreakdownRow('Fuel Surcharge Revenue', grossFuel),
                   _buildBreakdownRow('Toll Expense Reimbursement', grossToll),
                   _buildBreakdownRow('Demurrage & Extra Charges', grossExtras),
-                  _buildBreakdownRow('Discounts Subtotal', -grossDiscount, isNegative: true),
+                  _buildBreakdownRow('Discounts Subtotal', -grossDiscount,
+                      isNegative: true),
                   _buildBreakdownRow('GST/VAT Tax Collected', grossGst),
                   const Divider(height: 40),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('NET REVENUE (ISSUED)', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
-                      Text('\$${netRevenue.toStringAsFixed(2)}', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+                      Text('NET REVENUE (ISSUED)',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary)),
+                      Text('\$${netRevenue.toStringAsFixed(2)}',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary)),
                     ],
                   )
                 ],
@@ -502,18 +604,30 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   }
 
   // --- 3.3 Customer Ledger ---
-  Widget _buildCustomerLedgerSubTab(List<InvoiceEntity> invoices, List<PaymentEntity> payments, List<CustomerEntity> customers, ThemeData theme) {
+  Widget _buildCustomerLedgerSubTab(
+      List<InvoiceEntity> invoices,
+      List<PaymentEntity> payments,
+      List<CustomerEntity> customers,
+      ThemeData theme) {
     if (_selectedReportCustomerId == null && customers.isNotEmpty) {
       _selectedReportCustomerId = customers[0].id;
     }
 
-    final selectedCustomer = customers.any((c) => c.id == _selectedReportCustomerId)
-        ? customers.firstWhere((c) => c.id == _selectedReportCustomerId)
-        : null;
+    final selectedCustomer =
+        customers.any((c) => c.id == _selectedReportCustomerId)
+            ? customers.firstWhere((c) => c.id == _selectedReportCustomerId)
+            : null;
 
-    final customerInvoices = invoices.where((i) => i.customerId == _selectedReportCustomerId && i.status != 'cancelled' && i.status != 'draft').toList();
+    final customerInvoices = invoices
+        .where((i) =>
+            i.customerId == _selectedReportCustomerId &&
+            i.status != 'cancelled' &&
+            i.status != 'draft')
+        .toList();
     final customerPayments = payments.where((p) {
-      final inv = invoices.any((i) => i.id == p.invoiceId) ? invoices.firstWhere((i) => i.id == p.invoiceId) : null;
+      final inv = invoices.any((i) => i.id == p.invoiceId)
+          ? invoices.firstWhere((i) => i.id == p.invoiceId)
+          : null;
       return inv?.customerId == _selectedReportCustomerId;
     }).toList();
 
@@ -531,13 +645,16 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       final isRefund = p.status == 'refunded';
       ledgerEvents.add({
         'date': p.paymentDate,
-        'description': isRefund ? 'Refund Issued (Ref: ${p.referenceNumber ?? "None"})' : 'Payment Received (Ref: ${p.referenceNumber ?? "None"})',
+        'description': isRefund
+            ? 'Refund Issued (Ref: ${p.referenceNumber ?? "None"})'
+            : 'Payment Received (Ref: ${p.referenceNumber ?? "None"})',
         'debit': isRefund ? p.amount : 0.0,
         'credit': isRefund ? 0.0 : p.amount,
       });
     }
 
-    ledgerEvents.sort((a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
+    ledgerEvents.sort(
+        (a, b) => (a['date'] as DateTime).compareTo(b['date'] as DateTime));
 
     double runningBalance = 0.0;
     final List<Map<String, dynamic>> ledgerWithBalance = [];
@@ -557,10 +674,14 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
         children: [
           Row(
             children: [
-              const Text('Select Customer:  ', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Select Customer:  ',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               DropdownButton<String>(
                 value: _selectedReportCustomerId,
-                items: customers.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
+                items: customers
+                    .map((c) =>
+                        DropdownMenuItem(value: c.id, child: Text(c.name)))
+                    .toList(),
                 onChanged: (val) {
                   if (val != null) {
                     setState(() => _selectedReportCustomerId = val);
@@ -574,15 +695,19 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Credit Limit: \$${selectedCustomer.creditLimit.toStringAsFixed(2)}'),
-                Text('Current Balance: \$${selectedCustomer.outstandingBalance.toStringAsFixed(2)}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange)),
+                Text(
+                    'Credit Limit: \$${selectedCustomer.creditLimit.toStringAsFixed(2)}'),
+                Text(
+                    'Current Balance: \$${selectedCustomer.outstandingBalance.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.orange)),
               ],
             ),
           const SizedBox(height: 16),
           Expanded(
             child: ledgerWithBalance.isEmpty
-                ? const Center(child: Text('No transactions recorded in ledger.'))
+                ? const Center(
+                    child: Text('No transactions recorded in ledger.'))
                 : Card(
                     child: ListView.separated(
                       itemCount: ledgerWithBalance.length,
@@ -591,21 +716,28 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                         final ev = ledgerWithBalance[index];
                         final isDebit = (ev['debit'] as double) > 0.0;
                         return ListTile(
-                          title: Text(ev['description'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text('Date: ${ev['date'].toString().split(' ')[0]}'),
+                          title: Text(ev['description'] as String,
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text(
+                              'Date: ${ev['date'].toString().split(' ')[0]}'),
                           trailing: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                isDebit ? '+\$${ev['debit'].toStringAsFixed(2)}' : '-\$${ev['credit'].toStringAsFixed(2)}',
+                                isDebit
+                                    ? '+\$${ev['debit'].toStringAsFixed(2)}'
+                                    : '-\$${ev['credit'].toStringAsFixed(2)}',
                                 style: TextStyle(
                                   color: isDebit ? Colors.red : Colors.green,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text('Bal: \$${(ev['balance'] as double).toStringAsFixed(2)}', style: const TextStyle(fontSize: 11)),
+                              Text(
+                                  'Bal: \$${(ev['balance'] as double).toStringAsFixed(2)}',
+                                  style: const TextStyle(fontSize: 11)),
                             ],
                           ),
                         );
@@ -621,20 +753,24 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
   // --- 3.4 Invoice History & Audit Logs ---
   Widget _buildAuditLogsSubTab(List<AuditLogEntity> list, ThemeData theme) {
     // Filter to only display billing-related audit logs
-    final billingAuditLogs = list.where((log) =>
-        log.action == 'invoice_created' ||
-        log.action == 'invoice_updated' ||
-        log.action == 'invoice_deleted' ||
-        log.action == 'invoice_issued' ||
-        log.action == 'payment_received' ||
-        log.action == 'payment_refunded').toList();
+    final billingAuditLogs = list
+        .where((log) =>
+            log.action == 'invoice_created' ||
+            log.action == 'invoice_updated' ||
+            log.action == 'invoice_deleted' ||
+            log.action == 'invoice_issued' ||
+            log.action == 'payment_received' ||
+            log.action == 'payment_refunded')
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('System Audit Logs (Billing & Payments History)', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          Text('System Audit Logs (Billing & Payments History)',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: billingAuditLogs.isEmpty
@@ -648,16 +784,21 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
                         return ListTile(
                           leading: const Icon(Icons.history_toggle_off_rounded),
                           title: Text(log.description),
-                          subtitle: Text('User: ${log.userName} (${log.userId})\nTimestamp: ${log.timestamp.toLocal().toString().split('.')[0]}'),
+                          subtitle: Text(
+                              'User: ${log.userName} (${log.userId})\nTimestamp: ${log.timestamp.toLocal().toString().split('.')[0]}'),
                           trailing: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: Colors.blue.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               log.action.replaceAll('_', ' ').toUpperCase(),
-                              style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         );
@@ -672,7 +813,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
 
   // --- HELPERS & UTILS ---
 
-  Widget _buildBreakdownRow(String label, double value, {bool isNegative = false}) {
+  Widget _buildBreakdownRow(String label, double value,
+      {bool isNegative = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -691,7 +833,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
     );
   }
 
-  Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
+  Widget _buildMetricCard(
+      String title, String value, IconData icon, Color color) {
     return Card(
       elevation: 0,
       color: color.withOpacity(0.04),
@@ -708,9 +851,14 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(title,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   const SizedBox(height: 8),
-                  Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+                  Text(value,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: color)),
                 ],
               ),
             ),
@@ -751,7 +899,8 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(color: badgeColor, fontWeight: FontWeight.bold, fontSize: 10),
+        style: TextStyle(
+            color: badgeColor, fontWeight: FontWeight.bold, fontSize: 10),
       ),
     );
   }
@@ -761,9 +910,12 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Issue'),
-        content: const Text('Are you sure you want to issue this invoice? This will lock editing and record ledger entries.'),
+        content: const Text(
+            'Are you sure you want to issue this invoice? This will lock editing and record ledger entries.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
@@ -781,13 +933,18 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Refund'),
-        content: const Text('Are you sure you want to issue a full refund? This reverts the invoice and customer balances, and writes ledger entries.'),
+        content: const Text(
+            'Are you sure you want to issue a full refund? This reverts the invoice and customer balances, and writes ledger entries.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ref.read(paymentFormControllerProvider.notifier).refundPayment(paymentId);
+              ref
+                  .read(paymentFormControllerProvider.notifier)
+                  .refundPayment(paymentId);
             },
             child: const Text('Confirm Refund'),
           ),

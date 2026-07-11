@@ -12,7 +12,8 @@ class InvoiceDetailScreen extends ConsumerStatefulWidget {
   const InvoiceDetailScreen({super.key, required this.invoiceId});
 
   @override
-  ConsumerState<InvoiceDetailScreen> createState() => _InvoiceDetailScreenState();
+  ConsumerState<InvoiceDetailScreen> createState() =>
+      _InvoiceDetailScreenState();
 }
 
 class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
@@ -45,7 +46,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     ref.listen<InvoiceFormState>(invoiceFormControllerProvider, (prev, next) {
       if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage!), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(next.errorMessage!), backgroundColor: Colors.red),
         );
       }
       if (next.isCompleted) {
@@ -56,7 +58,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     ref.listen<PaymentFormState>(paymentFormControllerProvider, (prev, next) {
       if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage!), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(next.errorMessage!), backgroundColor: Colors.red),
         );
       }
       if (next.isCompleted) {
@@ -130,9 +133,14 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(flex: 2, child: _buildDetailsCard(invoice, theme, colorScheme)),
+                        Expanded(
+                            flex: 2,
+                            child:
+                                _buildDetailsCard(invoice, theme, colorScheme)),
                         const SizedBox(width: 24),
-                        Expanded(child: _buildPaymentsSummaryCard(invoice, payments, theme, colorScheme)),
+                        Expanded(
+                            child: _buildPaymentsSummaryCard(
+                                invoice, payments, theme, colorScheme)),
                       ],
                     )
                   else
@@ -140,7 +148,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       children: [
                         _buildDetailsCard(invoice, theme, colorScheme),
                         const SizedBox(height: 24),
-                        _buildPaymentsSummaryCard(invoice, payments, theme, colorScheme),
+                        _buildPaymentsSummaryCard(
+                            invoice, payments, theme, colorScheme),
                       ],
                     ),
                 ],
@@ -149,7 +158,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     );
   }
 
-  Widget _buildDetailsCard(InvoiceEntity invoice, ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildDetailsCard(
+      InvoiceEntity invoice, ThemeData theme, ColorScheme colorScheme) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -169,7 +179,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   children: [
                     Text(
                       invoice.customerName,
-                      style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text('Customer ID: ${invoice.customerId}'),
@@ -184,14 +195,23 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               children: [
                 _buildInfoColumn('Issue Date', _formatDate(invoice.issueDate)),
                 _buildInfoColumn('Due Date', _formatDate(invoice.dueDate)),
-                _buildInfoColumn('Trip ID Reference', invoice.tripId.isNotEmpty ? invoice.tripId.substring(0, 8).toUpperCase() : 'N/A'),
-                _buildInfoColumn('Dispatch ID Reference', invoice.dispatchId != null ? invoice.dispatchId!.substring(0, 8).toUpperCase() : 'N/A'),
+                _buildInfoColumn(
+                    'Trip ID Reference',
+                    invoice.tripId.isNotEmpty
+                        ? invoice.tripId.substring(0, 8).toUpperCase()
+                        : 'N/A'),
+                _buildInfoColumn(
+                    'Dispatch ID Reference',
+                    invoice.dispatchId != null
+                        ? invoice.dispatchId!.substring(0, 8).toUpperCase()
+                        : 'N/A'),
               ],
             ),
             const Divider(height: 40),
             Text(
               'Charges Breakdown',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildChargesBreakdown(invoice, theme),
@@ -201,11 +221,13 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               children: [
                 Text(
                   'GRAND TOTAL',
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.black, color: colorScheme.primary),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.black, color: colorScheme.primary),
                 ),
                 Text(
                   '\$${invoice.grandTotal.toStringAsFixed(2)}',
-                  style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.black, color: colorScheme.primary),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.black, color: colorScheme.primary),
                 ),
               ],
             ),
@@ -213,7 +235,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               const SizedBox(height: 24),
               Text(
                 'Notes & Payment Terms',
-                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(invoice.notes!, style: theme.textTheme.bodyMedium),
@@ -231,13 +254,15 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         _buildBreakdownRow('Fuel Surcharge', invoice.fuelCharge),
         _buildBreakdownRow('Toll Expenses', invoice.tollCharge),
         _buildBreakdownRow('Demurrage & Extras', invoice.extraCharges),
-        _buildBreakdownRow('Discounts Applied', -invoice.discount, isNegative: true),
+        _buildBreakdownRow('Discounts Applied', -invoice.discount,
+            isNegative: true),
         _buildBreakdownRow('GST/VAT tax (18% default)', invoice.gstVat),
       ],
     );
   }
 
-  Widget _buildBreakdownRow(String label, double value, {bool isNegative = false}) {
+  Widget _buildBreakdownRow(String label, double value,
+      {bool isNegative = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -298,12 +323,14 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(color: badgeColor, fontWeight: FontWeight.bold, fontSize: 12),
+        style: TextStyle(
+            color: badgeColor, fontWeight: FontWeight.bold, fontSize: 12),
       ),
     );
   }
 
-  Widget _buildPaymentsSummaryCard(InvoiceEntity invoice, List<PaymentEntity> payments, ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildPaymentsSummaryCard(InvoiceEntity invoice,
+      List<PaymentEntity> payments, ThemeData theme, ColorScheme colorScheme) {
     return Column(
       children: [
         Card(
@@ -320,20 +347,28 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               children: [
                 Text(
                   'Payment Summary',
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 24),
-                _buildSummaryLine('Amount Paid', '\$${invoice.amountPaid.toStringAsFixed(2)}', Colors.green),
+                _buildSummaryLine('Amount Paid',
+                    '\$${invoice.amountPaid.toStringAsFixed(2)}', Colors.green),
                 const SizedBox(height: 12),
-                _buildSummaryLine('Outstanding', '\$${invoice.outstandingAmount.toStringAsFixed(2)}', Colors.red),
-                if (invoice.outstandingAmount > 0.0 && invoice.status != 'draft' && invoice.status != 'cancelled') ...[
+                _buildSummaryLine(
+                    'Outstanding',
+                    '\$${invoice.outstandingAmount.toStringAsFixed(2)}',
+                    Colors.red),
+                if (invoice.outstandingAmount > 0.0 &&
+                    invoice.status != 'draft' &&
+                    invoice.status != 'cancelled') ...[
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.add_card_rounded),
                       label: const Text('Record Payment'),
-                      onPressed: () => _showRecordPaymentDialog(context, invoice),
+                      onPressed: () =>
+                          _showRecordPaymentDialog(context, invoice),
                     ),
                   ),
                 ]
@@ -355,7 +390,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
               children: [
                 Text(
                   'Payment Logs',
-                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
                 if (payments.isEmpty)
@@ -370,7 +406,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       final p = payments[index];
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: Text('\$${p.amount.toStringAsFixed(2)} - ${p.paymentMethod.toUpperCase()}'),
+                        title: Text(
+                            '\$${p.amount.toStringAsFixed(2)} - ${p.paymentMethod.toUpperCase()}'),
                         subtitle: Text(
                           'Date: ${_formatDate(p.paymentDate)}\nRef: ${p.referenceNumber ?? "None"}\nStatus: ${p.status.toUpperCase()}',
                           style: const TextStyle(fontSize: 12),
@@ -381,14 +418,18 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                                 child: const Text('Refund'),
                               )
                             : Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: const Text(
                                   'REFUNDED',
-                                  style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                       );
@@ -407,7 +448,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label),
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: valueColor)),
+        Text(value,
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: valueColor)),
       ],
     );
   }
@@ -439,9 +482,11 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Payment Amount (\$)',
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       validator: (val) {
-                        if (val == null || val.trim().isEmpty) return 'Required';
+                        if (val == null || val.trim().isEmpty)
+                          return 'Required';
                         final amt = double.tryParse(val);
                         if (amt == null) return 'Invalid number';
                         if (amt <= 0.0) return 'Must be greater than zero';
@@ -457,13 +502,18 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _paymentMethod,
-                      decoration: const InputDecoration(labelText: 'Payment Method'),
+                      decoration:
+                          const InputDecoration(labelText: 'Payment Method'),
                       items: const [
                         DropdownMenuItem(value: 'cash', child: Text('Cash')),
-                        DropdownMenuItem(value: 'bank_transfer', child: Text('Bank Transfer')),
+                        DropdownMenuItem(
+                            value: 'bank_transfer',
+                            child: Text('Bank Transfer')),
                         DropdownMenuItem(value: 'upi', child: Text('UPI')),
-                        DropdownMenuItem(value: 'card', child: Text('Debit/Credit Card')),
-                        DropdownMenuItem(value: 'cheque', child: Text('Cheque')),
+                        DropdownMenuItem(
+                            value: 'card', child: Text('Debit/Credit Card')),
+                        DropdownMenuItem(
+                            value: 'cheque', child: Text('Cheque')),
                         DropdownMenuItem(value: 'other', child: Text('Other')),
                       ],
                       onChanged: (val) {
@@ -498,7 +548,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   onPressed: () async {
                     if (!_paymentFormKey.currentState!.validate()) return;
                     Navigator.pop(context);
-                    
+
                     final payment = PaymentEntity(
                       id: '',
                       companyId: '',
@@ -512,7 +562,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       createdAt: DateTime.now(),
                       updatedAt: DateTime.now(),
                     );
-                    await ref.read(paymentFormControllerProvider.notifier).recordPayment(payment);
+                    await ref
+                        .read(paymentFormControllerProvider.notifier)
+                        .recordPayment(payment);
                   },
                   child: const Text('Confirm'),
                 ),
@@ -532,11 +584,15 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         content: const Text(
             'Are you sure you want to issue this invoice? This will create official accounting ledger entries and lock editing unless you are an Administrator.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ref.read(invoiceFormControllerProvider.notifier).issueInvoice(invoiceId);
+              ref
+                  .read(invoiceFormControllerProvider.notifier)
+                  .issueInvoice(invoiceId);
             },
             child: const Text('Issue'),
           ),
@@ -550,9 +606,12 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Invoice'),
-        content: const Text('Are you sure you want to delete this invoice? This action soft-deletes the invoice and cannot be undone.'),
+        content: const Text(
+            'Are you sure you want to delete this invoice? This action soft-deletes the invoice and cannot be undone.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -575,13 +634,18 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Refund Transaction'),
-        content: const Text('Are you sure you want to issue a full refund for this payment transaction? This will revert the invoice balance and outstanding amount, and write debit ledger records.'),
+        content: const Text(
+            'Are you sure you want to issue a full refund for this payment transaction? This will revert the invoice balance and outstanding amount, and write debit ledger records.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ref.read(paymentFormControllerProvider.notifier).refundPayment(paymentId);
+              ref
+                  .read(paymentFormControllerProvider.notifier)
+                  .refundPayment(paymentId);
             },
             child: const Text('Confirm Refund'),
           ),

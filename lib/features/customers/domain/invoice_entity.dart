@@ -17,7 +17,8 @@ class InvoiceEntity {
   final double outstandingAmount;
   final DateTime issueDate;
   final DateTime dueDate;
-  final String status; // draft, issued, partially_paid, paid, overdue, cancelled
+  final String
+      status; // draft, issued, partially_paid, paid, overdue, cancelled
   final String paymentStatus; // pending, completed, failed, refunded
   final String? notes;
   final DateTime createdAt;
@@ -51,8 +52,23 @@ class InvoiceEntity {
     required this.updatedAt,
     this.deletedAt,
   })  : freightCharge = freightCharge ?? amount ?? grandTotal ?? 0.0,
-        grandTotal = grandTotal ?? amount ?? ((freightCharge ?? 0.0) + (fuelCharge ?? 0.0) + (tollCharge ?? 0.0) + (extraCharges ?? 0.0) - (discount ?? 0.0) + (gstVat ?? 0.0)),
-        outstandingAmount = outstandingAmount ?? (((grandTotal ?? amount ?? 0.0) + (freightCharge ?? 0.0) + (fuelCharge ?? 0.0) + (tollCharge ?? 0.0) + (extraCharges ?? 0.0) - (discount ?? 0.0) + (gstVat ?? 0.0)) - amountPaid);
+        grandTotal = grandTotal ??
+            amount ??
+            ((freightCharge ?? 0.0) +
+                (fuelCharge ?? 0.0) +
+                (tollCharge ?? 0.0) +
+                (extraCharges ?? 0.0) -
+                (discount ?? 0.0) +
+                (gstVat ?? 0.0)),
+        outstandingAmount = outstandingAmount ??
+            (((grandTotal ?? amount ?? 0.0) +
+                    (freightCharge ?? 0.0) +
+                    (fuelCharge ?? 0.0) +
+                    (tollCharge ?? 0.0) +
+                    (extraCharges ?? 0.0) -
+                    (discount ?? 0.0) +
+                    (gstVat ?? 0.0)) -
+                amountPaid);
 
   /// Helper getter for backward compatibility
   double get amount => grandTotal;
@@ -73,7 +89,8 @@ class InvoiceEntity {
       'discount': discount,
       'gstVat': gstVat,
       'grandTotal': grandTotal,
-      'amount': grandTotal, // for backwards-compatibility with existing collections
+      'amount':
+          grandTotal, // for backwards-compatibility with existing collections
       'amountPaid': amountPaid,
       'outstandingAmount': outstandingAmount,
       'status': status,
@@ -89,15 +106,21 @@ class InvoiceEntity {
 
   factory InvoiceEntity.fromMap(Map<String, dynamic> map) {
     final rawAmountPaid = (map['amountPaid'] as num? ?? 0.0).toDouble();
-    final rawFreight = (map['freightCharge'] as num? ?? map['amount'] as num? ?? 0.0).toDouble();
+    final rawFreight =
+        (map['freightCharge'] as num? ?? map['amount'] as num? ?? 0.0)
+            .toDouble();
     final rawFuel = (map['fuelCharge'] as num? ?? 0.0).toDouble();
     final rawToll = (map['tollCharge'] as num? ?? 0.0).toDouble();
     final rawExtra = (map['extraCharges'] as num? ?? 0.0).toDouble();
     final rawDiscount = (map['discount'] as num? ?? 0.0).toDouble();
     final rawGst = (map['gstVat'] as num? ?? 0.0).toDouble();
 
-    final computedGrandTotal = (map['grandTotal'] as num? ?? (rawFreight + rawFuel + rawToll + rawExtra - rawDiscount + rawGst)).toDouble();
-    final computedOutstanding = (map['outstandingAmount'] as num? ?? (computedGrandTotal - rawAmountPaid)).toDouble();
+    final computedGrandTotal = (map['grandTotal'] as num? ??
+            (rawFreight + rawFuel + rawToll + rawExtra - rawDiscount + rawGst))
+        .toDouble();
+    final computedOutstanding = (map['outstandingAmount'] as num? ??
+            (computedGrandTotal - rawAmountPaid))
+        .toDouble();
 
     return InvoiceEntity(
       id: map['id'] as String? ?? '',

@@ -33,19 +33,22 @@ final ledgerRepositoryProvider = Provider<LedgerRepository>((ref) {
 
 // --- Stream Providers ---
 
-final billingInvoicesProvider = StreamProvider.autoDispose<List<InvoiceEntity>>((ref) {
+final billingInvoicesProvider =
+    StreamProvider.autoDispose<List<InvoiceEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(invoiceRepositoryProvider).watchInvoices(user!.companyId!);
 });
 
-final billingPaymentsProvider = StreamProvider.autoDispose<List<PaymentEntity>>((ref) {
+final billingPaymentsProvider =
+    StreamProvider.autoDispose<List<PaymentEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(paymentRepositoryProvider).watchPayments(user!.companyId!);
 });
 
-final billingLedgerProvider = StreamProvider.autoDispose<List<LedgerEntity>>((ref) {
+final billingLedgerProvider =
+    StreamProvider.autoDispose<List<LedgerEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(ledgerRepositoryProvider).watchLedger(user!.companyId!);
@@ -120,19 +123,25 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
       // 2. Validation: Prevent duplicate invoice numbers
       final existingInvoices = await _invoiceRepo.getInvoices(companyId);
       final hasDuplicateNumber = existingInvoices.any((inv) =>
-          inv.invoiceNumber.trim().toLowerCase() == invoice.invoiceNumber.trim().toLowerCase() &&
+          inv.invoiceNumber.trim().toLowerCase() ==
+              invoice.invoiceNumber.trim().toLowerCase() &&
           inv.id != invoice.id);
       if (hasDuplicateNumber) {
-        throw Exception('Invoice number "${invoice.invoiceNumber}" is already in use.');
+        throw Exception(
+            'Invoice number "${invoice.invoiceNumber}" is already in use.');
       }
 
       // 3. Validation: Prevent editing paid invoices unless Admin
       if (invoice.id.isNotEmpty) {
-        final currentInvoice = await _invoiceRepo.getInvoiceById(companyId, invoice.id);
+        final currentInvoice =
+            await _invoiceRepo.getInvoiceById(companyId, invoice.id);
         if (currentInvoice != null &&
-            (currentInvoice.status == 'paid' || currentInvoice.status == 'partially_paid' || currentInvoice.amountPaid > 0.0)) {
+            (currentInvoice.status == 'paid' ||
+                currentInvoice.status == 'partially_paid' ||
+                currentInvoice.amountPaid > 0.0)) {
           if (user.role != 'admin') {
-            throw Exception('Permission Blocked: Only Administrators can modify invoices with payment history.');
+            throw Exception(
+                'Permission Blocked: Only Administrators can modify invoices with payment history.');
           }
         }
       }
@@ -180,7 +189,8 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
 
       final invoice = await _invoiceRepo.getInvoiceById(companyId, invoiceId);
       if (invoice == null) throw Exception('Invoice not found.');
-      if (invoice.status != 'draft') throw Exception('Only draft invoices can be issued.');
+      if (invoice.status != 'draft')
+        throw Exception('Only draft invoices can be issued.');
 
       final issuedInvoice = invoice.copyWith(
         status: 'issued',
@@ -198,7 +208,8 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
         accountType: 'accounts_receivable',
         amount: issuedInvoice.grandTotal,
         referenceId: issuedInvoice.id,
-        description: 'Accounts Receivable increased for Issued Invoice ${issuedInvoice.invoiceNumber}',
+        description:
+            'Accounts Receivable increased for Issued Invoice ${issuedInvoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -212,7 +223,8 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
         accountType: 'revenue',
         amount: issuedInvoice.grandTotal,
         referenceId: issuedInvoice.id,
-        description: 'Revenue recognized for Issued Invoice ${issuedInvoice.invoiceNumber}',
+        description:
+            'Revenue recognized for Issued Invoice ${issuedInvoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -228,7 +240,8 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
         entityType: 'invoice',
         entityId: issuedInvoice.id,
         action: 'invoice_issued',
-        description: 'Issued Invoice ${issuedInvoice.invoiceNumber} of amount $companyId.',
+        description:
+            'Issued Invoice ${issuedInvoice.invoiceNumber} of amount $companyId.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -253,16 +266,20 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
       final invoice = await _invoiceRepo.getInvoiceById(companyId, invoiceId);
       if (invoice == null) throw Exception('Invoice not found.');
       if (invoice.status == 'paid' && user.role != 'admin') {
-        throw Exception('Permission Blocked: Only Administrators can delete paid invoices.');
+        throw Exception(
+            'Permission Blocked: Only Administrators can delete paid invoices.');
       }
 
       await _invoiceRepo.deleteInvoice(companyId, invoiceId);
 
       // Deduct from customer's outstanding balance
-      final customer = await _customerRepo.getCustomerById(companyId, invoice.customerId);
+      final customer =
+          await _customerRepo.getCustomerById(companyId, invoice.customerId);
       if (customer != null) {
         final updatedCustomer = customer.copyWith(
-          outstandingBalance: (customer.outstandingBalance - invoice.outstandingAmount).clamp(0.0, double.infinity),
+          outstandingBalance:
+              (customer.outstandingBalance - invoice.outstandingAmount)
+                  .clamp(0.0, double.infinity),
         );
         await _customerRepo.updateCustomer(companyId, updatedCustomer);
       }
@@ -315,7 +332,8 @@ class InvoiceFormController extends StateNotifier<InvoiceFormState> {
 }
 
 final invoiceFormControllerProvider =
-    StateNotifierProvider.autoDispose<InvoiceFormController, InvoiceFormState>((ref) {
+    StateNotifierProvider.autoDispose<InvoiceFormController, InvoiceFormState>(
+        (ref) {
   return InvoiceFormController(
     invoiceRepo: ref.watch(invoiceRepositoryProvider),
     tripRepo: ref.watch(tripRepositoryProvider),
@@ -385,11 +403,13 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         throw Exception('Payment amount must be greater than zero.');
       }
 
-      final invoice = await _invoiceRepo.getInvoiceById(companyId, payment.invoiceId);
+      final invoice =
+          await _invoiceRepo.getInvoiceById(companyId, payment.invoiceId);
       if (invoice == null) throw Exception('Invoice not found.');
 
       if (payment.amount > invoice.outstandingAmount) {
-        throw Exception('Payment amount exceeds outstanding invoice balance (\$${invoice.outstandingAmount.toStringAsFixed(2)}).');
+        throw Exception(
+            'Payment amount exceeds outstanding invoice balance (\$${invoice.outstandingAmount.toStringAsFixed(2)}).');
       }
 
       // Save Payment
@@ -397,7 +417,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
 
       // Update Invoice outstanding amount & status
       final newAmountPaid = invoice.amountPaid + payment.amount;
-      final newOutstanding = (invoice.grandTotal - newAmountPaid).clamp(0.0, double.infinity);
+      final newOutstanding =
+          (invoice.grandTotal - newAmountPaid).clamp(0.0, double.infinity);
       String newStatus = invoice.status;
       if (newOutstanding == 0.0) {
         newStatus = 'paid';
@@ -414,10 +435,12 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
       await _invoiceRepo.updateInvoice(companyId, updatedInvoice);
 
       // Update Customer outstanding balance
-      final customer = await _customerRepo.getCustomerById(companyId, invoice.customerId);
+      final customer =
+          await _customerRepo.getCustomerById(companyId, invoice.customerId);
       if (customer != null) {
         final updatedCustomer = customer.copyWith(
-          outstandingBalance: (customer.outstandingBalance - payment.amount).clamp(0.0, double.infinity),
+          outstandingBalance: (customer.outstandingBalance - payment.amount)
+              .clamp(0.0, double.infinity),
         );
         await _customerRepo.updateCustomer(companyId, updatedCustomer);
       }
@@ -431,7 +454,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         accountType: 'cash_bank',
         amount: payment.amount,
         referenceId: savedPayment.id,
-        description: 'Cash/Bank increased for payment received on Invoice ${invoice.invoiceNumber}',
+        description:
+            'Cash/Bank increased for payment received on Invoice ${invoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -445,7 +469,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         accountType: 'accounts_receivable',
         amount: payment.amount,
         referenceId: savedPayment.id,
-        description: 'Accounts Receivable decreased for payment received on Invoice ${invoice.invoiceNumber}',
+        description:
+            'Accounts Receivable decreased for payment received on Invoice ${invoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -458,7 +483,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         entityType: 'payment',
         entityId: savedPayment.id,
         action: 'payment_received',
-        description: 'Received payment of \$${payment.amount.toStringAsFixed(2)} via ${payment.paymentMethod.toUpperCase()} for Invoice ${invoice.invoiceNumber}.',
+        description:
+            'Received payment of \$${payment.amount.toStringAsFixed(2)} via ${payment.paymentMethod.toUpperCase()} for Invoice ${invoice.invoiceNumber}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -482,7 +508,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
 
       final payment = await _paymentRepo.getPaymentById(companyId, paymentId);
       if (payment == null) throw Exception('Payment not found.');
-      if (payment.status == 'refunded') throw Exception('Payment has already been refunded.');
+      if (payment.status == 'refunded')
+        throw Exception('Payment has already been refunded.');
 
       // Mark payment as refunded
       final refundedPayment = payment.copyWith(
@@ -492,12 +519,15 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
       await _paymentRepo.updatePayment(companyId, refundedPayment);
 
       // Get Invoice
-      final invoice = await _invoiceRepo.getInvoiceById(companyId, payment.invoiceId);
+      final invoice =
+          await _invoiceRepo.getInvoiceById(companyId, payment.invoiceId);
       if (invoice == null) throw Exception('Invoice not found.');
 
       // Revert outstanding balance and amount paid on Invoice
-      final newAmountPaid = (invoice.amountPaid - payment.amount).clamp(0.0, double.infinity);
-      final newOutstanding = (invoice.grandTotal - newAmountPaid).clamp(0.0, double.infinity);
+      final newAmountPaid =
+          (invoice.amountPaid - payment.amount).clamp(0.0, double.infinity);
+      final newOutstanding =
+          (invoice.grandTotal - newAmountPaid).clamp(0.0, double.infinity);
       String newStatus = invoice.status;
       if (newOutstanding == invoice.grandTotal) {
         newStatus = 'issued';
@@ -514,7 +544,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
       await _invoiceRepo.updateInvoice(companyId, updatedInvoice);
 
       // Revert Customer outstanding balance
-      final customer = await _customerRepo.getCustomerById(companyId, invoice.customerId);
+      final customer =
+          await _customerRepo.getCustomerById(companyId, invoice.customerId);
       if (customer != null) {
         final updatedCustomer = customer.copyWith(
           outstandingBalance: customer.outstandingBalance + payment.amount,
@@ -531,7 +562,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         accountType: 'accounts_receivable',
         amount: payment.amount,
         referenceId: payment.id,
-        description: 'Accounts Receivable increased for refunded payment on Invoice ${invoice.invoiceNumber}',
+        description:
+            'Accounts Receivable increased for refunded payment on Invoice ${invoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -545,7 +577,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         accountType: 'cash_bank',
         amount: payment.amount,
         referenceId: payment.id,
-        description: 'Cash/Bank decreased for refunded payment on Invoice ${invoice.invoiceNumber}',
+        description:
+            'Cash/Bank decreased for refunded payment on Invoice ${invoice.invoiceNumber}',
         date: DateTime.now(),
         createdAt: DateTime.now(),
       );
@@ -558,7 +591,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
         entityType: 'payment',
         entityId: paymentId,
         action: 'payment_refunded',
-        description: 'Refunded payment of \$${payment.amount.toStringAsFixed(2)} for Invoice ${invoice.invoiceNumber}.',
+        description:
+            'Refunded payment of \$${payment.amount.toStringAsFixed(2)} for Invoice ${invoice.invoiceNumber}.',
         userId: user.uid,
         userName: user.displayName.isEmpty ? 'Operator' : user.displayName,
         timestamp: DateTime.now(),
@@ -599,7 +633,8 @@ class PaymentFormController extends StateNotifier<PaymentFormState> {
 }
 
 final paymentFormControllerProvider =
-    StateNotifierProvider.autoDispose<PaymentFormController, PaymentFormState>((ref) {
+    StateNotifierProvider.autoDispose<PaymentFormController, PaymentFormState>(
+        (ref) {
   return PaymentFormController(
     paymentRepo: ref.watch(paymentRepositoryProvider),
     invoiceRepo: ref.watch(invoiceRepositoryProvider),
@@ -610,10 +645,11 @@ final paymentFormControllerProvider =
   );
 });
 
-final billingAuditLogsProvider = StreamProvider.autoDispose<List<AuditLogEntity>>((ref) {
+final billingAuditLogsProvider =
+    StreamProvider.autoDispose<List<AuditLogEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
-  
+
   return FirebaseFirestore.instance
       .collection('companies')
       .doc(user!.companyId!)

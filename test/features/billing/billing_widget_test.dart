@@ -41,7 +41,8 @@ void main() {
                 companyId: 'c_1',
                 createdAt: now,
               )),
-          billingInvoicesProvider.overrideWith((ref) => Stream.value([testInvoice])),
+          billingInvoicesProvider
+              .overrideWith((ref) => Stream.value([testInvoice])),
           billingPaymentsProvider.overrideWith((ref) => Stream.value([])),
           billingAuditLogsProvider.overrideWith((ref) => Stream.value([])),
           customersStreamProvider.overrideWith((ref) => Stream.value([])),

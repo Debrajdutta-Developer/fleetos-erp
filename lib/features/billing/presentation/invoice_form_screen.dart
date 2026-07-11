@@ -25,14 +25,14 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
   String? _selectedCustomerName;
   String? _selectedTripId;
   String? _selectedDispatchId;
-  
+
   double _freightCharge = 0.0;
   double _fuelCharge = 0.0;
   double _tollCharge = 0.0;
   double _extraCharges = 0.0;
   double _discount = 0.0;
   double _gstVat = 0.0;
-  
+
   DateTime _issueDate = DateTime.now();
   DateTime _dueDate = DateTime.now().add(const Duration(days: 30));
   String _status = 'draft';
@@ -49,7 +49,12 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
   }
 
   double get _grandTotal =>
-      _freightCharge + _fuelCharge + _tollCharge + _extraCharges - _discount + _gstVat;
+      _freightCharge +
+      _fuelCharge +
+      _tollCharge +
+      _extraCharges -
+      _discount +
+      _gstVat;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +108,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
         _initialized = true;
       }
     } else if (!_initialized) {
-      _invoiceNumber = 'INV-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
+      _invoiceNumber =
+          'INV-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
       _initialized = true;
     }
 
@@ -112,7 +118,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.invoiceId == null ? 'Create Invoice' : 'Edit Invoice'),
+        title:
+            Text(widget.invoiceId == null ? 'Create Invoice' : 'Edit Invoice'),
       ),
       body: formState.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -140,8 +147,9 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'Invoice Number',
                             prefixIcon: Icon(Icons.tag),
                           ),
-                          validator: (val) =>
-                              val == null || val.trim().isEmpty ? 'Required' : null,
+                          validator: (val) => val == null || val.trim().isEmpty
+                              ? 'Required'
+                              : null,
                           onChanged: (val) => _invoiceNumber = val.trim(),
                         ),
                         _buildDatePicker(
@@ -152,7 +160,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             setState(() {
                               _issueDate = date;
                               if (_dueDate.isBefore(_issueDate)) {
-                                _dueDate = _issueDate.add(const Duration(days: 30));
+                                _dueDate =
+                                    _issueDate.add(const Duration(days: 30));
                               }
                             });
                           },
@@ -165,7 +174,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             if (date.isBefore(_issueDate)) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Due date cannot be before issue date.'),
+                                  content: Text(
+                                      'Due date cannot be before issue date.'),
                                 ),
                               );
                               return;
@@ -197,12 +207,14 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             onChanged: (val) {
                               setState(() {
                                 _selectedCustomerId = val;
-                                _selectedCustomerName =
-                                    customers.firstWhere((c) => c.id == val).name;
+                                _selectedCustomerName = customers
+                                    .firstWhere((c) => c.id == val)
+                                    .name;
                               });
                             },
                           ),
-                          loading: () => const Center(child: LinearProgressIndicator()),
+                          loading: () =>
+                              const Center(child: LinearProgressIndicator()),
                           error: (e, _) => Text('Error loading customers: $e'),
                         ),
                         tripsAsync.when(
@@ -220,7 +232,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                               ...trips.where((t) => t.id.isNotEmpty).map((t) {
                                 return DropdownMenuItem(
                                   value: t.id,
-                                  child: Text('Trip #${t.id.substring(0, 8).toUpperCase()} - ${t.customerName}'),
+                                  child: Text(
+                                      'Trip #${t.id.substring(0, 8).toUpperCase()} - ${t.customerName}'),
                                 );
                               }),
                             ],
@@ -230,7 +243,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                               });
                             },
                           ),
-                          loading: () => const Center(child: LinearProgressIndicator()),
+                          loading: () =>
+                              const Center(child: LinearProgressIndicator()),
                           error: (e, _) => Text('Error loading trips: $e'),
                         ),
                         dispatchesAsync.when(
@@ -245,10 +259,13 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                                 value: '',
                                 child: Text('No Dispatch Reference'),
                               ),
-                              ...dispatches.where((d) => d.id.isNotEmpty).map((d) {
+                              ...dispatches
+                                  .where((d) => d.id.isNotEmpty)
+                                  .map((d) {
                                 return DropdownMenuItem(
                                   value: d.id,
-                                  child: Text('Dispatch #${d.id.substring(0, 8).toUpperCase()} - ${d.routeId}'),
+                                  child: Text(
+                                      'Dispatch #${d.id.substring(0, 8).toUpperCase()} - ${d.routeId}'),
                                 );
                               }),
                             ],
@@ -258,7 +275,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                               });
                             },
                           ),
-                          loading: () => const Center(child: LinearProgressIndicator()),
+                          loading: () =>
+                              const Center(child: LinearProgressIndicator()),
                           error: (e, _) => Text('Error loading dispatches: $e'),
                         ),
                       ],
@@ -281,10 +299,12 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'Freight Charge (\$)',
                             prefixIcon: Icon(Icons.attach_money_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _freightCharge = double.tryParse(val) ?? 0.0);
+                            setState(() =>
+                                _freightCharge = double.tryParse(val) ?? 0.0);
                           },
                         ),
                         TextFormField(
@@ -293,10 +313,12 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'Fuel Charge/Surcharge (\$)',
                             prefixIcon: Icon(Icons.local_gas_station_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _fuelCharge = double.tryParse(val) ?? 0.0);
+                            setState(() =>
+                                _fuelCharge = double.tryParse(val) ?? 0.0);
                           },
                         ),
                         TextFormField(
@@ -305,10 +327,12 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'Toll Expense (\$)',
                             prefixIcon: Icon(Icons.toll_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _tollCharge = double.tryParse(val) ?? 0.0);
+                            setState(() =>
+                                _tollCharge = double.tryParse(val) ?? 0.0);
                           },
                         ),
                       ],
@@ -324,22 +348,27 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'Demurrage / Extras (\$)',
                             prefixIcon: Icon(Icons.add_circle_outline_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _extraCharges = double.tryParse(val) ?? 0.0);
+                            setState(() =>
+                                _extraCharges = double.tryParse(val) ?? 0.0);
                           },
                         ),
                         TextFormField(
                           initialValue: _discount.toStringAsFixed(2),
                           decoration: const InputDecoration(
                             labelText: 'Contract Discount (\$)',
-                            prefixIcon: Icon(Icons.remove_circle_outline_rounded),
+                            prefixIcon:
+                                Icon(Icons.remove_circle_outline_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _discount = double.tryParse(val) ?? 0.0);
+                            setState(
+                                () => _discount = double.tryParse(val) ?? 0.0);
                           },
                         ),
                         TextFormField(
@@ -348,10 +377,12 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                             labelText: 'GST / VAT Tax (\$)',
                             prefixIcon: Icon(Icons.percent_rounded),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
                           validator: (val) => _validateDouble(val),
                           onChanged: (val) {
-                            setState(() => _gstVat = double.tryParse(val) ?? 0.0);
+                            setState(
+                                () => _gstVat = double.tryParse(val) ?? 0.0);
                           },
                         ),
                       ],
@@ -359,7 +390,10 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                     const SizedBox(height: 32),
                     // Calculation breakdown Panel
                     Card(
-                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primaryContainer
+                          .withOpacity(0.2),
                       child: Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: Row(
@@ -370,17 +404,27 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                               children: [
                                 Text(
                                   'GRAND TOTAL DUE',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                        color: Theme.of(context).colorScheme.primary,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   '\$${_grandTotal.toStringAsFixed(2)}',
-                                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineLarge
+                                      ?.copyWith(
                                         fontWeight: FontWeight.black,
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                 ),
                               ],
@@ -390,7 +434,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
                               children: [
                                 Text(
                                   'Status: ${_status.toUpperCase()}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(

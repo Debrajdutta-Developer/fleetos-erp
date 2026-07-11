@@ -189,13 +189,20 @@ final dashboardStatsProvider =
 
   final now = DateTime.now();
   final revenueToday = invoices
-      .where((i) => i.status != 'draft' && i.status != 'cancelled' &&
-                    i.issueDate.year == now.year && i.issueDate.month == now.month && i.issueDate.day == now.day)
+      .where((i) =>
+          i.status != 'draft' &&
+          i.status != 'cancelled' &&
+          i.issueDate.year == now.year &&
+          i.issueDate.month == now.month &&
+          i.issueDate.day == now.day)
       .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
 
   final revenueThisMonth = invoices
-      .where((i) => i.status != 'draft' && i.status != 'cancelled' &&
-                    i.issueDate.year == now.year && i.issueDate.month == now.month)
+      .where((i) =>
+          i.status != 'draft' &&
+          i.status != 'cancelled' &&
+          i.issueDate.year == now.year &&
+          i.issueDate.month == now.month)
       .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
 
   final outstandingAmount = invoices
@@ -203,7 +210,11 @@ final dashboardStatsProvider =
       .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
 
   final overdueInvoicesCount = invoices
-      .where((i) => i.status == 'overdue' || (i.status != 'paid' && i.status != 'cancelled' && i.dueDate.isBefore(now)))
+      .where((i) =>
+          i.status == 'overdue' ||
+          (i.status != 'paid' &&
+              i.status != 'cancelled' &&
+              i.dueDate.isBefore(now)))
       .length;
 
   final paidInvoicesCount = invoices.where((i) => i.status == 'paid').length;
