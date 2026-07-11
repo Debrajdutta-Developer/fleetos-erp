@@ -55,19 +55,19 @@ class InvoiceEntity {
         grandTotal = grandTotal ??
             amount ??
             ((freightCharge ?? 0.0) +
-                (fuelCharge ?? 0.0) +
-                (tollCharge ?? 0.0) +
-                (extraCharges ?? 0.0) -
-                (discount ?? 0.0) +
-                (gstVat ?? 0.0)),
+                fuelCharge +
+                tollCharge +
+                extraCharges -
+                discount +
+                gstVat),
         outstandingAmount = outstandingAmount ??
             (((grandTotal ?? amount ?? 0.0) +
                     (freightCharge ?? 0.0) +
-                    (fuelCharge ?? 0.0) +
-                    (tollCharge ?? 0.0) +
-                    (extraCharges ?? 0.0) -
-                    (discount ?? 0.0) +
-                    (gstVat ?? 0.0)) -
+                    fuelCharge +
+                    tollCharge +
+                    extraCharges -
+                    discount +
+                    gstVat) -
                 amountPaid);
 
   /// Helper getter for backward compatibility

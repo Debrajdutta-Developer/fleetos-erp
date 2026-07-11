@@ -4,10 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
 import '../../customers/domain/invoice_entity.dart';
+import '../domain/customer_entity.dart';
 import '../../billing/domain/payment_entity.dart';
 import '../../billing/presentation/billing_providers.dart';
 import '../../trips/domain/audit_log_entity.dart';
-import '../../core/widgets/empty_state_widget.dart';
+import '../../../core/widgets/empty_state_widget.dart';
 
 class InvoiceListScreen extends ConsumerStatefulWidget {
   const InvoiceListScreen({super.key});
@@ -37,7 +38,6 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(currentUserProvider);
     final invoicesAsync = ref.watch(billingInvoicesProvider);
     final paymentsAsync = ref.watch(billingPaymentsProvider);
     final auditLogsAsync = ref.watch(billingAuditLogsProvider);
@@ -457,9 +457,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Aged Accounts Receivable (Outstanding Summary)',
-              style: theme.textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text('Aged Accounts Receivable (Total Outstanding: \$${totalOutstanding.toStringAsFixed(2)})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           // Aging Cards Grid
           Row(
