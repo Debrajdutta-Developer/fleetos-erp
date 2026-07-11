@@ -5,6 +5,8 @@ import '../../auth/presentation/auth_providers.dart';
 import '../../company_setup/presentation/company_providers.dart';
 import '../../company_setup/domain/company_entity.dart';
 import 'dashboard_providers.dart';
+import '../../reports/presentation/widgets/chart_widgets.dart';
+import '../../reports/presentation/report_providers.dart';
 
 /// State notifier for global app theme configuration overrides.
 class ThemeController extends StateNotifier<ThemeMode> {
@@ -566,40 +568,40 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               ],
                             ),
                             const SizedBox(height: 32),
-                            // Simulated graphic/chart element
-                            Container(
-                              height: 240,
-                              decoration: BoxDecoration(
-                                color: colorScheme.primary.withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: colorScheme.primary.withOpacity(0.08),
-                                ),
+                            // Real live CustomBarChart from active streams
+                            ref.watch(tripsStreamProvider).when(
+                              data: (trips) {
+                                final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
+                                final grouped = <String, int>{};
+                                for (final t in trips) {
+                                  final v = vehicles.firstWhere((veh) => veh.id == t.vehicleId, orElse: () => null as dynamic);
+                                  final label = v != null ? v.licensePlate : t.vehicleId;
+                                  grouped[label] = (grouped[label] ?? 0) + 1;
+                                }
+                                final chartData = grouped.entries.map((e) => ChartDataPoint(label: e.key, value: e.value.toDouble())).toList();
+                                if (chartData.isEmpty) {
+                                  return Container(
+                                    height: 240,
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.primary.withOpacity(0.04),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: colorScheme.primary.withOpacity(0.08)),
+                                    ),
+                                    child: const Center(child: Text('No active trip logs to plot')),
+                                  );
+                                }
+                                return SizedBox(
+                                  height: 240,
+                                  child: CustomBarChart(data: chartData.take(6).toList()),
+                                );
+                              },
+                              loading: () => const SizedBox(
+                                height: 240,
+                                child: Center(child: CircularProgressIndicator()),
                               ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.analytics_outlined,
-                                      size: 48,
-                                      color: colorScheme.primary,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    const Text(
-                                      'Interactive Analytics Graph Placeholder',
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Available in Fleet Modules integration.',
-                                      style: TextStyle(
-                                        color: colorScheme.onBackground
-                                            .withOpacity(0.4),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              error: (_, __) => const SizedBox(
+                                height: 240,
+                                child: Center(child: Text('Error loading analytics')),
                               ),
                             ),
                           ],
@@ -925,6 +927,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/finance');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.analytics_rounded),
+                    title: const Text('Reports & BI'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/reports');
                     },
                   ),
                   ListTile(

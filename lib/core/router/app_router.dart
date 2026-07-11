@@ -44,6 +44,7 @@ import '../../features/dispatch/presentation/dispatch_list_screen.dart';
 import '../../features/dispatch/presentation/dispatch_form_screen.dart';
 import '../../features/dispatch/presentation/dispatch_detail_screen.dart';
 import '../../features/dispatch/presentation/route_list_screen.dart';
+import '../../features/reports/presentation/report_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -320,6 +321,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final id = state.pathParameters['id']!;
           return InvoiceFormScreen(invoiceId: id);
         },
+      ),
+      GoRoute(
+        path: '/reports',
+        builder: (context, state) => const ReportScreen(),
       ),
       GoRoute(
         path: '/dispatches',
