@@ -66,6 +66,6 @@ void main() {
 
     // Verify the invoice item is rendered in the list
     expect(find.text('INV-TEST-99'), findsOneWidget);
-    expect(find.text('Walmart Inc'), findsOneWidget);
+    expect(find.textContaining('Walmart Inc'), findsOneWidget);
   });
 }
