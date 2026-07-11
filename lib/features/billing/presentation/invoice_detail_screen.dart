@@ -40,7 +40,8 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
     final invoiceState = ref.watch(billingInvoiceFormControllerProvider);
     final paymentState = ref.watch(paymentFormControllerProvider);
 
-    ref.listen<InvoiceFormState>(billingInvoiceFormControllerProvider, (prev, next) {
+    ref.listen<InvoiceFormState>(billingInvoiceFormControllerProvider,
+        (prev, next) {
       if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

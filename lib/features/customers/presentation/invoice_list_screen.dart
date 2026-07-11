@@ -920,7 +920,9 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ref.read(billingInvoiceFormControllerProvider.notifier).issueInvoice(id);
+              ref
+                  .read(billingInvoiceFormControllerProvider.notifier)
+                  .issueInvoice(id);
             },
             child: const Text('Issue'),
           ),

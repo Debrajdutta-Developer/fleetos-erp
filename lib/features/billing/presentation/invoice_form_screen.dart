@@ -65,7 +65,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
 
     final formState = ref.watch(billingInvoiceFormControllerProvider);
 
-    ref.listen<InvoiceFormState>(billingInvoiceFormControllerProvider, (prev, next) {
+    ref.listen<InvoiceFormState>(billingInvoiceFormControllerProvider,
+        (prev, next) {
       if (next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -584,6 +585,8 @@ class _InvoiceFormScreenState extends ConsumerState<InvoiceFormScreen> {
       updatedAt: DateTime.now(),
     );
 
-    ref.read(billingInvoiceFormControllerProvider.notifier).saveInvoice(invoice);
+    ref
+        .read(billingInvoiceFormControllerProvider.notifier)
+        .saveInvoice(invoice);
   }
 }
