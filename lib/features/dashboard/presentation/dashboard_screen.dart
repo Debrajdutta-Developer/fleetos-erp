@@ -1018,6 +1018,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     },
                   ),
                   ListTile(
+                    leading: const Icon(Icons.folder_shared_rounded),
+                    title: const Text('Document Vault'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/documents');
+                    },
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.inventory_2_outlined),
                     title: const Text('Storage & Hubs'),
                     onTap: () {
