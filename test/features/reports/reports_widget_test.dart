@@ -61,9 +61,11 @@ void main() {
           vehiclesStreamProvider.overrideWith((ref) => Stream.value([])),
           driversStreamProvider.overrideWith((ref) => Stream.value([])),
           tripsStreamProvider.overrideWith((ref) => Stream.value([])),
-          billingInvoicesProvider.overrideWith((ref) => Stream.value([testInvoice])),
+          billingInvoicesProvider
+              .overrideWith((ref) => Stream.value([testInvoice])),
           billingPaymentsProvider.overrideWith((ref) => Stream.value([])),
-          financeTransactionsStreamProvider.overrideWith((ref) => Stream.value([])),
+          financeTransactionsStreamProvider
+              .overrideWith((ref) => Stream.value([])),
           partsStreamProvider.overrideWith((ref) => Stream.value([])),
           fuelLogsStreamProvider.overrideWith((ref) => Stream.value([])),
           maintenanceLogsStreamProvider.overrideWith((ref) => Stream.value([])),
@@ -92,7 +94,8 @@ void main() {
 
     // Verify calculated KPIs are displayed on screen
     expect(find.text('Total Invoiced'), findsOneWidget);
-    expect(find.text('\$5500.00'), findsNWidgets(2)); // Total Invoiced & Total Collected
+    expect(find.text('\$5500.00'),
+        findsNWidgets(2)); // Total Invoiced & Total Collected
 
     // Verify tabs are available
     expect(find.text('Visual Analytics'), findsOneWidget);

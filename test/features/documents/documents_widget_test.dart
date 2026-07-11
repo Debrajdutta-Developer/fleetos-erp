@@ -12,7 +12,8 @@ import 'package:fleet_os_erp/features/documents/presentation/document_providers.
 import 'documents_providers_test.dart' show MockDocumentRepository;
 
 void main() {
-  testWidgets('DocumentListScreen renders Material 3 widgets, sorting, and drag drop mock',
+  testWidgets(
+      'DocumentListScreen renders Material 3 widgets, sorting, and drag drop mock',
       (WidgetTester tester) async {
     final now = DateTime.now();
 
@@ -87,7 +88,7 @@ void main() {
     // We simulate a desktop layout width by setting the screen size
     tester.view.physicalSize = const Size(1200, 800);
     tester.view.devicePixelRatio = 1.0;
-    
+
     await tester.pump();
     expect(find.text('Drag & Drop Files Here'), findsOneWidget);
 

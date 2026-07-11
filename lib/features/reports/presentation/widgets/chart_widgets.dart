@@ -19,7 +19,8 @@ List<Color> getPalette(ColorScheme scheme) {
 }
 
 // Custom Painter for dashed lines
-void drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint, double dashWidth, double dashSpace) {
+void drawDashedLine(Canvas canvas, Offset p1, Offset p2, Paint paint,
+    double dashWidth, double dashSpace) {
   double dx = p2.dx - p1.dx;
   double dy = p2.dy - p1.dy;
   double len = math.sqrt(dx * dx + dy * dy);
@@ -66,7 +67,8 @@ class LineChartPainter extends CustomPainter {
 
     // 2. Identify unique X labels and max/min Y values
     final xLabels = data.map((d) => d.label).toSet().toList()..sort();
-    final double maxY = data.map((d) => d.value).reduce((a, b) => math.max(a, b));
+    final double maxY =
+        data.map((d) => d.value).reduce((a, b) => math.max(a, b));
     final double minY = 0.0; // Anchored at zero
     final double rangeY = maxY - minY == 0 ? 100 : maxY - minY;
     final double targetMaxY = maxY * 1.15; // Give 15% top margin
@@ -96,7 +98,7 @@ class LineChartPainter extends CustomPainter {
     for (int i = 0; i <= horizontalSegments; i++) {
       final double yRatio = i / horizontalSegments;
       final double yPos = paddingTop + chartHeight * (1 - yRatio);
-      
+
       // Draw grid line
       if (i > 0 && i < horizontalSegments) {
         drawDashedLine(
@@ -127,7 +129,8 @@ class LineChartPainter extends CustomPainter {
       textPainter.layout();
       textPainter.paint(
         canvas,
-        Offset(paddingLeft - textPainter.width - 8, yPos - textPainter.height / 2),
+        Offset(
+            paddingLeft - textPainter.width - 8, yPos - textPainter.height / 2),
       );
     }
 
@@ -140,7 +143,8 @@ class LineChartPainter extends CustomPainter {
 
     // Draw X labels
     if (xLabels.isNotEmpty) {
-      final double xStep = xLabels.length > 1 ? chartWidth / (xLabels.length - 1) : chartWidth;
+      final double xStep =
+          xLabels.length > 1 ? chartWidth / (xLabels.length - 1) : chartWidth;
       for (int i = 0; i < xLabels.length; i++) {
         final double xPos = paddingLeft + i * xStep;
 
@@ -164,7 +168,8 @@ class LineChartPainter extends CustomPainter {
           textPainter.layout();
           textPainter.paint(
             canvas,
-            Offset(xPos - textPainter.width / 2, size.height - paddingBottom + 8),
+            Offset(
+                xPos - textPainter.width / 2, size.height - paddingBottom + 8),
           );
         }
       }
@@ -174,15 +179,18 @@ class LineChartPainter extends CustomPainter {
     for (int g = 0; g < groups.length; g++) {
       final groupName = groups[g];
       final groupColor = palette[g % palette.length];
-      final groupData = data.where((d) => (d.group ?? 'Default') == groupName).toList();
-      
+      final groupData =
+          data.where((d) => (d.group ?? 'Default') == groupName).toList();
+
       // Sort group data by label order
-      groupData.sort((a, b) => xLabels.indexOf(a.label).compareTo(xLabels.indexOf(b.label)));
+      groupData.sort((a, b) =>
+          xLabels.indexOf(a.label).compareTo(xLabels.indexOf(b.label)));
 
       if (groupData.isEmpty) continue;
 
       final Path path = Path();
-      final double xStep = xLabels.length > 1 ? chartWidth / (xLabels.length - 1) : chartWidth;
+      final double xStep =
+          xLabels.length > 1 ? chartWidth / (xLabels.length - 1) : chartWidth;
 
       bool isFirst = true;
       Offset firstOffset = Offset.zero;
@@ -193,7 +201,8 @@ class LineChartPainter extends CustomPainter {
         if (idx == -1) continue;
 
         final double xPos = paddingLeft + idx * xStep;
-        final double yRatio = targetMaxY > 0 ? (d.value - minY) / (targetMaxY - minY) : 0.0;
+        final double yRatio =
+            targetMaxY > 0 ? (d.value - minY) / (targetMaxY - minY) : 0.0;
         final double yPos = paddingTop + chartHeight * (1 - yRatio);
 
         if (isFirst) {
@@ -233,7 +242,9 @@ class LineChartPainter extends CustomPainter {
           ..lineTo(firstOffset.dx, size.height - paddingBottom)
           ..close();
 
-        final double yRatioLast = targetMaxY > 0 ? (groupData.last.value - minY) / (targetMaxY - minY) : 0.0;
+        final double yRatioLast = targetMaxY > 0
+            ? (groupData.last.value - minY) / (targetMaxY - minY)
+            : 0.0;
         final double yPosLast = paddingTop + chartHeight * (1 - yRatioLast);
 
         final areaPaint = Paint()
@@ -283,7 +294,8 @@ class BarChartPainter extends CustomPainter {
 
     final groups = data.map((d) => d.group ?? 'Default').toSet().toList();
     final xLabels = data.map((d) => d.label).toSet().toList()..sort();
-    final double maxY = data.map((d) => d.value).reduce((a, b) => math.max(a, b));
+    final double maxY =
+        data.map((d) => d.value).reduce((a, b) => math.max(a, b));
     final double minY = 0.0;
     final double targetMaxY = maxY * 1.15; // Give 15% top margin
 
@@ -340,7 +352,8 @@ class BarChartPainter extends CustomPainter {
       textPainter.layout();
       textPainter.paint(
         canvas,
-        Offset(paddingLeft - textPainter.width - 8, yPos - textPainter.height / 2),
+        Offset(
+            paddingLeft - textPainter.width - 8, yPos - textPainter.height / 2),
       );
     }
 
@@ -356,7 +369,7 @@ class BarChartPainter extends CustomPainter {
     final double groupWidth = chartWidth / xLabels.length;
     final double innerPaddingRatio = 0.2; // space between groups
     final double barPaddingRatio = 0.1; // space between bars in same group
-    
+
     final double activeGroupWidth = groupWidth * (1 - innerPaddingRatio);
     final double barWidth = activeGroupWidth / groups.length;
     final palette = getPalette(colorScheme);
@@ -364,7 +377,8 @@ class BarChartPainter extends CustomPainter {
     // Draw bars
     for (int i = 0; i < xLabels.length; i++) {
       final label = xLabels[i];
-      final double groupStart = paddingLeft + i * groupWidth + (groupWidth * innerPaddingRatio / 2);
+      final double groupStart =
+          paddingLeft + i * groupWidth + (groupWidth * innerPaddingRatio / 2);
 
       // Draw grid category label
       textPainter.text = TextSpan(
@@ -377,13 +391,15 @@ class BarChartPainter extends CustomPainter {
       textPainter.layout();
       textPainter.paint(
         canvas,
-        Offset(groupStart + activeGroupWidth / 2 - textPainter.width / 2, size.height - paddingBottom + 8),
+        Offset(groupStart + activeGroupWidth / 2 - textPainter.width / 2,
+            size.height - paddingBottom + 8),
       );
 
       // Draw tick marks
       canvas.drawLine(
         Offset(groupStart + activeGroupWidth / 2, size.height - paddingBottom),
-        Offset(groupStart + activeGroupWidth / 2, size.height - paddingBottom + 4),
+        Offset(
+            groupStart + activeGroupWidth / 2, size.height - paddingBottom + 4),
         borderPaint,
       );
 
@@ -391,18 +407,21 @@ class BarChartPainter extends CustomPainter {
       for (int g = 0; g < groups.length; g++) {
         final gName = groups[g];
         final gColor = palette[g % palette.length];
-        
+
         // Find matching data point
         final pt = data.firstWhere(
           (d) => d.label == label && (d.group ?? 'Default') == gName,
           orElse: () => ChartDataPoint(label: label, value: 0.0, group: gName),
         );
 
-        final double barLeft = groupStart + g * barWidth + (barWidth * barPaddingRatio / 2);
+        final double barLeft =
+            groupStart + g * barWidth + (barWidth * barPaddingRatio / 2);
         final double barRight = barLeft + barWidth * (1 - barPaddingRatio);
 
-        final double yRatio = targetMaxY > 0 ? (pt.value - minY) / (targetMaxY - minY) : 0.0;
-        final double barTop = size.height - paddingBottom - chartHeight * yRatio;
+        final double yRatio =
+            targetMaxY > 0 ? (pt.value - minY) / (targetMaxY - minY) : 0.0;
+        final double barTop =
+            size.height - paddingBottom - chartHeight * yRatio;
         final double barBottom = size.height - paddingBottom;
 
         if (barTop < barBottom) {
@@ -504,7 +523,8 @@ class PieChartPainter extends CustomPainter {
     textPainter.layout();
     textPainter.paint(
       canvas,
-      Offset(center.dx - textPainter.width / 2, center.dy - textPainter.height / 2),
+      Offset(center.dx - textPainter.width / 2,
+          center.dy - textPainter.height / 2),
     );
   }
 

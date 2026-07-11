@@ -14,7 +14,8 @@ class DocumentDetailScreen extends ConsumerStatefulWidget {
   const DocumentDetailScreen({super.key, required this.documentId});
 
   @override
-  ConsumerState<DocumentDetailScreen> createState() => _DocumentDetailScreenState();
+  ConsumerState<DocumentDetailScreen> createState() =>
+      _DocumentDetailScreenState();
 }
 
 class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
@@ -28,39 +29,67 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
 
   String _getFriendlyTypeName(String type) {
     switch (type) {
-      case 'gst_certificate': return 'GST Certificate';
-      case 'pan': return 'PAN Card';
-      case 'trade_license': return 'Trade License / Registration';
-      case 'company_logo': return 'Company Logo';
-      case 'rc': return 'Registration Certificate (RC)';
-      case 'insurance': return 'Insurance Policy';
-      case 'fitness': return 'Fitness Certificate';
-      case 'puc': return 'Pollution Certificate (PUC)';
-      case 'permit': return 'National/State Permit';
-      case 'road_tax': return 'Road Tax receipt';
-      case 'driving_license': return 'Driving License (DL)';
-      case 'national_id': return 'Aadhaar / National ID';
-      case 'medical_certificate': return 'Medical Certificate';
-      case 'training_certificate': return 'Training Certificate';
-      case 'contract': return 'signed Contract';
-      case 'agreement': return 'SLA / Agreement';
-      case 'purchase_order': return 'Purchase Order (PO)';
-      case 'kyc_document': return 'KYC Document';
-      case 'invoice': return 'Finance Invoice';
-      case 'receipt': return 'Receipt Log';
-      case 'expense_bill': return 'Expense Bill';
-      case 'payment_proof': return 'Payment Proof';
-      default: return 'Other Document';
+      case 'gst_certificate':
+        return 'GST Certificate';
+      case 'pan':
+        return 'PAN Card';
+      case 'trade_license':
+        return 'Trade License / Registration';
+      case 'company_logo':
+        return 'Company Logo';
+      case 'rc':
+        return 'Registration Certificate (RC)';
+      case 'insurance':
+        return 'Insurance Policy';
+      case 'fitness':
+        return 'Fitness Certificate';
+      case 'puc':
+        return 'Pollution Certificate (PUC)';
+      case 'permit':
+        return 'National/State Permit';
+      case 'road_tax':
+        return 'Road Tax receipt';
+      case 'driving_license':
+        return 'Driving License (DL)';
+      case 'national_id':
+        return 'Aadhaar / National ID';
+      case 'medical_certificate':
+        return 'Medical Certificate';
+      case 'training_certificate':
+        return 'Training Certificate';
+      case 'contract':
+        return 'signed Contract';
+      case 'agreement':
+        return 'SLA / Agreement';
+      case 'purchase_order':
+        return 'Purchase Order (PO)';
+      case 'kyc_document':
+        return 'KYC Document';
+      case 'invoice':
+        return 'Finance Invoice';
+      case 'receipt':
+        return 'Receipt Log';
+      case 'expense_bill':
+        return 'Expense Bill';
+      case 'payment_proof':
+        return 'Payment Proof';
+      default:
+        return 'Other Document';
     }
   }
 
   Color _getStatusColor(String status, ColorScheme scheme) {
     switch (status) {
-      case 'verified': return Colors.green;
-      case 'pending_verification': return Colors.orange;
-      case 'rejected': return scheme.error;
-      case 'expired': return Colors.red.shade800;
-      default: return Colors.grey;
+      case 'verified':
+        return Colors.green;
+      case 'pending_verification':
+        return Colors.orange;
+      case 'rejected':
+        return scheme.error;
+      case 'expired':
+        return Colors.red.shade800;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -68,12 +97,15 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
     final note = _noteController.text.trim();
     final success = await ref
         .read(documentFormControllerProvider.notifier)
-        .verifyDocument(widget.documentId, status, note.isNotEmpty ? note : null);
+        .verifyDocument(
+            widget.documentId, status, note.isNotEmpty ? note : null);
 
     if (success && mounted) {
       _noteController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Document status updated to ${status.replaceAll('_', ' ')}.')),
+        SnackBar(
+            content: Text(
+                'Document status updated to ${status.replaceAll('_', ' ')}.')),
       );
     }
   }
@@ -86,12 +118,16 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
         title: const Text('Rename Document'),
         content: TextField(
           controller: renameController,
-          decoration: const InputDecoration(labelText: 'Display Name', border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+              labelText: 'Display Name', border: OutlineInputBorder()),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel')),
           ElevatedButton(
-            onPressed: () => Navigator.of(ctx).pop(renameController.text.trim()),
+            onPressed: () =>
+                Navigator.of(ctx).pop(renameController.text.trim()),
             child: const Text('Rename'),
           ),
         ],
@@ -127,7 +163,8 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
 
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vault document file successfully replaced.')),
+        const SnackBar(
+            content: Text('Vault document file successfully replaced.')),
       );
     }
   }
@@ -137,12 +174,16 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Remove Document'),
-        content: const Text('Are you sure you want to soft-delete this document? It can be restored later.'),
+        content: const Text(
+            'Are you sure you want to soft-delete this document? It can be restored later.'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, foregroundColor: Colors.white),
             child: const Text('Soft Delete'),
           ),
         ],
@@ -172,10 +213,14 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
 
   Future<void> _handleDownload() async {
     // Trigger download simulation and log download audit trail
-    await ref.read(documentFormControllerProvider.notifier).simulateDownload(widget.documentId);
+    await ref
+        .read(documentFormControllerProvider.notifier)
+        .simulateDownload(widget.documentId);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Simulated file download initiated (audit log registered).')),
+        const SnackBar(
+            content: Text(
+                'Simulated file download initiated (audit log registered).')),
       );
     }
   }
@@ -187,11 +232,12 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
 
     final documents = ref.watch(documentsStreamProvider).valueOrNull ?? [];
     final docList = documents.where((d) => d.id == widget.documentId).toList();
-    
+
     if (docList.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: const Text('Document Vault Detail')),
-        body: const Center(child: Text('Document record not found in company vault.')),
+        body: const Center(
+            child: Text('Document record not found in company vault.')),
       );
     }
 
@@ -225,7 +271,8 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
           ),
           if (isDeleted)
             IconButton(
-              icon: const Icon(Icons.restore_from_trash_outlined, color: Colors.green),
+              icon: const Icon(Icons.restore_from_trash_outlined,
+                  color: Colors.green),
               tooltip: 'Restore Document',
               onPressed: _handleRestore,
             )
@@ -255,7 +302,8 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: colorScheme.outline.withOpacity(0.15)),
+                      border: Border.all(
+                          color: colorScheme.outline.withOpacity(0.15)),
                     ),
                     child: Center(
                       child: Column(
@@ -273,16 +321,20 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                           const SizedBox(height: 16),
                           Text(
                             doc.originalFileName,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Size: $sizeKb KB | Format: ${doc.mimeType.toUpperCase()}',
-                            style: TextStyle(color: colorScheme.onBackground.withOpacity(0.5)),
+                            style: TextStyle(
+                                color:
+                                    colorScheme.onBackground.withOpacity(0.5)),
                           ),
                           const SizedBox(height: 24),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, py: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, py: 12),
                             decoration: BoxDecoration(
                               color: colorScheme.surface,
                               borderRadius: BorderRadius.circular(30),
@@ -321,7 +373,9 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
           Container(
             width: 380,
             decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: colorScheme.outline.withOpacity(0.2))),
+              border: Border(
+                  left:
+                      BorderSide(color: colorScheme.outline.withOpacity(0.2))),
               color: colorScheme.surfaceVariant.withOpacity(0.15),
             ),
             child: SingleChildScrollView(
@@ -331,17 +385,20 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                 children: [
                   Text(
                     doc.fileName,
-                    style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 10, py: 4),
                         decoration: BoxDecoration(
                           color: statusColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: statusColor.withOpacity(0.2)),
+                          border:
+                              Border.all(color: statusColor.withOpacity(0.2)),
                         ),
                         child: Text(
                           doc.status.replaceAll('_', ' ').toUpperCase(),
@@ -355,15 +412,20 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                       if (isDeleted) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 10, py: 4),
                           decoration: BoxDecoration(
                             color: Colors.red.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.red.withOpacity(0.2)),
+                            border:
+                                Border.all(color: Colors.red.withOpacity(0.2)),
                           ),
                           child: const Text(
                             'SOFT DELETED',
-                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 10),
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10),
                           ),
                         ),
                       ]
@@ -372,16 +434,22 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                   const Divider(height: 32),
 
                   // Metadata properties
-                  _buildProperty(context, 'Category', doc.category.toUpperCase()),
-                  _buildProperty(context, 'Document Type', _getFriendlyTypeName(doc.type)),
-                  _buildProperty(context, 'Reference ID / Number', doc.documentNumber),
-                  _buildProperty(context, 'Mapping Scope', doc.entityName ?? 'Company Level'),
+                  _buildProperty(
+                      context, 'Category', doc.category.toUpperCase()),
+                  _buildProperty(
+                      context, 'Document Type', _getFriendlyTypeName(doc.type)),
+                  _buildProperty(
+                      context, 'Reference ID / Number', doc.documentNumber),
+                  _buildProperty(context, 'Mapping Scope',
+                      doc.entityName ?? 'Company Level'),
                   _buildProperty(context, 'Mime Type', doc.mimeType),
                   _buildProperty(context, 'Storage Path', doc.storagePath),
                   _buildProperty(
                     context,
                     'Expiry Date',
-                    doc.expiryDate != null ? DateFormat('yMMMMd').format(doc.expiryDate!) : 'No expiration',
+                    doc.expiryDate != null
+                        ? DateFormat('yMMMMd').format(doc.expiryDate!)
+                        : 'No expiration',
                   ),
                   if (doc.notes != null && doc.notes!.isNotEmpty)
                     _buildProperty(context, 'Notes', doc.notes!),
@@ -417,7 +485,9 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                             ),
                             icon: const Icon(Icons.cancel_outlined),
                             label: const Text('Reject'),
-                            onPressed: formState.isLoading ? null : () => _handleVerification('rejected'),
+                            onPressed: formState.isLoading
+                                ? null
+                                : () => _handleVerification('rejected'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -429,7 +499,9 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                             ),
                             icon: const Icon(Icons.check_circle_outline),
                             label: const Text('Approve'),
-                            onPressed: formState.isLoading ? null : () => _handleVerification('verified'),
+                            onPressed: formState.isLoading
+                                ? null
+                                : () => _handleVerification('verified'),
                           ),
                         ),
                       ],
@@ -459,7 +531,9 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
                     subtitle: doc.status == 'pending_verification'
                         ? 'Pending manager review.'
                         : 'Marked ${doc.status.toUpperCase()} by ${doc.verifiedBy ?? "system"}.',
-                    time: doc.verifiedAt != null ? DateFormat('MM/dd/yy HH:mm').format(doc.verifiedAt!) : 'N/A',
+                    time: doc.verifiedAt != null
+                        ? DateFormat('MM/dd/yy HH:mm').format(doc.verifiedAt!)
+                        : 'N/A',
                     color: statusColor,
                     isLast: false,
                   ),
@@ -495,7 +569,8 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+            style: theme.textTheme.bodyMedium
+                ?.copyWith(fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -532,11 +607,15 @@ class _DocumentDetailScreenState extends ConsumerState<DocumentDetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 2),
-              Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text(subtitle,
+                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
               const SizedBox(height: 2),
-              Text(time, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              Text(time,
+                  style: const TextStyle(fontSize: 10, color: Colors.grey)),
             ],
           ),
         ),

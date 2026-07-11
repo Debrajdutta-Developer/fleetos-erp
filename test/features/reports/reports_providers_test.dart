@@ -28,7 +28,8 @@ class MockReportRepository implements ReportRepository {
   final List<ReportEntity> reports = [];
 
   @override
-  Stream<List<ReportEntity>> watchReports(String companyId) => Stream.value(reports);
+  Stream<List<ReportEntity>> watchReports(String companyId) =>
+      Stream.value(reports);
 
   @override
   Future<List<ReportEntity>> getReports(String companyId) async => reports;
@@ -43,7 +44,8 @@ class MockReportRepository implements ReportRepository {
   }
 
   @override
-  Future<ReportEntity> createReport(String companyId, ReportEntity report) async {
+  Future<ReportEntity> createReport(
+      String companyId, ReportEntity report) async {
     final newReport = report.copyWith(id: 'rep_${reports.length}');
     reports.add(newReport);
     return newReport;
@@ -163,16 +165,21 @@ void main() {
                 createdAt: now,
               )),
           reportRepositoryProvider.overrideWithValue(reportRepo),
-          vehiclesStreamProvider.overrideWith((ref) => Stream.value([testVehicle])),
-          driversStreamProvider.overrideWith((ref) => Stream.value([testDriver])),
+          vehiclesStreamProvider
+              .overrideWith((ref) => Stream.value([testVehicle])),
+          driversStreamProvider
+              .overrideWith((ref) => Stream.value([testDriver])),
           tripsStreamProvider.overrideWith((ref) => Stream.value([testTrip])),
-          billingInvoicesProvider.overrideWith((ref) => Stream.value([testInvoice])),
+          billingInvoicesProvider
+              .overrideWith((ref) => Stream.value([testInvoice])),
           billingPaymentsProvider.overrideWith((ref) => Stream.value([])),
-          financeTransactionsStreamProvider.overrideWith((ref) => Stream.value([testExpense])),
+          financeTransactionsStreamProvider
+              .overrideWith((ref) => Stream.value([testExpense])),
           partsStreamProvider.overrideWith((ref) => Stream.value([])),
           fuelLogsStreamProvider.overrideWith((ref) => Stream.value([])),
           maintenanceLogsStreamProvider.overrideWith((ref) => Stream.value([])),
-          customersStreamProvider.overrideWith((ref) => Stream.value([testCustomer])),
+          customersStreamProvider
+              .overrideWith((ref) => Stream.value([testCustomer])),
           contractsStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
@@ -199,14 +206,15 @@ void main() {
 
     test('Financial Revenue calculations are aggregated correctly', () async {
       // Set to revenue type
-      container.read(selectedReportTypeProvider.notifier).state = 'financial_revenue';
-      
+      container.read(selectedReportTypeProvider.notifier).state =
+          'financial_revenue';
+
       // Let streams settle
       await pumpEventQueue();
 
       final reportDataVal = container.read(reportDataProvider);
       expect(reportDataVal, isA<AsyncData>());
-      
+
       final data = reportDataVal.value!;
       expect(data.kpis['Total Invoiced'], '\$5500.00');
       expect(data.kpis['Total Collected'], '\$5500.00');
@@ -218,12 +226,13 @@ void main() {
     });
 
     test('Financial Expense calculations are aggregated correctly', () async {
-      container.read(selectedReportTypeProvider.notifier).state = 'financial_expense';
+      container.read(selectedReportTypeProvider.notifier).state =
+          'financial_expense';
       await pumpEventQueue();
 
       final reportDataVal = container.read(reportDataProvider);
       final data = reportDataVal.value!;
-      
+
       expect(data.kpis['Total Expenses'], '\$1200.00');
       expect(data.kpis['Fuel Expenses'], '\$1200.00');
       expect(data.rows.length, 1);
@@ -231,7 +240,8 @@ void main() {
     });
 
     test('Profit & Loss calculations verify net operational profit', () async {
-      container.read(selectedReportTypeProvider.notifier).state = 'financial_profit_loss';
+      container.read(selectedReportTypeProvider.notifier).state =
+          'financial_profit_loss';
       await pumpEventQueue();
 
       final reportDataVal = container.read(reportDataProvider);
@@ -243,7 +253,8 @@ void main() {
     });
 
     test('Fleet Availability calculates active rates correctly', () async {
-      container.read(selectedReportTypeProvider.notifier).state = 'fleet_availability';
+      container.read(selectedReportTypeProvider.notifier).state =
+          'fleet_availability';
       await pumpEventQueue();
 
       final reportDataVal = container.read(reportDataProvider);
@@ -254,7 +265,9 @@ void main() {
       expect(data.kpis['Availability Rate'], '100.0%');
     });
 
-    test('Save report parameters generates a database record and logs audit trail', () async {
+    test(
+        'Save report parameters generates a database record and logs audit trail',
+        () async {
       final data = ReportData(
         kpis: const {'Key': 'Value'},
         rows: const [

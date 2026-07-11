@@ -22,7 +22,8 @@ final documentRepositoryProvider = Provider<DocumentRepository>((ref) {
 });
 
 // --- Stream Provider for Documents ---
-final documentsStreamProvider = StreamProvider.autoDispose<List<DocumentEntity>>((ref) {
+final documentsStreamProvider =
+    StreamProvider.autoDispose<List<DocumentEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(documentRepositoryProvider).watchDocuments(user!.companyId!);
@@ -32,12 +33,14 @@ final documentsStreamProvider = StreamProvider.autoDispose<List<DocumentEntity>>
 final selectedDocumentCategoryProvider = StateProvider<String>((ref) => 'all');
 final selectedDocumentTypeProvider = StateProvider<String>((ref) => 'all');
 final documentSearchQueryProvider = StateProvider<String>((ref) => '');
-final documentSortOptionProvider = StateProvider<String>((ref) => 'date_uploaded_desc'); // name_asc, name_desc, expiry_asc, date_uploaded_desc
+final documentSortOptionProvider = StateProvider<String>((ref) =>
+    'date_uploaded_desc'); // name_asc, name_desc, expiry_asc, date_uploaded_desc
 final showDeletedDocumentsProvider = StateProvider<bool>((ref) => false);
 final selectedEntityFilterProvider = StateProvider<String?>((ref) => null);
 
 // --- Filtered & Sorted Documents Provider ---
-final filteredDocumentsProvider = Provider.autoDispose<List<DocumentEntity>>((ref) {
+final filteredDocumentsProvider =
+    Provider.autoDispose<List<DocumentEntity>>((ref) {
   final docsAsync = ref.watch(documentsStreamProvider);
   final category = ref.watch(selectedDocumentCategoryProvider);
   final type = ref.watch(selectedDocumentTypeProvider);
@@ -58,7 +61,7 @@ final filteredDocumentsProvider = Provider.autoDispose<List<DocumentEntity>>((re
 
     // 2. Category filter
     if (category != 'all' && doc.category != category) return false;
-    
+
     // 3. Type filter
     if (type != 'all' && doc.type != type) return false;
 
@@ -71,7 +74,10 @@ final filteredDocumentsProvider = Provider.autoDispose<List<DocumentEntity>>((re
       final orig = doc.originalFileName.toLowerCase();
       final num = doc.documentNumber.toLowerCase();
       final entity = (doc.entityName ?? '').toLowerCase();
-      return name.contains(query) || orig.contains(query) || num.contains(query) || entity.contains(query);
+      return name.contains(query) ||
+          orig.contains(query) ||
+          num.contains(query) ||
+          entity.contains(query);
     }
 
     return true;
@@ -153,7 +159,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       throw Exception('Validation Error: Document Name cannot be empty.');
     }
     if (doc.documentNumber.trim().isEmpty) {
-      throw Exception('Validation Error: Reference number / ID cannot be empty.');
+      throw Exception(
+          'Validation Error: Reference number / ID cannot be empty.');
     }
     if (doc.storagePath.trim().isEmpty) {
       throw Exception('Validation Error: Storage Path is required.');
@@ -162,7 +169,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     // 2. Maximum File Size Validation (10MB limit)
     const maxBytes = 10 * 1024 * 1024;
     if (doc.fileSize > maxBytes) {
-      throw Exception('Validation Error: File size exceeds the 10MB maximum limit.');
+      throw Exception(
+          'Validation Error: File size exceeds the 10MB maximum limit.');
     }
 
     // 3. Allowed File Types Validation
@@ -174,7 +182,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
     ];
     if (!allowedMimeTypes.contains(doc.mimeType) && doc.mimeType.isNotEmpty) {
-      throw Exception('Validation Error: Only PDF, JPEG, PNG, DOCX, and XLSX files are permitted.');
+      throw Exception(
+          'Validation Error: Only PDF, JPEG, PNG, DOCX, and XLSX files are permitted.');
     }
 
     // 4. Duplicate Detection (check by fileName, category, and size)
@@ -186,7 +195,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
         e.fileSize == doc.fileSize);
 
     if (isDuplicate) {
-      throw Exception('Validation Error: A document with this name and file size already exists.');
+      throw Exception(
+          'Validation Error: A document with this name and file size already exists.');
     }
   }
 
@@ -194,10 +204,11 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true, uploadProgress: 0.0);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
       final existingDocs = _ref.read(documentsStreamProvider).valueOrNull ?? [];
-      
+
       // Perform local business rule validations
       validateDocument(doc, existingDocs);
 
@@ -235,19 +246,22 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: isEdit ? 'document_updated' : 'document_uploaded',
-        description: 'Document "${savedDoc.fileName}" (${savedDoc.mimeType}) ${isEdit ? "updated" : "uploaded"} by ${user.displayName ?? user.email}',
+        description:
+            'Document "${savedDoc.fileName}" (${savedDoc.mimeType}) ${isEdit ? "updated" : "uploaded"} by ${user.displayName ?? user.email}',
         entityId: savedDoc.id,
       );
 
       state = const DocumentFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = DocumentFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = DocumentFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
 
-  Future<bool> replaceDocumentFile(String docId, {
+  Future<bool> replaceDocumentFile(
+    String docId, {
     required Uint8List fileBytes,
     required String originalFileName,
     required String mimeType,
@@ -256,7 +270,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true, uploadProgress: 0.0);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
       final doc = await _repo.getDocumentById(user!.companyId!, docId);
       if (doc == null) throw Exception('Document not found.');
@@ -264,7 +279,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Check max size validation
       const maxBytes = 10 * 1024 * 1024;
       if (fileSize > maxBytes) {
-        throw Exception('Validation Error: File size exceeds the 10MB maximum limit.');
+        throw Exception(
+            'Validation Error: File size exceeds the 10MB maximum limit.');
       }
 
       // Simulate Upload Progress
@@ -274,7 +290,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       }
 
       // Upload replacement file
-      final storagePath = 'replaced_${DateTime.now().millisecondsSinceEpoch}_$originalFileName';
+      final storagePath =
+          'replaced_${DateTime.now().millisecondsSinceEpoch}_$originalFileName';
       final newUrl = await _storage.uploadFile(
         companyId: user!.companyId!,
         path: storagePath,
@@ -298,14 +315,16 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_replaced',
-        description: 'File replaced on Document "${doc.fileName}" with "$originalFileName" by ${user.displayName ?? user.email}',
+        description:
+            'File replaced on Document "${doc.fileName}" with "$originalFileName" by ${user.displayName ?? user.email}',
         entityId: docId,
       );
 
       state = const DocumentFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = DocumentFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = DocumentFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -314,9 +333,11 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
-      if (newName.trim().isEmpty) throw Exception('New document name cannot be empty.');
+      if (newName.trim().isEmpty)
+        throw Exception('New document name cannot be empty.');
 
       final doc = await _repo.getDocumentById(user!.companyId!, docId);
       if (doc == null) throw Exception('Document not found.');
@@ -326,14 +347,16 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_updated',
-        description: 'Document "${doc.fileName}" renamed to "$newName" by ${user.displayName ?? user.email}',
+        description:
+            'Document "${doc.fileName}" renamed to "$newName" by ${user.displayName ?? user.email}',
         entityId: docId,
       );
 
       state = const DocumentFormState(isCompleted: true);
       return true;
     } catch (e) {
-      state = DocumentFormState(errorMessage: e.toString().replaceAll('Exception: ', ''));
+      state = DocumentFormState(
+          errorMessage: e.toString().replaceAll('Exception: ', ''));
       return false;
     }
   }
@@ -342,7 +365,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
       final doc = await _repo.getDocumentById(user!.companyId!, docId);
       if (doc == null) throw Exception('Document not found.');
@@ -359,7 +383,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_verified',
-        description: 'Document "${doc.fileName}" marked as $status by ${user.displayName ?? user.email}',
+        description:
+            'Document "${doc.fileName}" marked as $status by ${user.displayName ?? user.email}',
         entityId: docId,
       );
 
@@ -375,7 +400,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
       final doc = await _repo.getDocumentById(user!.companyId!, docId);
       if (doc == null) throw Exception('Document not found.');
@@ -385,7 +411,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_deleted',
-        description: 'Document "${doc.fileName}" soft-deleted by ${user.displayName ?? user.email}',
+        description:
+            'Document "${doc.fileName}" soft-deleted by ${user.displayName ?? user.email}',
         entityId: docId,
       );
 
@@ -401,7 +428,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     state = const DocumentFormState(isLoading: true);
     try {
       final user = _ref.read(currentUserProvider);
-      if (user?.companyId == null) throw Exception('No company session context.');
+      if (user?.companyId == null)
+        throw Exception('No company session context.');
 
       final doc = await _repo.getDocumentById(user!.companyId!, docId);
       if (doc == null) throw Exception('Document not found.');
@@ -411,7 +439,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_restored',
-        description: 'Document "${doc.fileName}" restored to vault by ${user.displayName ?? user.email}',
+        description:
+            'Document "${doc.fileName}" restored to vault by ${user.displayName ?? user.email}',
         entityId: docId,
       );
 
@@ -434,7 +463,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Write Audit Log
       await _writeAuditLog(
         action: 'document_downloaded',
-        description: 'Document file "${doc.fileName}" downloaded by ${user.displayName ?? user.email}',
+        description:
+            'Document file "${doc.fileName}" downloaded by ${user.displayName ?? user.email}',
         entityId: docId,
       );
     } catch (_) {}
@@ -469,8 +499,8 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
   }
 }
 
-final documentFormControllerProvider =
-    StateNotifierProvider.autoDispose<DocumentFormController, DocumentFormState>((ref) {
+final documentFormControllerProvider = StateNotifierProvider.autoDispose<
+    DocumentFormController, DocumentFormState>((ref) {
   return DocumentFormController(
     repo: ref.watch(documentRepositoryProvider),
     storage: ref.watch(cloudStorageServiceProvider),

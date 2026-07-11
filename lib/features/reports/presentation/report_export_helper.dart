@@ -12,7 +12,8 @@ class ReportExportHelper {
     final StringBuffer csvBuffer = StringBuffer();
 
     // Write Header row
-    csvBuffer.writeln(headers.map((h) => '"${h.replaceAll('"', '""')}"').join(','));
+    csvBuffer
+        .writeln(headers.map((h) => '"${h.replaceAll('"', '""')}"').join(','));
 
     // Write Data rows
     for (final row in rows) {
@@ -39,7 +40,9 @@ class ReportExportHelper {
     required List<Map<String, dynamic>> rows,
   }) async {
     // 1. Log to Audit Trails
-    await ref.read(reportSaveControllerProvider.notifier).logReportExport(title, type, format.toUpperCase());
+    await ref
+        .read(reportSaveControllerProvider.notifier)
+        .logReportExport(title, type, format.toUpperCase());
 
     // 2. Generate export content representation
     String exportString = '';
@@ -59,7 +62,8 @@ class ReportExportHelper {
         buffer.writeln(headers.join(' | '));
         buffer.writeln('-' * 80);
         for (final row in rows) {
-          buffer.writeln(headers.map((h) => row[h]?.toString() ?? '').join(' | '));
+          buffer.writeln(
+              headers.map((h) => row[h]?.toString() ?? '').join(' | '));
         }
       }
       exportString = buffer.toString();
@@ -70,7 +74,8 @@ class ReportExportHelper {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Successfully exported "$title" to ${format.toUpperCase()} format! (Logged in Audit Log)'),
+          content: Text(
+              'Successfully exported "$title" to ${format.toUpperCase()} format! (Logged in Audit Log)'),
           action: SnackBarAction(
             label: 'View Bytes',
             onPressed: () {
@@ -97,7 +102,8 @@ class ReportExportHelper {
                             exportString.length > 500
                                 ? '${exportString.substring(0, 500)}\n... [truncated]'
                                 : exportString,
-                            style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                            style: const TextStyle(
+                                fontFamily: 'monospace', fontSize: 11),
                           ),
                         ),
                       ],

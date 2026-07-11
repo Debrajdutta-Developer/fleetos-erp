@@ -30,14 +30,16 @@ final reportRepositoryProvider = Provider<ReportRepository>((ref) {
 });
 
 // --- Stream Provider for Saved Reports ---
-final savedReportsProvider = StreamProvider.autoDispose<List<ReportEntity>>((ref) {
+final savedReportsProvider =
+    StreamProvider.autoDispose<List<ReportEntity>>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user?.companyId == null) return Stream.value([]);
   return ref.watch(reportRepositoryProvider).watchReports(user!.companyId!);
 });
 
 // --- State Providers for Filtering and View Configuration ---
-final selectedReportTypeProvider = StateProvider<String>((ref) => 'financial_revenue');
+final selectedReportTypeProvider =
+    StateProvider<String>((ref) => 'financial_revenue');
 final reportTimeframeProvider = StateProvider<String>((ref) => 'monthly');
 
 class ReportFilters {
@@ -80,27 +82,37 @@ class ReportFilters {
       driverId: clearDriver ? null : (driverId ?? this.driverId),
       customerId: clearCustomer ? null : (customerId ?? this.customerId),
       routeId: clearRoute ? null : (routeId ?? this.routeId),
-      invoiceStatus: clearInvoiceStatus ? null : (invoiceStatus ?? this.invoiceStatus),
-      paymentStatus: clearPaymentStatus ? null : (paymentStatus ?? this.paymentStatus),
+      invoiceStatus:
+          clearInvoiceStatus ? null : (invoiceStatus ?? this.invoiceStatus),
+      paymentStatus:
+          clearPaymentStatus ? null : (paymentStatus ?? this.paymentStatus),
       dateRange: clearDateRange ? null : (dateRange ?? this.dateRange),
     );
   }
 }
 
-final reportFiltersProvider = StateNotifierProvider<ReportFiltersNotifier, ReportFilters>((ref) {
+final reportFiltersProvider =
+    StateNotifierProvider<ReportFiltersNotifier, ReportFilters>((ref) {
   return ReportFiltersNotifier();
 });
 
 class ReportFiltersNotifier extends StateNotifier<ReportFilters> {
   ReportFiltersNotifier() : super(const ReportFilters());
 
-  void setVehicleId(String? id) => state = state.copyWith(vehicleId: id, clearVehicle: id == null);
-  void setDriverId(String? id) => state = state.copyWith(driverId: id, clearDriver: id == null);
-  void setCustomerId(String? id) => state = state.copyWith(customerId: id, clearCustomer: id == null);
-  void setRouteId(String? id) => state = state.copyWith(routeId: id, clearRoute: id == null);
-  void setInvoiceStatus(String? status) => state = state.copyWith(invoiceStatus: status, clearInvoiceStatus: status == null);
-  void setPaymentStatus(String? status) => state = state.copyWith(paymentStatus: status, clearPaymentStatus: status == null);
-  void setDateRange(DateTimeRange? range) => state = state.copyWith(dateRange: range, clearDateRange: range == null);
+  void setVehicleId(String? id) =>
+      state = state.copyWith(vehicleId: id, clearVehicle: id == null);
+  void setDriverId(String? id) =>
+      state = state.copyWith(driverId: id, clearDriver: id == null);
+  void setCustomerId(String? id) =>
+      state = state.copyWith(customerId: id, clearCustomer: id == null);
+  void setRouteId(String? id) =>
+      state = state.copyWith(routeId: id, clearRoute: id == null);
+  void setInvoiceStatus(String? status) => state =
+      state.copyWith(invoiceStatus: status, clearInvoiceStatus: status == null);
+  void setPaymentStatus(String? status) => state =
+      state.copyWith(paymentStatus: status, clearPaymentStatus: status == null);
+  void setDateRange(DateTimeRange? range) =>
+      state = state.copyWith(dateRange: range, clearDateRange: range == null);
   void reset() => state = const ReportFilters();
 }
 
@@ -191,7 +203,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
   // Helper date filters
   bool inDateRange(DateTime date) {
     if (filters.dateRange == null) return true;
-    return date.isAfter(filters.dateRange!.start.subtract(const Duration(seconds: 1))) &&
+    return date.isAfter(
+            filters.dateRange!.start.subtract(const Duration(seconds: 1))) &&
         date.isBefore(filters.dateRange!.end.add(const Duration(days: 1)));
   }
 
@@ -199,7 +212,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
     if (timeframe == 'daily') {
       return DateFormat('yyyy-MM-dd').format(date);
     } else if (timeframe == 'weekly') {
-      final weekOfYear = ((date.difference(DateTime(date.year, 1, 1)).inDays) / 7).ceil();
+      final weekOfYear =
+          ((date.difference(DateTime(date.year, 1, 1)).inDays) / 7).ceil();
       return '${date.year}-W$weekOfYear';
     } else if (timeframe == 'monthly') {
       return DateFormat('yyyy-MM').format(date);
@@ -221,15 +235,22 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
       case 'financial_revenue':
         final filteredInvoices = invoices.where((i) {
           if (!inDateRange(i.issueDate)) return false;
-          if (filters.customerId != null && i.customerId != filters.customerId) return false;
-          if (filters.invoiceStatus != null && i.status != filters.invoiceStatus) return false;
+          if (filters.customerId != null && i.customerId != filters.customerId)
+            return false;
+          if (filters.invoiceStatus != null &&
+              i.status != filters.invoiceStatus) return false;
           return true;
         }).toList();
 
-        final totalInvoiced = filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
-        final totalCollected = filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.amountPaid);
-        final totalOutstanding = filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
-        final rate = totalInvoiced > 0.0 ? (totalCollected / totalInvoiced) * 100.0 : 100.0;
+        final totalInvoiced =
+            filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+        final totalCollected =
+            filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.amountPaid);
+        final totalOutstanding = filteredInvoices.fold<double>(
+            0.0, (sum, i) => sum + i.outstandingAmount);
+        final rate = totalInvoiced > 0.0
+            ? (totalCollected / totalInvoiced) * 100.0
+            : 100.0;
 
         kpis = {
           'Total Invoiced': '\$${totalInvoiced.toStringAsFixed(2)}',
@@ -250,36 +271,48 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredInvoices.map((i) => {
-          'Invoice ID': i.id,
-          'Invoice Number': i.invoiceNumber,
-          'Customer': i.customerName,
-          'Freight Charge': '\$${i.freightCharge.toStringAsFixed(2)}',
-          'Grand Total': '\$${i.grandTotal.toStringAsFixed(2)}',
-          'Amount Paid': '\$${i.amountPaid.toStringAsFixed(2)}',
-          'Outstanding': '\$${i.outstandingAmount.toStringAsFixed(2)}',
-          'Status': i.status,
-          'Issue Date': DateFormat('yyyy-MM-dd').format(i.issueDate),
-        }).toList();
+        rows = filteredInvoices
+            .map((i) => {
+                  'Invoice ID': i.id,
+                  'Invoice Number': i.invoiceNumber,
+                  'Customer': i.customerName,
+                  'Freight Charge': '\$${i.freightCharge.toStringAsFixed(2)}',
+                  'Grand Total': '\$${i.grandTotal.toStringAsFixed(2)}',
+                  'Amount Paid': '\$${i.amountPaid.toStringAsFixed(2)}',
+                  'Outstanding': '\$${i.outstandingAmount.toStringAsFixed(2)}',
+                  'Status': i.status,
+                  'Issue Date': DateFormat('yyyy-MM-dd').format(i.issueDate),
+                })
+            .toList();
         break;
 
       case 'financial_expense':
         final filteredTxs = txs.where((t) {
           if (t.type != 'expense') return false;
           if (!inDateRange(t.transactionDate)) return false;
-          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId) return false;
+          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId)
+            return false;
           if (filters.driverId != null && t.tripId != null) {
             // Find driver in trip
-            final trip = trips.firstWhere((tr) => tr.id == t.tripId, orElse: () => null as dynamic);
+            final trip = trips.firstWhere((tr) => tr.id == t.tripId,
+                orElse: () => null as dynamic);
             if (trip != null && trip.driverId != filters.driverId) return false;
           }
           return true;
         }).toList();
 
-        final totalExp = filteredTxs.fold<double>(0.0, (sum, t) => sum + t.amount);
-        final fuelExp = filteredTxs.where((t) => t.category == 'diesel').fold<double>(0.0, (sum, t) => sum + t.amount);
-        final maintExp = filteredTxs.where((t) => t.category == 'repair' || t.category == 'tyre').fold<double>(0.0, (sum, t) => sum + t.amount);
-        final salaryExp = filteredTxs.where((t) => t.category == 'driver_salary' || t.category == 'advance_salary').fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalExp =
+            filteredTxs.fold<double>(0.0, (sum, t) => sum + t.amount);
+        final fuelExp = filteredTxs
+            .where((t) => t.category == 'diesel')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final maintExp = filteredTxs
+            .where((t) => t.category == 'repair' || t.category == 'tyre')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final salaryExp = filteredTxs
+            .where((t) =>
+                t.category == 'driver_salary' || t.category == 'advance_salary')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
 
         kpis = {
           'Total Expenses': '\$${totalExp.toStringAsFixed(2)}',
@@ -299,31 +332,46 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredTxs.map((t) => {
-          'Transaction ID': t.id,
-          'Category': t.category,
-          'Amount': '\$${t.amount.toStringAsFixed(2)}',
-          'Payment Mode': t.paymentMode,
-          'Vehicle': t.vehicleLicensePlate ?? 'N/A',
-          'Trip': t.tripNumber ?? 'N/A',
-          'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
-          'Notes': t.notes ?? '',
-        }).toList();
+        rows = filteredTxs
+            .map((t) => {
+                  'Transaction ID': t.id,
+                  'Category': t.category,
+                  'Amount': '\$${t.amount.toStringAsFixed(2)}',
+                  'Payment Mode': t.paymentMode,
+                  'Vehicle': t.vehicleLicensePlate ?? 'N/A',
+                  'Trip': t.tripNumber ?? 'N/A',
+                  'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
+                  'Notes': t.notes ?? '',
+                })
+            .toList();
         break;
 
       case 'financial_profit_loss':
         // Sum total income vs expense
-        final filteredIncomes = txs.where((t) => t.type == 'income' && inDateRange(t.transactionDate)).toList();
-        final filteredExpenses = txs.where((t) => t.type == 'expense' && inDateRange(t.transactionDate)).toList();
+        final filteredIncomes = txs
+            .where((t) => t.type == 'income' && inDateRange(t.transactionDate))
+            .toList();
+        final filteredExpenses = txs
+            .where((t) => t.type == 'expense' && inDateRange(t.transactionDate))
+            .toList();
 
         // Plus invoices grandTotal as alternative/operational income
-        final invoiceRevenue = invoices.where((i) => i.status != 'draft' && i.status != 'cancelled' && inDateRange(i.issueDate)).fold<double>(0.0, (sum, i) => sum + i.grandTotal);
-        final financeIncome = filteredIncomes.fold<double>(0.0, (sum, t) => sum + t.amount);
-        final totalIncome = financeIncome > 0.0 ? financeIncome : invoiceRevenue;
+        final invoiceRevenue = invoices
+            .where((i) =>
+                i.status != 'draft' &&
+                i.status != 'cancelled' &&
+                inDateRange(i.issueDate))
+            .fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+        final financeIncome =
+            filteredIncomes.fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalIncome =
+            financeIncome > 0.0 ? financeIncome : invoiceRevenue;
 
-        final totalExpense = filteredExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalExpense =
+            filteredExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
         final netProfit = totalIncome - totalExpense;
-        final margin = totalIncome > 0.0 ? (netProfit / totalIncome) * 100 : 0.0;
+        final margin =
+            totalIncome > 0.0 ? (netProfit / totalIncome) * 100 : 0.0;
 
         kpis = {
           'Total Income': '\$${totalIncome.toStringAsFixed(2)}',
@@ -335,14 +383,17 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         // Group P&L by Timeframe
         final groupedIncome = <String, double>{};
         final groupedExpense = <String, double>{};
-        
+
         if (financeIncome > 0.0) {
           for (final t in filteredIncomes) {
             final key = formatDateKey(t.transactionDate);
             groupedIncome[key] = (groupedIncome[key] ?? 0.0) + t.amount;
           }
         } else {
-          for (final i in invoices.where((i) => i.status != 'draft' && i.status != 'cancelled' && inDateRange(i.issueDate))) {
+          for (final i in invoices.where((i) =>
+              i.status != 'draft' &&
+              i.status != 'cancelled' &&
+              inDateRange(i.issueDate))) {
             final key = formatDateKey(i.issueDate);
             groupedIncome[key] = (groupedIncome[key] ?? 0.0) + i.grandTotal;
           }
@@ -353,27 +404,52 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           groupedExpense[key] = (groupedExpense[key] ?? 0.0) + t.amount;
         }
 
-        final allKeys = {...groupedIncome.keys, ...groupedExpense.keys}.toList()..sort();
+        final allKeys = {...groupedIncome.keys, ...groupedExpense.keys}.toList()
+          ..sort();
         for (final key in allKeys) {
-          chartData.add(ChartDataPoint(label: key, value: groupedIncome[key] ?? 0.0, group: 'Income'));
-          chartData.add(ChartDataPoint(label: key, value: groupedExpense[key] ?? 0.0, group: 'Expense'));
+          chartData.add(ChartDataPoint(
+              label: key, value: groupedIncome[key] ?? 0.0, group: 'Income'));
+          chartData.add(ChartDataPoint(
+              label: key, value: groupedExpense[key] ?? 0.0, group: 'Expense'));
         }
 
         rows = [
-          {'Account': 'Gross Invoiced Revenue', 'Total Amount': '\$${invoiceRevenue.toStringAsFixed(2)}', 'Details': 'Accumulated accounts receivable'},
-          {'Account': 'Direct Finance Income', 'Total Amount': '\$${financeIncome.toStringAsFixed(2)}', 'Details': 'Cash/UPI/Bank direct receipts'},
-          {'Account': 'Operating Expenses', 'Total Amount': '\$${totalExpense.toStringAsFixed(2)}', 'Details': 'Salaries, fuel, tolls, parts, repairs'},
-          {'Account': 'Net Operational Profit', 'Total Amount': '\$${netProfit.toStringAsFixed(2)}', 'Details': 'Income minus direct expenses'},
+          {
+            'Account': 'Gross Invoiced Revenue',
+            'Total Amount': '\$${invoiceRevenue.toStringAsFixed(2)}',
+            'Details': 'Accumulated accounts receivable'
+          },
+          {
+            'Account': 'Direct Finance Income',
+            'Total Amount': '\$${financeIncome.toStringAsFixed(2)}',
+            'Details': 'Cash/UPI/Bank direct receipts'
+          },
+          {
+            'Account': 'Operating Expenses',
+            'Total Amount': '\$${totalExpense.toStringAsFixed(2)}',
+            'Details': 'Salaries, fuel, tolls, parts, repairs'
+          },
+          {
+            'Account': 'Net Operational Profit',
+            'Total Amount': '\$${netProfit.toStringAsFixed(2)}',
+            'Details': 'Income minus direct expenses'
+          },
         ];
         break;
 
       case 'financial_cash_flow':
         // Cash Flow tracks direct cash/bank transaction records (payments received vs expense transactions)
-        final filteredPayments = payments.where((p) => p.status == 'completed' && inDateRange(p.paymentDate)).toList();
-        final filteredExpenses = txs.where((t) => t.type == 'expense' && inDateRange(t.transactionDate)).toList();
+        final filteredPayments = payments
+            .where((p) => p.status == 'completed' && inDateRange(p.paymentDate))
+            .toList();
+        final filteredExpenses = txs
+            .where((t) => t.type == 'expense' && inDateRange(t.transactionDate))
+            .toList();
 
-        final inflows = filteredPayments.fold<double>(0.0, (sum, p) => sum + p.amount);
-        final outflows = filteredExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
+        final inflows =
+            filteredPayments.fold<double>(0.0, (sum, p) => sum + p.amount);
+        final outflows =
+            filteredExpenses.fold<double>(0.0, (sum, t) => sum + t.amount);
         final netCash = inflows - outflows;
 
         kpis = {
@@ -397,38 +473,56 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           groupedOut[key] = (groupedOut[key] ?? 0.0) + t.amount;
         }
 
-        final allKeys = {...groupedIn.keys, ...groupedOut.keys}.toList()..sort();
+        final allKeys = {...groupedIn.keys, ...groupedOut.keys}.toList()
+          ..sort();
         for (final key in allKeys) {
-          chartData.add(ChartDataPoint(label: key, value: groupedIn[key] ?? 0.0, group: 'Inflow'));
-          chartData.add(ChartDataPoint(label: key, value: groupedOut[key] ?? 0.0, group: 'Outflow'));
+          chartData.add(ChartDataPoint(
+              label: key, value: groupedIn[key] ?? 0.0, group: 'Inflow'));
+          chartData.add(ChartDataPoint(
+              label: key, value: groupedOut[key] ?? 0.0, group: 'Outflow'));
         }
 
-        rows = filteredPayments.map((p) => {
-          'Date': DateFormat('yyyy-MM-dd').format(p.paymentDate),
-          'Type': 'Inflow',
-          'Source': 'Invoice ${p.invoiceId}',
-          'Reference': p.referenceNumber ?? 'N/A',
-          'Amount': '+\$${p.amount.toStringAsFixed(2)}',
-        }).toList()
-        ..addAll(filteredExpenses.map((t) => {
-          'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
-          'Type': 'Outflow',
-          'Source': 'Expense (${t.category})',
-          'Reference': t.referenceNumber ?? 'N/A',
-          'Amount': '-\$${t.amount.toStringAsFixed(2)}',
-        }).toList());
+        rows = filteredPayments
+            .map((p) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(p.paymentDate),
+                  'Type': 'Inflow',
+                  'Source': 'Invoice ${p.invoiceId}',
+                  'Reference': p.referenceNumber ?? 'N/A',
+                  'Amount': '+\$${p.amount.toStringAsFixed(2)}',
+                })
+            .toList()
+          ..addAll(filteredExpenses
+              .map((t) => {
+                    'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
+                    'Type': 'Outflow',
+                    'Source': 'Expense (${t.category})',
+                    'Reference': t.referenceNumber ?? 'N/A',
+                    'Amount': '-\$${t.amount.toStringAsFixed(2)}',
+                  })
+              .toList());
 
         rows.sort((a, b) => b['Date'].compareTo(a['Date']));
         break;
 
       case 'financial_outstanding_receivables':
-        final activeInvoices = invoices.where((i) => i.status == 'sent' || i.status == 'overdue').toList();
-        final totalOut = activeInvoices.fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
-        
+        final activeInvoices = invoices
+            .where((i) => i.status == 'sent' || i.status == 'overdue')
+            .toList();
+        final totalOut = activeInvoices.fold<double>(
+            0.0, (sum, i) => sum + i.outstandingAmount);
+
         final now = DateTime.now();
-        final aging30 = activeInvoices.where((i) => now.difference(i.issueDate).inDays <= 30).fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
-        final aging60 = activeInvoices.where((i) => now.difference(i.issueDate).inDays > 30 && now.difference(i.issueDate).inDays <= 60).fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
-        final aging90 = activeInvoices.where((i) => now.difference(i.issueDate).inDays > 60).fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
+        final aging30 = activeInvoices
+            .where((i) => now.difference(i.issueDate).inDays <= 30)
+            .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
+        final aging60 = activeInvoices
+            .where((i) =>
+                now.difference(i.issueDate).inDays > 30 &&
+                now.difference(i.issueDate).inDays <= 60)
+            .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
+        final aging90 = activeInvoices
+            .where((i) => now.difference(i.issueDate).inDays > 60)
+            .fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
 
         kpis = {
           'Total Outstanding': '\$${totalOut.toStringAsFixed(2)}',
@@ -443,15 +537,18 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           ChartDataPoint(label: '60+ Days', value: aging90),
         ];
 
-        rows = activeInvoices.map((i) => {
-          'Invoice Number': i.invoiceNumber,
-          'Customer Name': i.customerName,
-          'Due Date': DateFormat('yyyy-MM-dd').format(i.dueDate),
-          'Aging (Days)': now.difference(i.issueDate).inDays.toString(),
-          'Invoiced Amount': '\$${i.grandTotal.toStringAsFixed(2)}',
-          'Outstanding Amount': '\$${i.outstandingAmount.toStringAsFixed(2)}',
-          'Status': i.status,
-        }).toList();
+        rows = activeInvoices
+            .map((i) => {
+                  'Invoice Number': i.invoiceNumber,
+                  'Customer Name': i.customerName,
+                  'Due Date': DateFormat('yyyy-MM-dd').format(i.dueDate),
+                  'Aging (Days)': now.difference(i.issueDate).inDays.toString(),
+                  'Invoiced Amount': '\$${i.grandTotal.toStringAsFixed(2)}',
+                  'Outstanding Amount':
+                      '\$${i.outstandingAmount.toStringAsFixed(2)}',
+                  'Status': i.status,
+                })
+            .toList();
         break;
 
       case 'financial_customer_ledger':
@@ -462,10 +559,23 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           break;
         }
 
-        final customer = customers.firstWhere((c) => c.id == custId, orElse: () => CustomerEntity(id: custId, name: 'Unknown Customer', contactName: '', email: '', phone: '', address: '', createdAt: DateTime.now(), updatedAt: DateTime.now()));
-        final custInvoices = invoices.where((i) => i.customerId == custId && inDateRange(i.issueDate)).toList();
-        final totalInv = custInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
-        final totalPaid = custInvoices.fold<double>(0.0, (sum, i) => sum + i.amountPaid);
+        final customer = customers.firstWhere((c) => c.id == custId,
+            orElse: () => CustomerEntity(
+                id: custId,
+                name: 'Unknown Customer',
+                contactName: '',
+                email: '',
+                phone: '',
+                address: '',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now()));
+        final custInvoices = invoices
+            .where((i) => i.customerId == custId && inDateRange(i.issueDate))
+            .toList();
+        final totalInv =
+            custInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+        final totalPaid =
+            custInvoices.fold<double>(0.0, (sum, i) => sum + i.amountPaid);
         final currentBal = totalInv - totalPaid;
 
         kpis = {
@@ -485,32 +595,41 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = custInvoices.map((i) => {
-          'Date': DateFormat('yyyy-MM-dd').format(i.issueDate),
-          'Document ID': i.id,
-          'Invoice/Ref': i.invoiceNumber,
-          'Invoiced Total': '\$${i.grandTotal.toStringAsFixed(2)}',
-          'Amount Settled': '\$${i.amountPaid.toStringAsFixed(2)}',
-          'Balance Remaining': '\$${i.outstandingAmount.toStringAsFixed(2)}',
-          'Status': i.status,
-        }).toList();
+        rows = custInvoices
+            .map((i) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(i.issueDate),
+                  'Document ID': i.id,
+                  'Invoice/Ref': i.invoiceNumber,
+                  'Invoiced Total': '\$${i.grandTotal.toStringAsFixed(2)}',
+                  'Amount Settled': '\$${i.amountPaid.toStringAsFixed(2)}',
+                  'Balance Remaining':
+                      '\$${i.outstandingAmount.toStringAsFixed(2)}',
+                  'Status': i.status,
+                })
+            .toList();
         rows.sort((a, b) => b['Date'].compareTo(a['Date']));
         break;
 
       case 'financial_driver_expense':
         final filteredTxs = txs.where((t) {
-          if (t.category != 'driver_salary' && t.category != 'advance_salary') return false;
+          if (t.category != 'driver_salary' && t.category != 'advance_salary')
+            return false;
           if (!inDateRange(t.transactionDate)) return false;
           if (filters.driverId != null) {
             // Check if transaction has tripId, matching driverId
-            final trip = trips.firstWhere((tr) => tr.id == t.tripId, orElse: () => null as dynamic);
+            final trip = trips.firstWhere((tr) => tr.id == t.tripId,
+                orElse: () => null as dynamic);
             if (trip != null && trip.driverId != filters.driverId) return false;
           }
           return true;
         }).toList();
 
-        final totalSalaries = filteredTxs.where((t) => t.category == 'driver_salary').fold<double>(0.0, (sum, t) => sum + t.amount);
-        final totalAdvances = filteredTxs.where((t) => t.category == 'advance_salary').fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalSalaries = filteredTxs
+            .where((t) => t.category == 'driver_salary')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalAdvances = filteredTxs
+            .where((t) => t.category == 'advance_salary')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
         final totalCombined = totalSalaries + totalAdvances;
 
         kpis = {
@@ -530,27 +649,39 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredTxs.map((t) => {
-          'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
-          'Category': t.category,
-          'Amount': '\$${t.amount.toStringAsFixed(2)}',
-          'Payment Mode': t.paymentMode,
-          'Trip ID/Number': t.tripNumber ?? 'N/A',
-          'Reference': t.referenceNumber ?? 'N/A',
-        }).toList();
+        rows = filteredTxs
+            .map((t) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
+                  'Category': t.category,
+                  'Amount': '\$${t.amount.toStringAsFixed(2)}',
+                  'Payment Mode': t.paymentMode,
+                  'Trip ID/Number': t.tripNumber ?? 'N/A',
+                  'Reference': t.referenceNumber ?? 'N/A',
+                })
+            .toList();
         break;
 
       case 'financial_vehicle_expense':
         final filteredTxs = txs.where((t) {
           if (t.vehicleId == null) return false;
           if (!inDateRange(t.transactionDate)) return false;
-          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId) return false;
+          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId)
+            return false;
           return true;
         }).toList();
 
-        final totalFuel = filteredTxs.where((t) => t.category == 'diesel').fold<double>(0.0, (sum, t) => sum + t.amount);
-        final totalMaint = filteredTxs.where((t) => t.category == 'repair' || t.category == 'tyre').fold<double>(0.0, (sum, t) => sum + t.amount);
-        final totalMisc = filteredTxs.where((t) => t.category == 'toll' || t.category == 'insurance' || t.category == 'miscellaneous').fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalFuel = filteredTxs
+            .where((t) => t.category == 'diesel')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalMaint = filteredTxs
+            .where((t) => t.category == 'repair' || t.category == 'tyre')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
+        final totalMisc = filteredTxs
+            .where((t) =>
+                t.category == 'toll' ||
+                t.category == 'insurance' ||
+                t.category == 'miscellaneous')
+            .fold<double>(0.0, (sum, t) => sum + t.amount);
         final totalCombined = totalFuel + totalMaint + totalMisc;
 
         kpis = {
@@ -571,33 +702,42 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredTxs.map((t) => {
-          'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
-          'Vehicle License': t.vehicleLicensePlate ?? 'N/A',
-          'Category': t.category,
-          'Amount': '\$${t.amount.toStringAsFixed(2)}',
-          'Payment Mode': t.paymentMode,
-          'Reference': t.referenceNumber ?? 'N/A',
-        }).toList();
+        rows = filteredTxs
+            .map((t) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(t.transactionDate),
+                  'Vehicle License': t.vehicleLicensePlate ?? 'N/A',
+                  'Category': t.category,
+                  'Amount': '\$${t.amount.toStringAsFixed(2)}',
+                  'Payment Mode': t.paymentMode,
+                  'Reference': t.referenceNumber ?? 'N/A',
+                })
+            .toList();
         break;
 
       case 'fleet_vehicle_utilization':
         final activeTrips = trips.where((t) {
           if (!inDateRange(t.createdAt)) return false;
-          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId) return false;
+          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId)
+            return false;
           return t.status == 'completed' || t.status == 'in_transit';
         }).toList();
 
         final totalVehicles = vehicles.length;
         final totalTrips = activeTrips.length;
-        
+
         // Approximate utilization rate based on trip count per vehicle
-        final avgTripsPerVehicle = totalVehicles > 0 ? totalTrips / totalVehicles : 0.0;
-        final utilPercent = totalVehicles > 0 ? (activeTrips.map((t) => t.vehicleId).toSet().length / totalVehicles) * 100 : 0.0;
+        final avgTripsPerVehicle =
+            totalVehicles > 0 ? totalTrips / totalVehicles : 0.0;
+        final utilPercent = totalVehicles > 0
+            ? (activeTrips.map((t) => t.vehicleId).toSet().length /
+                    totalVehicles) *
+                100
+            : 0.0;
 
         kpis = {
           'Fleet Size': totalVehicles.toString(),
-          'Utilized Vehicles': activeTrips.map((t) => t.vehicleId).toSet().length.toString(),
+          'Utilized Vehicles':
+              activeTrips.map((t) => t.vehicleId).toSet().length.toString(),
           'Utilization Rate': '${utilPercent.toStringAsFixed(1)}%',
           'Avg Trips per Vehicle': avgTripsPerVehicle.toStringAsFixed(1),
         };
@@ -605,7 +745,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         // Group by vehicle
         final grouped = <String, int>{};
         for (final t in activeTrips) {
-          final v = vehicles.firstWhere((veh) => veh.id == t.vehicleId, orElse: () => null as dynamic);
+          final v = vehicles.firstWhere((veh) => veh.id == t.vehicleId,
+              orElse: () => null as dynamic);
           final label = v != null ? v.licensePlate : t.vehicleId;
           grouped[label] = (grouped[label] ?? 0) + 1;
         }
@@ -630,15 +771,20 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
       case 'fleet_trip_summary':
         final filteredTrips = trips.where((t) {
           if (!inDateRange(t.createdAt)) return false;
-          if (filters.driverId != null && t.driverId != filters.driverId) return false;
-          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId) return false;
+          if (filters.driverId != null && t.driverId != filters.driverId)
+            return false;
+          if (filters.vehicleId != null && t.vehicleId != filters.vehicleId)
+            return false;
           return true;
         }).toList();
 
         final totalTrips = filteredTrips.length;
-        final completed = filteredTrips.where((t) => t.status == 'completed').length;
-        final inTransit = filteredTrips.where((t) => t.status == 'in_transit').length;
-        final cancelled = filteredTrips.where((t) => t.status == 'cancelled').length;
+        final completed =
+            filteredTrips.where((t) => t.status == 'completed').length;
+        final inTransit =
+            filteredTrips.where((t) => t.status == 'in_transit').length;
+        final cancelled =
+            filteredTrips.where((t) => t.status == 'cancelled').length;
 
         kpis = {
           'Total Trips': totalTrips.toString(),
@@ -657,24 +803,40 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredTrips.map((t) => {
-          'Trip ID': t.id,
-          'Trip Number': t.tripNumber,
-          'Driver': drivers.firstWhere((d) => d.id == t.driverId, orElse: () => null as dynamic)?.fullName ?? 'Unknown',
-          'Vehicle': vehicles.firstWhere((v) => v.id == t.vehicleId, orElse: () => null as dynamic)?.licensePlate ?? 'Unknown',
-          'Cargo Description': t.cargo['description'] ?? 'N/A',
-          'Route Start': t.route['startLocationName'] ?? 'N/A',
-          'Route End': t.route['endLocationName'] ?? 'N/A',
-          'Status': t.status,
-        }).toList();
+        rows = filteredTrips
+            .map((t) => {
+                  'Trip ID': t.id,
+                  'Trip Number': t.tripNumber,
+                  'Driver': drivers
+                          .firstWhere((d) => d.id == t.driverId,
+                              orElse: () => null as dynamic)
+                          ?.fullName ??
+                      'Unknown',
+                  'Vehicle': vehicles
+                          .firstWhere((v) => v.id == t.vehicleId,
+                              orElse: () => null as dynamic)
+                          ?.licensePlate ??
+                      'Unknown',
+                  'Cargo Description': t.cargo['description'] ?? 'N/A',
+                  'Route Start': t.route['startLocationName'] ?? 'N/A',
+                  'Route End': t.route['endLocationName'] ?? 'N/A',
+                  'Status': t.status,
+                })
+            .toList();
         break;
 
       case 'fleet_availability':
         final totalVehicles = vehicles.length;
-        final available = vehicles.where((v) => v.status == 'active' || v.status == 'idle').length;
-        final maintenance = vehicles.where((v) => v.status == 'maintenance').length;
-        final decommissioned = vehicles.where((v) => v.status == 'decommissioned' || v.status == 'sold').length;
-        final rate = totalVehicles > 0 ? (available / totalVehicles) * 100 : 100.0;
+        final available = vehicles
+            .where((v) => v.status == 'active' || v.status == 'idle')
+            .length;
+        final maintenance =
+            vehicles.where((v) => v.status == 'maintenance').length;
+        final decommissioned = vehicles
+            .where((v) => v.status == 'decommissioned' || v.status == 'sold')
+            .length;
+        final rate =
+            totalVehicles > 0 ? (available / totalVehicles) * 100 : 100.0;
 
         kpis = {
           'Total Fleet Size': totalVehicles.toString(),
@@ -686,25 +848,31 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         chartData = [
           ChartDataPoint(label: 'Available', value: available.toDouble()),
           ChartDataPoint(label: 'Maintenance', value: maintenance.toDouble()),
-          ChartDataPoint(label: 'Decommissioned', value: decommissioned.toDouble()),
+          ChartDataPoint(
+              label: 'Decommissioned', value: decommissioned.toDouble()),
         ];
 
-        rows = vehicles.map((v) => {
-          'License Plate': v.licensePlate,
-          'Make': v.make,
-          'Model': v.model,
-          'Year': v.year.toString(),
-          'Status': v.status,
-          'Fuel Type': v.fuelType,
-          'Current Odometer': '${v.odometer} km',
-        }).toList();
+        rows = vehicles
+            .map((v) => {
+                  'License Plate': v.licensePlate,
+                  'Make': v.make,
+                  'Model': v.model,
+                  'Year': v.year.toString(),
+                  'Status': v.status,
+                  'Fuel Type': v.fuelType,
+                  'Current Odometer': '${v.odometer} km',
+                })
+            .toList();
         break;
 
       case 'fleet_driver_utilization':
-        final activeTrips = trips.where((t) => t.status == 'completed' || t.status == 'in_transit').toList();
+        final activeTrips = trips
+            .where((t) => t.status == 'completed' || t.status == 'in_transit')
+            .toList();
         final totalDrivers = drivers.length;
         final activeDrivers = activeTrips.map((t) => t.driverId).toSet().length;
-        final utilPercent = totalDrivers > 0 ? (activeDrivers / totalDrivers) * 100 : 0.0;
+        final utilPercent =
+            totalDrivers > 0 ? (activeDrivers / totalDrivers) * 100 : 0.0;
 
         kpis = {
           'Total Drivers': totalDrivers.toString(),
@@ -716,7 +884,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         // Group by driver
         final grouped = <String, int>{};
         for (final t in activeTrips) {
-          final d = drivers.firstWhere((drv) => drv.id == t.driverId, orElse: () => null as dynamic);
+          final d = drivers.firstWhere((drv) => drv.id == t.driverId,
+              orElse: () => null as dynamic);
           final label = d != null ? d.fullName : t.driverId;
           grouped[label] = (grouped[label] ?? 0) + 1;
         }
@@ -738,9 +907,16 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         break;
 
       case 'fleet_driver_performance':
-        final avgSafety = drivers.isEmpty ? 0.0 : drivers.fold<double>(0.0, (sum, d) => sum + d.safetyScore) / drivers.length;
-        final highSafety = drivers.isEmpty ? 0 : drivers.map((d) => d.safetyScore).reduce((a, b) => a > b ? a : b);
-        final lowSafety = drivers.isEmpty ? 0 : drivers.map((d) => d.safetyScore).reduce((a, b) => a < b ? a : b);
+        final avgSafety = drivers.isEmpty
+            ? 0.0
+            : drivers.fold<double>(0.0, (sum, d) => sum + d.safetyScore) /
+                drivers.length;
+        final highSafety = drivers.isEmpty
+            ? 0
+            : drivers.map((d) => d.safetyScore).reduce((a, b) => a > b ? a : b);
+        final lowSafety = drivers.isEmpty
+            ? 0
+            : drivers.map((d) => d.safetyScore).reduce((a, b) => a < b ? a : b);
 
         kpis = {
           'Average Safety Score': '${avgSafety.toStringAsFixed(1)}%',
@@ -766,25 +942,35 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           chartData.add(ChartDataPoint(label: label, value: val.toDouble()));
         });
 
-        rows = drivers.map((d) => {
-          'Driver Name': d.fullName,
-          'License Number': d.licenseNumber,
-          'Safety Rating': '${d.safetyScore}%',
-          'Performance Class': d.safetyScore >= 90 ? 'Excellent' : d.safetyScore >= 75 ? 'Good' : 'Needs Review',
-          'Current Status': d.status,
-        }).toList();
+        rows = drivers
+            .map((d) => {
+                  'Driver Name': d.fullName,
+                  'License Number': d.licenseNumber,
+                  'Safety Rating': '${d.safetyScore}%',
+                  'Performance Class': d.safetyScore >= 90
+                      ? 'Excellent'
+                      : d.safetyScore >= 75
+                          ? 'Good'
+                          : 'Needs Review',
+                  'Current Status': d.status,
+                })
+            .toList();
         break;
 
       case 'fleet_fuel_consumption':
         final filteredFuels = fuels.where((f) {
           if (!inDateRange(f.date)) return false;
-          if (filters.vehicleId != null && f.vehicleId != filters.vehicleId) return false;
-          if (filters.driverId != null && f.driverId != filters.driverId) return false;
+          if (filters.vehicleId != null && f.vehicleId != filters.vehicleId)
+            return false;
+          if (filters.driverId != null && f.driverId != filters.driverId)
+            return false;
           return true;
         }).toList();
 
-        final totalLiters = filteredFuels.fold<double>(0.0, (sum, f) => sum + f.fuelQty);
-        final totalCost = filteredFuels.fold<double>(0.0, (sum, f) => sum + f.amount);
+        final totalLiters =
+            filteredFuels.fold<double>(0.0, (sum, f) => sum + f.fuelQty);
+        final totalCost =
+            filteredFuels.fold<double>(0.0, (sum, f) => sum + f.amount);
         final avgPrice = totalLiters > 0 ? totalCost / totalLiters : 0.0;
 
         kpis = {
@@ -805,27 +991,36 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredFuels.map((f) => {
-          'Date': DateFormat('yyyy-MM-dd').format(f.date),
-          'Vehicle License': f.vehicleLicensePlate,
-          'Driver': f.driverName,
-          'Fuel Quantity': '${f.fuelQty.toStringAsFixed(1)} L',
-          'Cost': '\$${f.amount.toStringAsFixed(2)}',
-          'Odometer': '${f.odometer} km',
-        }).toList();
+        rows = filteredFuels
+            .map((f) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(f.date),
+                  'Vehicle License': f.vehicleLicensePlate,
+                  'Driver': f.driverName,
+                  'Fuel Quantity': '${f.fuelQty.toStringAsFixed(1)} L',
+                  'Cost': '\$${f.amount.toStringAsFixed(2)}',
+                  'Odometer': '${f.odometer} km',
+                })
+            .toList();
         break;
 
       case 'fleet_maintenance_cost':
         final filteredMaints = maints.where((m) {
           if (!inDateRange(m.date)) return false;
-          if (filters.vehicleId != null && m.vehicleId != filters.vehicleId) return false;
+          if (filters.vehicleId != null && m.vehicleId != filters.vehicleId)
+            return false;
           return true;
         }).toList();
 
-        final totalCost = filteredMaints.fold<double>(0.0, (sum, m) => sum + m.cost);
-        final preventative = filteredMaints.where((m) => m.type == 'preventative').fold<double>(0.0, (sum, m) => sum + m.cost);
-        final corrective = filteredMaints.where((m) => m.type == 'corrective').fold<double>(0.0, (sum, m) => sum + m.cost);
-        final avgCost = filteredMaints.isEmpty ? 0.0 : totalCost / filteredMaints.length;
+        final totalCost =
+            filteredMaints.fold<double>(0.0, (sum, m) => sum + m.cost);
+        final preventative = filteredMaints
+            .where((m) => m.type == 'preventative')
+            .fold<double>(0.0, (sum, m) => sum + m.cost);
+        final corrective = filteredMaints
+            .where((m) => m.type == 'corrective')
+            .fold<double>(0.0, (sum, m) => sum + m.cost);
+        final avgCost =
+            filteredMaints.isEmpty ? 0.0 : totalCost / filteredMaints.length;
 
         kpis = {
           'Total Maintenance Cost': '\$${totalCost.toStringAsFixed(2)}',
@@ -840,24 +1035,30 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           ChartDataPoint(label: 'Corrective', value: corrective),
         ];
 
-        rows = filteredMaints.map((m) => {
-          'Date': DateFormat('yyyy-MM-dd').format(m.date),
-          'Vehicle License': m.vehicleLicensePlate,
-          'Type': m.type,
-          'Description': m.description,
-          'Repair Cost': '\$${m.cost.toStringAsFixed(2)}',
-          'Odometer': '${m.odometer} km',
-          'Part Replaced': m.partName ?? 'None',
-        }).toList();
+        rows = filteredMaints
+            .map((m) => {
+                  'Date': DateFormat('yyyy-MM-dd').format(m.date),
+                  'Vehicle License': m.vehicleLicensePlate,
+                  'Type': m.type,
+                  'Description': m.description,
+                  'Repair Cost': '\$${m.cost.toStringAsFixed(2)}',
+                  'Odometer': '${m.odometer} km',
+                  'Part Replaced': m.partName ?? 'None',
+                })
+            .toList();
         break;
 
       case 'fleet_inventory_usage':
         // Sum inventory transactions or parts consumed in maintenance
-        final maintParts = maints.where((m) => m.partId != null && inDateRange(m.date)).toList();
-        final totalPartsUsed = maintParts.fold<int>(0, (sum, m) => sum + (m.partQuantity ?? 0));
-        
+        final maintParts = maints
+            .where((m) => m.partId != null && inDateRange(m.date))
+            .toList();
+        final totalPartsUsed =
+            maintParts.fold<int>(0, (sum, m) => sum + (m.partQuantity ?? 0));
+
         final totalValue = maintParts.fold<double>(0.0, (sum, m) {
-          final part = parts.firstWhere((p) => p.id == m.partId, orElse: () => null as dynamic);
+          final part = parts.firstWhere((p) => p.id == m.partId,
+              orElse: () => null as dynamic);
           final price = part != null ? part.unitCost : 0.0;
           return sum + ((m.partQuantity ?? 0) * price);
         });
@@ -865,7 +1066,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         kpis = {
           'Parts Consumed Count': totalPartsUsed.toString(),
           'Total Valuation': '\$${totalValue.toStringAsFixed(2)}',
-          'Unique Parts Replaced': maintParts.map((m) => m.partId).toSet().length.toString(),
+          'Unique Parts Replaced':
+              maintParts.map((m) => m.partId).toSet().length.toString(),
         };
 
         // Group by part name
@@ -879,7 +1081,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
 
         rows = maintParts.map((m) {
-          final part = parts.firstWhere((p) => p.id == m.partId, orElse: () => null as dynamic);
+          final part = parts.firstWhere((p) => p.id == m.partId,
+              orElse: () => null as dynamic);
           final price = part != null ? part.unitCost : 0.0;
           final value = (m.partQuantity ?? 0) * price;
           return {
@@ -894,22 +1097,32 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         break;
 
       case 'customer_revenue':
-        final filteredInvoices = invoices.where((i) => i.status != 'draft' && i.status != 'cancelled' && inDateRange(i.issueDate)).toList();
-        
+        final filteredInvoices = invoices
+            .where((i) =>
+                i.status != 'draft' &&
+                i.status != 'cancelled' &&
+                inDateRange(i.issueDate))
+            .toList();
+
         // Group by customer
         final grouped = <String, double>{};
         for (final inv in filteredInvoices) {
-          grouped[inv.customerName] = (grouped[inv.customerName] ?? 0.0) + inv.grandTotal;
+          grouped[inv.customerName] =
+              (grouped[inv.customerName] ?? 0.0) + inv.grandTotal;
         }
 
         grouped.forEach((name, amount) {
           chartData.add(ChartDataPoint(label: name, value: amount));
         });
-        chartData.sort((a, b) => b.value.compareTo(a.value)); // Top customers first
+        chartData
+            .sort((a, b) => b.value.compareTo(a.value)); // Top customers first
 
-        final totalRev = filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
-        final topCustomerName = chartData.isNotEmpty ? chartData.first.label : 'None';
-        final topCustomerValue = chartData.isNotEmpty ? chartData.first.value : 0.0;
+        final totalRev =
+            filteredInvoices.fold<double>(0.0, (sum, i) => sum + i.grandTotal);
+        final topCustomerName =
+            chartData.isNotEmpty ? chartData.first.label : 'None';
+        final topCustomerValue =
+            chartData.isNotEmpty ? chartData.first.value : 0.0;
 
         kpis = {
           'Total Gross Revenue': '\$${totalRev.toStringAsFixed(2)}',
@@ -918,19 +1131,28 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           'Top Billing Value': '\$${topCustomerValue.toStringAsFixed(2)}',
         };
 
-        rows = grouped.entries.map((entry) => {
-          'Customer Name': entry.key,
-          'Total Revenue Generated': '\$${entry.value.toStringAsFixed(2)}',
-          'Share Percentage': '${totalRev > 0.0 ? ((entry.value / totalRev) * 100).toStringAsFixed(1) : 0.0}%',
-        }).toList();
+        rows = grouped.entries
+            .map((entry) => {
+                  'Customer Name': entry.key,
+                  'Total Revenue Generated':
+                      '\$${entry.value.toStringAsFixed(2)}',
+                  'Share Percentage':
+                      '${totalRev > 0.0 ? ((entry.value / totalRev) * 100).toStringAsFixed(1) : 0.0}%',
+                })
+            .toList();
         break;
 
       case 'customer_outstanding':
-        final unpaidInvoices = invoices.where((i) => (i.status == 'sent' || i.status == 'overdue') && inDateRange(i.issueDate)).toList();
-        
+        final unpaidInvoices = invoices
+            .where((i) =>
+                (i.status == 'sent' || i.status == 'overdue') &&
+                inDateRange(i.issueDate))
+            .toList();
+
         final grouped = <String, double>{};
         for (final inv in unpaidInvoices) {
-          grouped[inv.customerName] = (grouped[inv.customerName] ?? 0.0) + inv.outstandingAmount;
+          grouped[inv.customerName] =
+              (grouped[inv.customerName] ?? 0.0) + inv.outstandingAmount;
         }
 
         grouped.forEach((name, amount) {
@@ -938,9 +1160,12 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => b.value.compareTo(a.value));
 
-        final totalOut = unpaidInvoices.fold<double>(0.0, (sum, i) => sum + i.outstandingAmount);
-        final worstCustomerName = chartData.isNotEmpty ? chartData.first.label : 'None';
-        final worstCustomerValue = chartData.isNotEmpty ? chartData.first.value : 0.0;
+        final totalOut = unpaidInvoices.fold<double>(
+            0.0, (sum, i) => sum + i.outstandingAmount);
+        final worstCustomerName =
+            chartData.isNotEmpty ? chartData.first.label : 'None';
+        final worstCustomerValue =
+            chartData.isNotEmpty ? chartData.first.value : 0.0;
 
         kpis = {
           'Total Outstanding Receivables': '\$${totalOut.toStringAsFixed(2)}',
@@ -949,21 +1174,31 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
           'Highest Debt Balance': '\$${worstCustomerValue.toStringAsFixed(2)}',
         };
 
-        rows = grouped.entries.map((entry) => {
-          'Customer Name': entry.key,
-          'Outstanding Receivables': '\$${entry.value.toStringAsFixed(2)}',
-          'Risk Exposure %': '${totalOut > 0.0 ? ((entry.value / totalOut) * 100).toStringAsFixed(1) : 0.0}%',
-        }).toList();
+        rows = grouped.entries
+            .map((entry) => {
+                  'Customer Name': entry.key,
+                  'Outstanding Receivables':
+                      '\$${entry.value.toStringAsFixed(2)}',
+                  'Risk Exposure %':
+                      '${totalOut > 0.0 ? ((entry.value / totalOut) * 100).toStringAsFixed(1) : 0.0}%',
+                })
+            .toList();
         break;
 
       case 'customer_payment_history':
-        final filteredPayments = payments.where((p) => p.status == 'completed' && inDateRange(p.paymentDate)).toList();
-        
-        final totalInflows = filteredPayments.fold<double>(0.0, (sum, p) => sum + p.amount);
-        final avgPayment = filteredPayments.isEmpty ? 0.0 : totalInflows / filteredPayments.length;
+        final filteredPayments = payments
+            .where((p) => p.status == 'completed' && inDateRange(p.paymentDate))
+            .toList();
+
+        final totalInflows =
+            filteredPayments.fold<double>(0.0, (sum, p) => sum + p.amount);
+        final avgPayment = filteredPayments.isEmpty
+            ? 0.0
+            : totalInflows / filteredPayments.length;
 
         kpis = {
-          'Total Direct Payments Received': '\$${totalInflows.toStringAsFixed(2)}',
+          'Total Direct Payments Received':
+              '\$${totalInflows.toStringAsFixed(2)}',
           'Total Payment Transactions': filteredPayments.length.toString(),
           'Avg Payment Amount': '\$${avgPayment.toStringAsFixed(2)}',
         };
@@ -978,33 +1213,40 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
         chartData.sort((a, b) => a.label.compareTo(b.label));
 
-        rows = filteredPayments.map((p) => {
-          'Payment ID': p.id,
-          'Invoice ID': p.invoiceId,
-          'Payment Mode': p.paymentMethod,
-          'Reference #': p.referenceNumber ?? 'N/A',
-          'Settlement Date': DateFormat('yyyy-MM-dd').format(p.paymentDate),
-          'Paid Sum': '\$${p.amount.toStringAsFixed(2)}',
-          'Payment Status': p.status,
-        }).toList();
+        rows = filteredPayments
+            .map((p) => {
+                  'Payment ID': p.id,
+                  'Invoice ID': p.invoiceId,
+                  'Payment Mode': p.paymentMethod,
+                  'Reference #': p.referenceNumber ?? 'N/A',
+                  'Settlement Date':
+                      DateFormat('yyyy-MM-dd').format(p.paymentDate),
+                  'Paid Sum': '\$${p.amount.toStringAsFixed(2)}',
+                  'Payment Status': p.status,
+                })
+            .toList();
         break;
 
       case 'customer_contract_summary':
-        final filteredContracts = contracts.where((c) => inDateRange(c.createdAt)).toList();
-        
+        final filteredContracts =
+            contracts.where((c) => inDateRange(c.createdAt)).toList();
+
         final totalContracts = filteredContracts.length;
-        final activeContracts = filteredContracts.where((c) => c.status == 'active').length;
-        
+        final activeContracts =
+            filteredContracts.where((c) => c.status == 'active').length;
+
         kpis = {
           'Total Managed Contracts': totalContracts.toString(),
           'Active Contracts': activeContracts.toString(),
-          'Expired/Terminated Contracts': (totalContracts - activeContracts).toString(),
+          'Expired/Terminated Contracts':
+              (totalContracts - activeContracts).toString(),
         };
 
         // Group by Customer
         final grouped = <String, int>{};
         for (final c in filteredContracts) {
-          final cust = customers.firstWhere((cust) => cust.id == c.customerId, orElse: () => null as dynamic);
+          final cust = customers.firstWhere((cust) => cust.id == c.customerId,
+              orElse: () => null as dynamic);
           final label = cust != null ? cust.name : c.customerId;
           grouped[label] = (grouped[label] ?? 0) + 1;
         }
@@ -1013,7 +1255,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
         });
 
         rows = filteredContracts.map((c) {
-          final cust = customers.firstWhere((cust) => cust.id == c.customerId, orElse: () => null as dynamic);
+          final cust = customers.firstWhere((cust) => cust.id == c.customerId,
+              orElse: () => null as dynamic);
           return {
             'Contract ID': c.id,
             'Contract Code/Ref': c.contractNumber,
@@ -1066,7 +1309,8 @@ class ReportSaveController extends StateNotifier<ReportSaveState> {
         _ref = ref,
         super(const ReportSaveState());
 
-  Future<void> saveReport(String title, String type, ReportData data, ReportFilters filters) async {
+  Future<void> saveReport(
+      String title, String type, ReportData data, ReportFilters filters) async {
     state = const ReportSaveState(isLoading: true);
     try {
       final user = _ref.read(currentUserProvider);
@@ -1107,7 +1351,8 @@ class ReportSaveController extends StateNotifier<ReportSaveState> {
         entityType: 'report',
         entityId: report.id,
         action: 'report_generated',
-        description: 'Report "$title" ($type) generated by ${user.displayName ?? user.email}',
+        description:
+            'Report "$title" ($type) generated by ${user.displayName ?? user.email}',
         userId: user.uid,
         userName: user.displayName ?? user.email,
         timestamp: DateTime.now(),
@@ -1137,7 +1382,8 @@ class ReportSaveController extends StateNotifier<ReportSaveState> {
         entityType: 'report',
         entityId: '',
         action: 'report_exported',
-        description: 'Report "$title" ($type) exported to $format by ${user.displayName ?? user.email}',
+        description:
+            'Report "$title" ($type) exported to $format by ${user.displayName ?? user.email}',
         userId: user.uid,
         userName: user.displayName ?? user.email,
         timestamp: DateTime.now(),
@@ -1154,7 +1400,8 @@ class ReportSaveController extends StateNotifier<ReportSaveState> {
 }
 
 final reportSaveControllerProvider =
-    StateNotifierProvider.autoDispose<ReportSaveController, ReportSaveState>((ref) {
+    StateNotifierProvider.autoDispose<ReportSaveController, ReportSaveState>(
+        (ref) {
   return ReportSaveController(
     repo: ref.watch(reportRepositoryProvider),
     ref: ref,

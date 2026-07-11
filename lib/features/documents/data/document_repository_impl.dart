@@ -46,7 +46,8 @@ class DocumentRepositoryImpl implements DocumentRepository {
   }
 
   @override
-  Future<DocumentEntity?> getDocumentById(String companyId, String documentId) async {
+  Future<DocumentEntity?> getDocumentById(
+      String companyId, String documentId) async {
     try {
       final doc = await _firestore
           .collection('companies')
@@ -67,7 +68,8 @@ class DocumentRepositoryImpl implements DocumentRepository {
   }
 
   @override
-  Future<DocumentEntity> createDocument(String companyId, DocumentEntity document) async {
+  Future<DocumentEntity> createDocument(
+      String companyId, DocumentEntity document) async {
     try {
       final id = document.id.isEmpty ? _uuid.v4() : document.id;
       final newDoc = document.copyWith(
@@ -151,7 +153,8 @@ class DocumentRepositoryImpl implements DocumentRepository {
   }
 
   @override
-  Future<void> renameDocument(String companyId, String documentId, String newName) async {
+  Future<void> renameDocument(
+      String companyId, String documentId, String newName) async {
     try {
       await _firestore
           .collection('companies')

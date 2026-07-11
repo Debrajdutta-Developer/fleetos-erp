@@ -2,7 +2,8 @@ class DocumentEntity {
   final String id;
   final String companyId;
   final String? relatedEntityId;
-  final String? relatedEntityType; // vehicle, driver, customer, contract, company, etc.
+  final String?
+      relatedEntityType; // vehicle, driver, customer, contract, company, etc.
   final String category; // company, vehicle, driver, customer, finance
   final String fileName;
   final String originalFileName;
@@ -78,12 +79,22 @@ class DocumentEntity {
       mimeType: map['mimeType'] as String? ?? '',
       storagePath: map['storagePath'] as String? ?? '',
       downloadUrl: map['downloadUrl'] as String? ?? '',
-      uploadDate: map['uploadDate'] != null ? DateTime.parse(map['uploadDate'] as String) : DateTime.now(),
-      expiryDate: map['expiryDate'] != null ? DateTime.parse(map['expiryDate'] as String) : null,
+      uploadDate: map['uploadDate'] != null
+          ? DateTime.parse(map['uploadDate'] as String)
+          : DateTime.now(),
+      expiryDate: map['expiryDate'] != null
+          ? DateTime.parse(map['expiryDate'] as String)
+          : null,
       uploadedBy: map['uploadedBy'] as String? ?? '',
-      createdAt: map['createdAt'] != null ? DateTime.parse(map['createdAt'] as String) : DateTime.now(),
-      updatedAt: map['updatedAt'] != null ? DateTime.parse(map['updatedAt'] as String) : DateTime.now(),
-      deletedAt: map['deletedAt'] != null ? DateTime.parse(map['deletedAt'] as String) : null,
+      createdAt: map['createdAt'] != null
+          ? DateTime.parse(map['createdAt'] as String)
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.parse(map['updatedAt'] as String)
+          : DateTime.now(),
+      deletedAt: map['deletedAt'] != null
+          ? DateTime.parse(map['deletedAt'] as String)
+          : null,
       status: map['status'] as String? ?? 'pending_verification',
       notes: map['notes'] as String?,
     );

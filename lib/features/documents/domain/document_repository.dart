@@ -4,11 +4,14 @@ abstract class DocumentRepository {
   Stream<List<DocumentEntity>> watchDocuments(String companyId);
   Future<List<DocumentEntity>> getDocuments(String companyId);
   Future<DocumentEntity?> getDocumentById(String companyId, String documentId);
-  Future<DocumentEntity> createDocument(String companyId, DocumentEntity document);
+  Future<DocumentEntity> createDocument(
+      String companyId, DocumentEntity document);
   Future<void> updateDocument(String companyId, DocumentEntity document);
-  Future<void> deleteDocument(String companyId, String documentId); // Soft Delete
+  Future<void> deleteDocument(
+      String companyId, String documentId); // Soft Delete
   Future<void> restoreDocument(String companyId, String documentId); // Restore
-  Future<void> renameDocument(String companyId, String documentId, String newName); // Rename
+  Future<void> renameDocument(
+      String companyId, String documentId, String newName); // Rename
   Future<void> replaceDocumentFile(
     String companyId,
     String documentId, {

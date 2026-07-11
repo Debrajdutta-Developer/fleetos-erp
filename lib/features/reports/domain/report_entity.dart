@@ -2,7 +2,8 @@ class ReportEntity {
   final String id;
   final String companyId;
   final String title;
-  final String type; // financial_revenue, financial_expense, financial_profit_loss, financial_cash_flow, financial_outstanding_receivables, financial_customer_ledger, financial_driver_expense, financial_vehicle_expense, fleet_vehicle_utilization, fleet_trip_summary, fleet_availability, fleet_driver_utilization, fleet_driver_performance, fleet_fuel_consumption, fleet_maintenance_cost, fleet_inventory_usage, customer_revenue, customer_outstanding, customer_payment_history, customer_contract_summary
+  final String
+      type; // financial_revenue, financial_expense, financial_profit_loss, financial_cash_flow, financial_outstanding_receivables, financial_customer_ledger, financial_driver_expense, financial_vehicle_expense, fleet_vehicle_utilization, fleet_trip_summary, fleet_availability, fleet_driver_utilization, fleet_driver_performance, fleet_fuel_consumption, fleet_maintenance_cost, fleet_inventory_usage, customer_revenue, customer_outstanding, customer_payment_history, customer_contract_summary
   final Map<String, dynamic> filters;
   final Map<String, dynamic> data; // Contains summary KPIs and rows
   final DateTime generatedAt;

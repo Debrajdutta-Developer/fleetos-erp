@@ -50,13 +50,16 @@ class MockDocumentRepository implements DocumentRepository {
   final List<DocumentEntity> documents = [];
 
   @override
-  Stream<List<DocumentEntity>> watchDocuments(String companyId) => Stream.value(documents);
+  Stream<List<DocumentEntity>> watchDocuments(String companyId) =>
+      Stream.value(documents);
 
   @override
-  Future<List<DocumentEntity>> getDocuments(String companyId) async => documents;
+  Future<List<DocumentEntity>> getDocuments(String companyId) async =>
+      documents;
 
   @override
-  Future<DocumentEntity?> getDocumentById(String companyId, String documentId) async {
+  Future<DocumentEntity?> getDocumentById(
+      String companyId, String documentId) async {
     try {
       return documents.firstWhere((d) => d.id == documentId);
     } catch (_) {
@@ -65,7 +68,8 @@ class MockDocumentRepository implements DocumentRepository {
   }
 
   @override
-  Future<DocumentEntity> createDocument(String companyId, DocumentEntity document) async {
+  Future<DocumentEntity> createDocument(
+      String companyId, DocumentEntity document) async {
     final id = document.id.isEmpty ? 'doc_${documents.length}' : document.id;
     final newDoc = document.copyWith(id: id, companyId: companyId);
     final idx = documents.indexWhere((d) => d.id == id);
@@ -102,7 +106,8 @@ class MockDocumentRepository implements DocumentRepository {
   }
 
   @override
-  Future<void> renameDocument(String companyId, String documentId, String newName) async {
+  Future<void> renameDocument(
+      String companyId, String documentId, String newName) async {
     final idx = documents.indexWhere((d) => d.id == documentId);
     if (idx != -1) {
       documents[idx] = documents[idx].copyWith(fileName: newName);
@@ -167,7 +172,8 @@ void main() {
       expect(container.read(selectedDocumentCategoryProvider), 'all');
     });
 
-    test('saveDocument uploads file to storage and saves document metadata', () async {
+    test('saveDocument uploads file to storage and saves document metadata',
+        () async {
       final doc = DocumentEntity(
         id: '',
         companyId: '',
@@ -192,17 +198,23 @@ void main() {
           .saveDocument(doc, fileBytes: mockBytes);
 
       expect(success, true);
-      
+
       // Verify storage upload
-      expect(storageMock.uploadedFiles.containsKey('companies/c_1/documents/gst.pdf'), true);
+      expect(
+          storageMock.uploadedFiles
+              .containsKey('companies/c_1/documents/gst.pdf'),
+          true);
 
       // Verify firestore record
       final list = await docRepo.getDocuments('c_1');
       expect(list.length, 1);
-      expect(list.first.downloadUrl, 'https://mock-storage.com/companies/c_1/documents/gst.pdf');
+      expect(list.first.downloadUrl,
+          'https://mock-storage.com/companies/c_1/documents/gst.pdf');
     });
 
-    test('Business Validation: Exceeding maximum file size limit fails validation', () async {
+    test(
+        'Business Validation: Exceeding maximum file size limit fails validation',
+        () async {
       final largeDoc = DocumentEntity(
         id: '',
         companyId: '',
@@ -311,7 +323,8 @@ void main() {
           contains('A document with this name and file size already exists'));
     });
 
-    test('replaceDocumentFile updates storage files and triggers log events', () async {
+    test('replaceDocumentFile updates storage files and triggers log events',
+        () async {
       final doc = DocumentEntity(
         id: 'target_id_1',
         companyId: 'c_1',
@@ -380,7 +393,8 @@ void main() {
       expect(updated!.fileName, 'Volvo RC 2026');
     });
 
-    test('restoreDocument clears deletedAt and returns to active vault', () async {
+    test('restoreDocument clears deletedAt and returns to active vault',
+        () async {
       final doc = DocumentEntity(
         id: 'deleted_doc_id',
         companyId: 'c_1',

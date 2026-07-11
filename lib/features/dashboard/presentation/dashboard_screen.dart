@@ -570,40 +570,61 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             const SizedBox(height: 32),
                             // Real live CustomBarChart from active streams
                             ref.watch(tripsStreamProvider).when(
-                              data: (trips) {
-                                final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
-                                final grouped = <String, int>{};
-                                for (final t in trips) {
-                                  final v = vehicles.firstWhere((veh) => veh.id == t.vehicleId, orElse: () => null as dynamic);
-                                  final label = v != null ? v.licensePlate : t.vehicleId;
-                                  grouped[label] = (grouped[label] ?? 0) + 1;
-                                }
-                                final chartData = grouped.entries.map((e) => ChartDataPoint(label: e.key, value: e.value.toDouble())).toList();
-                                if (chartData.isEmpty) {
-                                  return Container(
+                                  data: (trips) {
+                                    final vehicles = ref
+                                            .watch(vehiclesStreamProvider)
+                                            .valueOrNull ??
+                                        [];
+                                    final grouped = <String, int>{};
+                                    for (final t in trips) {
+                                      final v = vehicles.firstWhere(
+                                          (veh) => veh.id == t.vehicleId,
+                                          orElse: () => null as dynamic);
+                                      final label = v != null
+                                          ? v.licensePlate
+                                          : t.vehicleId;
+                                      grouped[label] =
+                                          (grouped[label] ?? 0) + 1;
+                                    }
+                                    final chartData = grouped.entries
+                                        .map((e) => ChartDataPoint(
+                                            label: e.key,
+                                            value: e.value.toDouble()))
+                                        .toList();
+                                    if (chartData.isEmpty) {
+                                      return Container(
+                                        height: 240,
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.primary
+                                              .withOpacity(0.04),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: colorScheme.primary
+                                                  .withOpacity(0.08)),
+                                        ),
+                                        child: const Center(
+                                            child: Text(
+                                                'No active trip logs to plot')),
+                                      );
+                                    }
+                                    return SizedBox(
+                                      height: 240,
+                                      child: CustomBarChart(
+                                          data: chartData.take(6).toList()),
+                                    );
+                                  },
+                                  loading: () => const SizedBox(
                                     height: 240,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.primary.withOpacity(0.04),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: colorScheme.primary.withOpacity(0.08)),
-                                    ),
-                                    child: const Center(child: Text('No active trip logs to plot')),
-                                  );
-                                }
-                                return SizedBox(
-                                  height: 240,
-                                  child: CustomBarChart(data: chartData.take(6).toList()),
-                                );
-                              },
-                              loading: () => const SizedBox(
-                                height: 240,
-                                child: Center(child: CircularProgressIndicator()),
-                              ),
-                              error: (_, __) => const SizedBox(
-                                height: 240,
-                                child: Center(child: Text('Error loading analytics')),
-                              ),
-                            ),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  ),
+                                  error: (_, __) => const SizedBox(
+                                    height: 240,
+                                    child: Center(
+                                        child: Text('Error loading analytics')),
+                                  ),
+                                ),
                           ],
                         ),
                       ),

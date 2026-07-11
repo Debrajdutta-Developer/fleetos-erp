@@ -13,7 +13,8 @@ class DocumentListScreen extends ConsumerStatefulWidget {
   ConsumerState<DocumentListScreen> createState() => _DocumentListScreenState();
 }
 
-class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with SingleTickerProviderStateMixin {
+class _DocumentListScreenState extends ConsumerState<DocumentListScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
 
@@ -22,7 +23,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _searchController.addListener(() {
-      ref.read(documentSearchQueryProvider.notifier).state = _searchController.text;
+      ref.read(documentSearchQueryProvider.notifier).state =
+          _searchController.text;
     });
   }
 
@@ -35,50 +37,84 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
 
   String _getFriendlyTypeName(String type) {
     switch (type) {
-      case 'gst_certificate': return 'GST Certificate';
-      case 'pan': return 'PAN Card';
-      case 'trade_license': return 'Trade License';
-      case 'company_logo': return 'Company Logo';
-      case 'rc': return 'Registration Certificate (RC)';
-      case 'insurance': return 'Insurance Policy';
-      case 'fitness': return 'Fitness Certificate';
-      case 'puc': return 'Pollution Certificate (PUC)';
-      case 'permit': return 'National/State Permit';
-      case 'road_tax': return 'Road Tax receipt';
-      case 'driving_license': return 'Driving License (DL)';
-      case 'national_id': return 'Aadhaar / National ID';
-      case 'medical_certificate': return 'Medical Certificate';
-      case 'training_certificate': return 'Training Certificate';
-      case 'contract': return 'signed Contract';
-      case 'agreement': return 'SLA / Agreement';
-      case 'purchase_order': return 'Purchase Order (PO)';
-      case 'kyc_document': return 'KYC Document';
-      case 'invoice': return 'Finance Invoice';
-      case 'receipt': return 'Receipt Log';
-      case 'expense_bill': return 'Expense Bill';
-      case 'payment_proof': return 'Payment Proof';
-      default: return 'Other Document';
+      case 'gst_certificate':
+        return 'GST Certificate';
+      case 'pan':
+        return 'PAN Card';
+      case 'trade_license':
+        return 'Trade License';
+      case 'company_logo':
+        return 'Company Logo';
+      case 'rc':
+        return 'Registration Certificate (RC)';
+      case 'insurance':
+        return 'Insurance Policy';
+      case 'fitness':
+        return 'Fitness Certificate';
+      case 'puc':
+        return 'Pollution Certificate (PUC)';
+      case 'permit':
+        return 'National/State Permit';
+      case 'road_tax':
+        return 'Road Tax receipt';
+      case 'driving_license':
+        return 'Driving License (DL)';
+      case 'national_id':
+        return 'Aadhaar / National ID';
+      case 'medical_certificate':
+        return 'Medical Certificate';
+      case 'training_certificate':
+        return 'Training Certificate';
+      case 'contract':
+        return 'signed Contract';
+      case 'agreement':
+        return 'SLA / Agreement';
+      case 'purchase_order':
+        return 'Purchase Order (PO)';
+      case 'kyc_document':
+        return 'KYC Document';
+      case 'invoice':
+        return 'Finance Invoice';
+      case 'receipt':
+        return 'Receipt Log';
+      case 'expense_bill':
+        return 'Expense Bill';
+      case 'payment_proof':
+        return 'Payment Proof';
+      default:
+        return 'Other Document';
     }
   }
 
   Color _getStatusColor(String status, ColorScheme scheme) {
     switch (status) {
-      case 'verified': return Colors.green;
-      case 'pending_verification': return Colors.orange;
-      case 'rejected': return scheme.error;
-      case 'expired': return Colors.red.shade800;
-      default: return Colors.grey;
+      case 'verified':
+        return Colors.green;
+      case 'pending_verification':
+        return Colors.orange;
+      case 'rejected':
+        return scheme.error;
+      case 'expired':
+        return Colors.red.shade800;
+      default:
+        return Colors.grey;
     }
   }
 
   IconData _getCategoryIcon(String cat) {
     switch (cat) {
-      case 'company': return Icons.business_rounded;
-      case 'vehicle': return Icons.local_shipping_rounded;
-      case 'driver': return Icons.badge_rounded;
-      case 'customer': return Icons.people_rounded;
-      case 'finance': return Icons.account_balance_wallet_rounded;
-      default: return Icons.article_rounded;
+      case 'company':
+        return Icons.business_rounded;
+      case 'vehicle':
+        return Icons.local_shipping_rounded;
+      case 'driver':
+        return Icons.badge_rounded;
+      case 'customer':
+        return Icons.people_rounded;
+      case 'finance':
+        return Icons.account_balance_wallet_rounded;
+      default:
+        return Icons.article_rounded;
     }
   }
 
@@ -96,7 +132,12 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
 
     // Compute Expiry Metrics
     final now = DateTime.now();
-    final expiredDocs = allDocs.where((doc) => doc.deletedAt == null && doc.expiryDate != null && doc.expiryDate!.isBefore(now)).toList();
+    final expiredDocs = allDocs
+        .where((doc) =>
+            doc.deletedAt == null &&
+            doc.expiryDate != null &&
+            doc.expiryDate!.isBefore(now))
+        .toList();
     final expiringSoonDocs = allDocs.where((doc) {
       if (doc.deletedAt != null || doc.expiryDate == null) return false;
       final diff = doc.expiryDate!.difference(now).inDays;
@@ -109,7 +150,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     final recentlyUploaded = activeDocs.take(5).toList();
 
     // Pending verification list
-    final pendingDocs = allDocs.where((doc) => doc.deletedAt == null && doc.status == 'pending_verification').toList();
+    final pendingDocs = allDocs
+        .where((doc) =>
+            doc.deletedAt == null && doc.status == 'pending_verification')
+        .toList();
 
     // Determine layout width for responsiveness
     final width = MediaQuery.of(context).size.width;
@@ -130,7 +174,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
             ),
             Tab(
               icon: const Icon(Icons.warning_amber_rounded),
-              text: 'Vault Expirations (${expiredDocs.length + expiringSoonDocs.length})',
+              text:
+                  'Vault Expirations (${expiredDocs.length + expiringSoonDocs.length})',
             ),
             Tab(
               icon: const Icon(Icons.rate_review_outlined),
@@ -142,16 +187,36 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
       body: Column(
         children: [
           // 1. Dashboard Metrics Panel
-          _buildDashboardMetricsPanel(context, activeDocs.length, expiringSoonDocs.length, expiredDocs.length, recentlyUploaded, colorScheme, theme, isDesktop),
+          _buildDashboardMetricsPanel(
+              context,
+              activeDocs.length,
+              expiringSoonDocs.length,
+              expiredDocs.length,
+              recentlyUploaded,
+              colorScheme,
+              theme,
+              isDesktop),
 
           // 2. Tab Views
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildAllDocumentsTab(context, filteredDocs, selectedCategory, selectedType, showDeleted, sort, colorScheme, theme, isDesktop, isTablet),
-                _buildExpirationsTab(context, expiringSoonDocs, expiredDocs, colorScheme, theme),
-                _buildApprovalInboxTab(context, pendingDocs, colorScheme, theme),
+                _buildAllDocumentsTab(
+                    context,
+                    filteredDocs,
+                    selectedCategory,
+                    selectedType,
+                    showDeleted,
+                    sort,
+                    colorScheme,
+                    theme,
+                    isDesktop,
+                    isTablet),
+                _buildExpirationsTab(
+                    context, expiringSoonDocs, expiredDocs, colorScheme, theme),
+                _buildApprovalInboxTab(
+                    context, pendingDocs, colorScheme, theme),
               ],
             ),
           ),
@@ -176,7 +241,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
     ThemeData theme,
     bool isDesktop,
   ) {
-    final cardPadding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
+    final cardPadding =
+        const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0);
 
     return Container(
       color: colorScheme.surfaceVariant.withOpacity(0.12),
@@ -193,7 +259,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                   elevation: 0,
                   color: colorScheme.surface,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    side: BorderSide(
+                        color: colorScheme.outline.withOpacity(0.15)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
@@ -201,9 +268,12 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Total Documents', style: theme.textTheme.bodySmall),
+                        Text('Total Documents',
+                            style: theme.textTheme.bodySmall),
                         const SizedBox(height: 8),
-                        Text('$totalCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text('$totalCount',
+                            style: theme.textTheme.headlineMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -217,7 +287,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                   elevation: 0,
                   color: colorScheme.surface,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    side: BorderSide(
+                        color: colorScheme.outline.withOpacity(0.15)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
@@ -225,16 +296,22 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Expiring Soon (30d)', style: theme.textTheme.bodySmall),
+                        Text('Expiring Soon (30d)',
+                            style: theme.textTheme.bodySmall),
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Text('$expiringCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.orange)),
+                            Text('$expiringCount',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange)),
                             const SizedBox(width: 8),
                             if (expiringCount > 0)
                               const Tooltip(
-                                message: 'Compliance alert prepared for Reminder engine.',
-                                child: Icon(Icons.notifications_active_outlined, color: Colors.orange, size: 18),
+                                message:
+                                    'Compliance alert prepared for Reminder engine.',
+                                child: Icon(Icons.notifications_active_outlined,
+                                    color: Colors.orange, size: 18),
                               ),
                           ],
                         ),
@@ -251,7 +328,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                   elevation: 0,
                   color: colorScheme.surface,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(color: colorScheme.outline.withOpacity(0.15)),
+                    side: BorderSide(
+                        color: colorScheme.outline.withOpacity(0.15)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Padding(
@@ -259,16 +337,21 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Expired Documents', style: theme.textTheme.bodySmall),
+                        Text('Expired Documents',
+                            style: theme.textTheme.bodySmall),
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Text('$expiredCount', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.red.shade800)),
+                            Text('$expiredCount',
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red.shade800)),
                             const SizedBox(width: 8),
                             if (expiredCount > 0)
                               const Tooltip(
                                 message: 'Warning alert triggered.',
-                                child: Icon(Icons.error_outline_rounded, color: Colors.red, size: 18),
+                                child: Icon(Icons.error_outline_rounded,
+                                    color: Colors.red, size: 18),
                               ),
                           ],
                         ),
@@ -284,16 +367,20 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                 Container(
                   width: 320,
                   height: 90,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: colorScheme.outline.withOpacity(0.15)),
+                    border: Border.all(
+                        color: colorScheme.outline.withOpacity(0.15)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Recently Uploaded', style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold)),
+                      Text('Recently Uploaded',
+                          style: theme.textTheme.labelMedium
+                              ?.copyWith(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 6),
                       Expanded(
                         child: ListView.builder(
@@ -304,8 +391,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: Chip(
-                                avatar: Icon(_getCategoryIcon(doc.category), size: 14),
-                                label: Text(doc.fileName, style: const TextStyle(fontSize: 10)),
+                                avatar: Icon(_getCategoryIcon(doc.category),
+                                    size: 14),
+                                label: Text(doc.fileName,
+                                    style: const TextStyle(fontSize: 10)),
                                 padding: EdgeInsets.zero,
                               ),
                             );
@@ -358,7 +447,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Search by file name or code...',
-                          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -369,17 +459,27 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                       value: category,
                       underline: const SizedBox(),
                       items: const [
-                        DropdownMenuItem(value: 'all', child: Text('All Categories')),
-                        DropdownMenuItem(value: 'company', child: Text('Company Docs')),
-                        DropdownMenuItem(value: 'vehicle', child: Text('Vehicle Docs')),
-                        DropdownMenuItem(value: 'driver', child: Text('Driver Docs')),
-                        DropdownMenuItem(value: 'customer', child: Text('Customer Docs')),
-                        DropdownMenuItem(value: 'finance', child: Text('Finance Docs')),
+                        DropdownMenuItem(
+                            value: 'all', child: Text('All Categories')),
+                        DropdownMenuItem(
+                            value: 'company', child: Text('Company Docs')),
+                        DropdownMenuItem(
+                            value: 'vehicle', child: Text('Vehicle Docs')),
+                        DropdownMenuItem(
+                            value: 'driver', child: Text('Driver Docs')),
+                        DropdownMenuItem(
+                            value: 'customer', child: Text('Customer Docs')),
+                        DropdownMenuItem(
+                            value: 'finance', child: Text('Finance Docs')),
                       ],
                       onChanged: (val) {
                         if (val != null) {
-                          ref.read(selectedDocumentCategoryProvider.notifier).state = val;
-                          ref.read(selectedDocumentTypeProvider.notifier).state = 'all'; // reset type filter
+                          ref
+                              .read(selectedDocumentCategoryProvider.notifier)
+                              .state = val;
+                          ref
+                              .read(selectedDocumentTypeProvider.notifier)
+                              .state = 'all'; // reset type filter
                         }
                       },
                     ),
@@ -389,14 +489,21 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                       value: sort,
                       underline: const SizedBox(),
                       items: const [
-                        DropdownMenuItem(value: 'date_uploaded_desc', child: Text('Date Uploaded (Newest)')),
-                        DropdownMenuItem(value: 'name_asc', child: Text('File Name (A-Z)')),
-                        DropdownMenuItem(value: 'name_desc', child: Text('File Name (Z-A)')),
-                        DropdownMenuItem(value: 'expiry_asc', child: Text('Expiry (Expiring First)')),
+                        DropdownMenuItem(
+                            value: 'date_uploaded_desc',
+                            child: Text('Date Uploaded (Newest)')),
+                        DropdownMenuItem(
+                            value: 'name_asc', child: Text('File Name (A-Z)')),
+                        DropdownMenuItem(
+                            value: 'name_desc', child: Text('File Name (Z-A)')),
+                        DropdownMenuItem(
+                            value: 'expiry_asc',
+                            child: Text('Expiry (Expiring First)')),
                       ],
                       onChanged: (val) {
                         if (val != null) {
-                          ref.read(documentSortOptionProvider.notifier).state = val;
+                          ref.read(documentSortOptionProvider.notifier).state =
+                              val;
                         }
                       },
                     ),
@@ -409,11 +516,14 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                           value: showDeleted,
                           onChanged: (val) {
                             if (val != null) {
-                              ref.read(showDeletedDocumentsProvider.notifier).state = val;
+                              ref
+                                  .read(showDeletedDocumentsProvider.notifier)
+                                  .state = val;
                             }
                           },
                         ),
-                        Text('Show Soft Deleted Vault', style: theme.textTheme.bodySmall),
+                        Text('Show Soft Deleted Vault',
+                            style: theme.textTheme.bodySmall),
                       ],
                     ),
                   ],
@@ -423,7 +533,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
               // Grid list
               Expanded(
                 child: list.isEmpty
-                    ? Center(child: Text(showDeleted ? 'No soft-deleted vault items.' : 'No documents matching criteria.'))
+                    ? Center(
+                        child: Text(showDeleted
+                            ? 'No soft-deleted vault items.'
+                            : 'No documents matching criteria.'))
                     : GridView.builder(
                         padding: const EdgeInsets.all(16),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
@@ -435,7 +548,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                         itemCount: list.length,
                         itemBuilder: (ctx, idx) {
                           final doc = list[idx];
-                          return _buildDocumentCard(context, doc, colorScheme, theme);
+                          return _buildDocumentCard(
+                              context, doc, colorScheme, theme);
                         },
                       ),
               ),
@@ -449,7 +563,9 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
             width: 240,
             height: double.infinity,
             decoration: BoxDecoration(
-              border: Border(left: BorderSide(color: colorScheme.outline.withOpacity(0.15))),
+              border: Border(
+                  left:
+                      BorderSide(color: colorScheme.outline.withOpacity(0.15))),
               color: colorScheme.surfaceVariant.withOpacity(0.05),
             ),
             child: Padding(
@@ -457,17 +573,20 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.drive_folder_upload, size: 64, color: colorScheme.primary.withOpacity(0.5)),
+                  Icon(Icons.drive_folder_upload,
+                      size: 64, color: colorScheme.primary.withOpacity(0.5)),
                   const SizedBox(height: 16),
                   Text(
                     'Drag & Drop Files Here',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Quickly drop PDF, Image, or spreadsheet files to start uploading to the vault.',
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant.withOpacity(0.7)),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -514,7 +633,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
       separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (ctx, idx) {
         final doc = list[idx];
-        final days = doc.expiryDate != null ? doc.expiryDate!.difference(now).inDays : 0;
+        final days =
+            doc.expiryDate != null ? doc.expiryDate!.difference(now).inDays : 0;
         final isExpired = days < 0;
 
         return ListTile(
@@ -523,13 +643,17 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
             color: isExpired ? Colors.red.shade800 : Colors.orange,
             size: 32,
           ),
-          title: Text(doc.fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(doc.fileName,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${_getFriendlyTypeName(doc.type)} | Scope: ${doc.relatedEntityType?.toUpperCase() ?? "Company"}'),
               Text(
-                isExpired ? 'EXPIRED' : 'Expiring in $days days (${DateFormat('yMMMd').format(doc.expiryDate!)})',
+                  '${_getFriendlyTypeName(doc.type)} | Scope: ${doc.relatedEntityType?.toUpperCase() ?? "Company"}'),
+              Text(
+                isExpired
+                    ? 'EXPIRED'
+                    : 'Expiring in $days days (${DateFormat('yMMMd').format(doc.expiryDate!)})',
                 style: TextStyle(
                   color: isExpired ? Colors.red.shade800 : Colors.orange,
                   fontWeight: FontWeight.bold,
@@ -574,8 +698,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
         final doc = list[idx];
 
         return ListTile(
-          leading: const Icon(Icons.rate_review_outlined, color: Colors.orange, size: 32),
-          title: Text(doc.fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
+          leading: const Icon(Icons.rate_review_outlined,
+              color: Colors.orange, size: 32),
+          title: Text(doc.fileName,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(
             'Type: ${_getFriendlyTypeName(doc.type)} | Scope: ${doc.relatedEntityType?.toUpperCase() ?? "Company"} | Ref: ${doc.documentNumber}',
           ),
@@ -615,7 +741,8 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(_getCategoryIcon(doc.category), color: colorScheme.primary, size: 28),
+                  Icon(_getCategoryIcon(doc.category),
+                      color: colorScheme.primary, size: 28),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
                     decoration: BoxDecoration(
@@ -637,18 +764,21 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
               const Spacer(),
               Text(
                 doc.fileName,
-                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
               Text(
                 'Type: ${_getFriendlyTypeName(doc.type)}',
-                style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
+                style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),
               Text(
                 'Size: ${sizeKb} KB | Reference: ${doc.documentNumber}',
-                style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
+                style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),
               const Spacer(),
               const Divider(),
@@ -657,7 +787,10 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                 children: [
                   Text(
                     doc.entityName ?? 'Company Level',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 11, color: colorScheme.primary),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 11,
+                        color: colorScheme.primary),
                   ),
                   Text(
                     doc.expiryDate == null
@@ -665,10 +798,12 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen> with Si
                         : 'Expires: ${DateFormat('MM/dd/yy').format(doc.expiryDate!)}',
                     style: TextStyle(
                       fontSize: 11,
-                      color: doc.expiryDate != null && doc.expiryDate!.isBefore(DateTime.now())
+                      color: doc.expiryDate != null &&
+                              doc.expiryDate!.isBefore(DateTime.now())
                           ? Colors.red.shade800
                           : colorScheme.onSurfaceVariant.withOpacity(0.6),
-                      fontWeight: doc.expiryDate != null && doc.expiryDate!.isBefore(DateTime.now())
+                      fontWeight: doc.expiryDate != null &&
+                              doc.expiryDate!.isBefore(DateTime.now())
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ),

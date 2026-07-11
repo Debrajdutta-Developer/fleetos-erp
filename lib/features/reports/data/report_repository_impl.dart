@@ -69,7 +69,8 @@ class ReportRepositoryImpl implements ReportRepository {
   }
 
   @override
-  Future<ReportEntity> createReport(String companyId, ReportEntity report) async {
+  Future<ReportEntity> createReport(
+      String companyId, ReportEntity report) async {
     try {
       final id = report.id.isEmpty ? _uuid.v4() : report.id;
       final newReport = report.copyWith(
