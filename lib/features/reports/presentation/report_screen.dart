@@ -97,11 +97,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     final filters = ref.watch(reportFiltersProvider);
 
     // Watch query streams for filter dropdown values
-    final vehicles =
+    final List<VehicleEntity> vehicles =
         ref.watch(vehiclesStreamProvider).valueOrNull ?? <VehicleEntity>[];
-    final drivers =
+    final List<DriverEntity> drivers =
         ref.watch(driversStreamProvider).valueOrNull ?? <DriverEntity>[];
-    final customers =
+    final List<CustomerEntity> customers =
         ref.watch(customersStreamProvider).valueOrNull ?? <CustomerEntity>[];
 
     final reportDataAsync = ref.watch(reportDataProvider);
@@ -534,11 +534,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
             final filterNotifier = ref.read(reportFiltersProvider.notifier);
             filterNotifier.reset();
             if (r.filters['vehicleId'] != null)
-              filterNotifier.setVehicleId(r.filters['vehicleId']);
+              filterNotifier.setVehicleId(r.filters['vehicleId'] as String?);
             if (r.filters['driverId'] != null)
-              filterNotifier.setDriverId(r.filters['driverId']);
+              filterNotifier.setDriverId(r.filters['driverId'] as String?);
             if (r.filters['customerId'] != null)
-              filterNotifier.setCustomerId(r.filters['customerId']);
+              filterNotifier.setCustomerId(r.filters['customerId'] as String?);
 
             _tabController.animateTo(0); // Go to Visual analytics
           },
