@@ -495,7 +495,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
                   })
               .toList());
 
-        rows.sort((a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
+        rows.sort(
+            (a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
         break;
 
       case 'financial_outstanding_receivables':
@@ -601,7 +602,8 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
                   'Status': i.status,
                 })
             .toList();
-        rows.sort((a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
+        rows.sort(
+            (a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
         break;
 
       case 'financial_driver_expense':
