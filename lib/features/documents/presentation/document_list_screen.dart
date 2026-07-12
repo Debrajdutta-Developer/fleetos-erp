@@ -777,7 +777,7 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen>
                     color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),
               Text(
-                'Size: ${sizeKb} KB | Reference: ${doc.documentNumber}',
+                'Size: $sizeKb KB | Reference: ${doc.documentNumber}',
                 style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant.withOpacity(0.8)),
               ),

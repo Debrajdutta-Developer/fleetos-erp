@@ -70,7 +70,6 @@ class LineChartPainter extends CustomPainter {
     final double maxY =
         data.map((d) => d.value).reduce((a, b) => math.max(a, b));
     final double minY = 0.0; // Anchored at zero
-    final double rangeY = maxY - minY == 0 ? 100 : maxY - minY;
     final double targetMaxY = maxY * 1.15; // Give 15% top margin
 
     // Padding settings
@@ -242,10 +241,6 @@ class LineChartPainter extends CustomPainter {
           ..lineTo(firstOffset.dx, size.height - paddingBottom)
           ..close();
 
-        final double yRatioLast = targetMaxY > 0
-            ? (groupData.last.value - minY) / (targetMaxY - minY)
-            : 0.0;
-        final double yPosLast = paddingTop + chartHeight * (1 - yRatioLast);
 
         final areaPaint = Paint()
           ..shader = LinearGradient(

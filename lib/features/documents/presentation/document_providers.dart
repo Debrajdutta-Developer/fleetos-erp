@@ -238,7 +238,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
         user!.companyId!,
         doc.copyWith(
           downloadUrl: finalUrl,
-          uploadedBy: user.displayName ?? user.email,
+          uploadedBy: user.displayName,
           uploadDate: DateTime.now(),
         ),
       );
@@ -247,7 +247,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: isEdit ? 'document_updated' : 'document_uploaded',
         description:
-            'Document "${savedDoc.fileName}" (${savedDoc.mimeType}) ${isEdit ? "updated" : "uploaded"} by ${user.displayName ?? user.email}',
+            'Document "${savedDoc.fileName}" (${savedDoc.mimeType}) ${isEdit ? "updated" : "uploaded"} by ${user.displayName}',
         entityId: savedDoc.id,
       );
 
@@ -293,7 +293,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       final storagePath =
           'replaced_${DateTime.now().millisecondsSinceEpoch}_$originalFileName';
       final newUrl = await _storage.uploadFile(
-        companyId: user!.companyId!,
+        companyId: user.companyId!,
         path: storagePath,
         fileBytes: fileBytes,
         fileName: originalFileName,
@@ -316,7 +316,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_replaced',
         description:
-            'File replaced on Document "${doc.fileName}" with "$originalFileName" by ${user.displayName ?? user.email}',
+            'File replaced on Document "${doc.fileName}" with "$originalFileName" by ${user.displayName}',
         entityId: docId,
       );
 
@@ -348,7 +348,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_updated',
         description:
-            'Document "${doc.fileName}" renamed to "$newName" by ${user.displayName ?? user.email}',
+            'Document "${doc.fileName}" renamed to "$newName" by ${user.displayName}',
         entityId: docId,
       );
 
@@ -374,7 +374,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       final updatedDoc = doc.copyWith(
         status: status,
         notes: note,
-        verifiedBy: user.displayName ?? user.email,
+        verifiedBy: user.displayName,
         verifiedAt: DateTime.now(),
       );
 
@@ -384,7 +384,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_verified',
         description:
-            'Document "${doc.fileName}" marked as $status by ${user.displayName ?? user.email}',
+            'Document "${doc.fileName}" marked as $status by ${user.displayName}',
         entityId: docId,
       );
 
@@ -412,7 +412,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_deleted',
         description:
-            'Document "${doc.fileName}" soft-deleted by ${user.displayName ?? user.email}',
+            'Document "${doc.fileName}" soft-deleted by ${user.displayName}',
         entityId: docId,
       );
 
@@ -440,7 +440,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_restored',
         description:
-            'Document "${doc.fileName}" restored to vault by ${user.displayName ?? user.email}',
+            'Document "${doc.fileName}" restored to vault by ${user.displayName}',
         entityId: docId,
       );
 
@@ -464,7 +464,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       await _writeAuditLog(
         action: 'document_downloaded',
         description:
-            'Document file "${doc.fileName}" downloaded by ${user.displayName ?? user.email}',
+            'Document file "${doc.fileName}" downloaded by ${user.displayName}',
         entityId: docId,
       );
     } catch (_) {}
@@ -486,7 +486,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       action: action,
       description: description,
       userId: user.uid,
-      userName: user.displayName ?? user.email,
+      userName: user.displayName,
       timestamp: DateTime.now(),
     );
 
