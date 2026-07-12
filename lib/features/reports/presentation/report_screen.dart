@@ -97,9 +97,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     final filters = ref.watch(reportFiltersProvider);
 
     // Watch query streams for filter dropdown values
-    final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? <VehicleEntity>[];
-    final drivers = ref.watch(driversStreamProvider).valueOrNull ?? <DriverEntity>[];
-    final customers = ref.watch(customersStreamProvider).valueOrNull ?? <CustomerEntity>[];
+    final vehicles =
+        ref.watch(vehiclesStreamProvider).valueOrNull ?? <VehicleEntity>[];
+    final drivers =
+        ref.watch(driversStreamProvider).valueOrNull ?? <DriverEntity>[];
+    final customers =
+        ref.watch(customersStreamProvider).valueOrNull ?? <CustomerEntity>[];
 
     final reportDataAsync = ref.watch(reportDataProvider);
     final savedReports = ref.watch(savedReportsProvider).valueOrNull ?? [];
