@@ -7,6 +7,8 @@ import '../../company_setup/domain/company_entity.dart';
 import 'dashboard_providers.dart';
 import '../../reports/presentation/widgets/chart_widgets.dart';
 import '../../reports/presentation/report_providers.dart';
+import '../../trips/presentation/trip_providers.dart';
+import '../../vehicles/presentation/vehicle_providers.dart';
 
 /// State notifier for global app theme configuration overrides.
 class ThemeController extends StateNotifier<ThemeMode> {

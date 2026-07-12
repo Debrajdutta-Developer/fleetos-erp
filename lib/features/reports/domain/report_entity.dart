@@ -38,8 +38,8 @@ class ReportEntity {
       companyId: map['companyId'] as String? ?? '',
       title: map['title'] as String? ?? '',
       type: map['type'] as String? ?? '',
-      filters: Map<String, dynamic>.from(map['filters'] ?? {}),
-      data: Map<String, dynamic>.from(map['data'] ?? {}),
+      filters: Map<String, dynamic>.from((map['filters'] as Map?) ?? {}),
+      data: Map<String, dynamic>.from((map['data'] as Map?) ?? {}),
       generatedAt: map['generatedAt'] != null
           ? DateTime.parse(map['generatedAt'] as String)
           : DateTime.now(),

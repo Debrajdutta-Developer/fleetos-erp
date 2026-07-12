@@ -177,7 +177,6 @@ void main() {
       final doc = DocumentEntity(
         id: '',
         companyId: '',
-        name: 'GST Certificate 2026',
         fileName: 'GST Certificate 2026',
         category: 'company',
         type: 'gst_certificate',
@@ -188,6 +187,8 @@ void main() {
         downloadUrl: '',
         uploadDate: now,
         status: 'pending_verification',
+        uploadedBy: 'Operator John',
+        documentNumber: 'GST-9988-12',
         createdAt: now,
         updatedAt: now,
       );
@@ -218,7 +219,6 @@ void main() {
       final largeDoc = DocumentEntity(
         id: '',
         companyId: '',
-        name: 'Huge Invoice',
         fileName: 'Huge Invoice',
         category: 'finance',
         type: 'invoice',
@@ -229,6 +229,8 @@ void main() {
         downloadUrl: '',
         uploadDate: now,
         status: 'pending_verification',
+        uploadedBy: 'Operator John',
+        documentNumber: 'INV-001',
         createdAt: now,
         updatedAt: now,
       );
@@ -246,7 +248,6 @@ void main() {
       final badDoc = DocumentEntity(
         id: '',
         companyId: '',
-        name: 'Dangerous Script',
         fileName: 'Dangerous Script',
         category: 'company',
         type: 'other',
@@ -257,6 +258,8 @@ void main() {
         downloadUrl: '',
         uploadDate: now,
         status: 'pending_verification',
+        uploadedBy: 'Operator John',
+        documentNumber: 'BAD-01',
         createdAt: now,
         updatedAt: now,
       );
@@ -274,7 +277,6 @@ void main() {
       final doc1 = DocumentEntity(
         id: 'd_1',
         companyId: 'c_1',
-        name: 'PAN Card',
         fileName: 'PAN Card',
         category: 'company',
         type: 'pan',
@@ -285,6 +287,8 @@ void main() {
         downloadUrl: 'https://mock-storage/pan.jpg',
         uploadDate: now,
         status: 'verified',
+        uploadedBy: 'Operator John',
+        documentNumber: 'PAN-123',
         createdAt: now,
         updatedAt: now,
       );
@@ -295,7 +299,6 @@ void main() {
       final doc2 = DocumentEntity(
         id: '',
         companyId: '',
-        name: 'PAN Card',
         fileName: 'PAN Card',
         category: 'company',
         type: 'pan',
@@ -306,6 +309,8 @@ void main() {
         downloadUrl: '',
         uploadDate: now,
         status: 'pending_verification',
+        uploadedBy: 'Operator John',
+        documentNumber: 'PAN-123-NEW',
         createdAt: now,
         updatedAt: now,
       );
@@ -328,7 +333,6 @@ void main() {
       final doc = DocumentEntity(
         id: 'target_id_1',
         companyId: 'c_1',
-        name: 'Freight Contract',
         fileName: 'Freight Contract',
         category: 'customer',
         type: 'contract',
@@ -339,6 +343,8 @@ void main() {
         downloadUrl: 'https://mock-storage/contract_v1.pdf',
         uploadDate: now,
         status: 'verified',
+        uploadedBy: 'Operator John',
+        documentNumber: 'CTR-001',
         createdAt: now,
         updatedAt: now,
       );
@@ -367,7 +373,6 @@ void main() {
       final doc = DocumentEntity(
         id: 'target_id_2',
         companyId: 'c_1',
-        name: 'RC Copy',
         fileName: 'RC Copy',
         category: 'vehicle',
         type: 'rc',
@@ -378,6 +383,8 @@ void main() {
         downloadUrl: 'https://mock-storage/rc.jpg',
         uploadDate: now,
         status: 'pending_verification',
+        uploadedBy: 'Operator John',
+        documentNumber: 'RC-99',
         createdAt: now,
         updatedAt: now,
       );
@@ -398,7 +405,6 @@ void main() {
       final doc = DocumentEntity(
         id: 'deleted_doc_id',
         companyId: 'c_1',
-        name: 'Tax receipt',
         fileName: 'Tax receipt',
         category: 'finance',
         type: 'road_tax',
@@ -409,6 +415,8 @@ void main() {
         downloadUrl: 'https://mock-storage/tax.pdf',
         uploadDate: now,
         status: 'verified',
+        uploadedBy: 'Operator John',
+        documentNumber: 'TAX-001',
         createdAt: now,
         updatedAt: now,
         deletedAt: now,

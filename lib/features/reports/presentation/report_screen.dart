@@ -19,8 +19,7 @@ class ReportScreen extends ConsumerStatefulWidget {
   ConsumerState<ReportScreen> createState() => _ReportScreenState();
 }
 
-class _ReportScreenState extends ConsumerState<ReportScreen>
-    with SingleTickerProviderStateMixin {
+class _ReportScreenState extends ConsumerState<ReportScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _saveTitleController = TextEditingController();
 
@@ -139,8 +138,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                   const SizedBox(height: 24),
 
                   // Filter Toolbar Panel
-                  _buildFilterToolbar(
-                      context, ref, filters, vehicles, drivers, customers),
+                  _buildFilterToolbar(context, ref, filters, vehicles, drivers, customers),
                   const SizedBox(height: 24),
 
                   // KPI Dashboard Grid
@@ -172,15 +170,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                           labelColor: colorScheme.primary,
                           unselectedLabelColor: colorScheme.onSurfaceVariant,
                           tabs: const [
-                            Tab(
-                                icon: Icon(Icons.analytics_outlined),
-                                text: 'Visual Analytics'),
-                            Tab(
-                                icon: Icon(Icons.table_view_outlined),
-                                text: 'Data Table Grid'),
-                            Tab(
-                                icon: Icon(Icons.folder_shared_outlined),
-                                text: 'Saved Reports'),
+                            Tab(icon: Icon(Icons.analytics_outlined), text: 'Visual Analytics'),
+                            Tab(icon: Icon(Icons.table_view_outlined), text: 'Data Table Grid'),
+                            Tab(icon: Icon(Icons.folder_shared_outlined), text: 'Saved Reports'),
                           ],
                         ),
                         SizedBox(
@@ -192,13 +184,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                               reportDataAsync.when(
                                 data: (data) => Padding(
                                   padding: const EdgeInsets.all(24.0),
-                                  child: _buildChart(
-                                      selectedType, data.chartData, theme),
+                                  child: _buildChart(selectedType, data.chartData, theme),
                                 ),
-                                loading: () => const Center(
-                                    child: CircularProgressIndicator()),
-                                error: (err, _) => Center(
-                                    child: Text('Error plotting chart: $err')),
+                                loading: () => const Center(child: CircularProgressIndicator()),
+                                error: (err, _) => Center(child: Text('Error plotting chart: $err')),
                               ),
                               // 2. Tabular Data View
                               reportDataAsync.when(
@@ -206,14 +195,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                                   padding: const EdgeInsets.all(16.0),
                                   child: _buildDataTable(data.rows, theme),
                                 ),
-                                loading: () => const Center(
-                                    child: CircularProgressIndicator()),
-                                error: (err, _) =>
-                                    Center(child: Text('Error: $err')),
+                                loading: () => const Center(child: CircularProgressIndicator()),
+                                error: (err, _) => Center(child: Text('Error: $err')),
                               ),
                               // 3. Saved Reports View
-                              _buildSavedReportsTab(
-                                  savedReports, ref, context, theme),
+                              _buildSavedReportsTab(savedReports, ref, context, theme),
                             ],
                           ),
                         ),
@@ -234,8 +220,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               ),
               color: colorScheme.surfaceVariant.withOpacity(0.2),
             ),
-            child: _buildSettingsSidebar(context, ref, selectedType, timeframe,
-                reportDataAsync, filters),
+            child: _buildSettingsSidebar(context, ref, selectedType, timeframe, reportDataAsync, filters),
           ),
         ],
       ),
@@ -294,9 +279,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Vehicle'),
               value: filters.vehicleId,
               items: [
-                const DropdownMenuItem(
-                    value: null, child: Text('All Vehicles')),
-                ...vehicles.map((v) => DropdownMenuItem(
+                const DropdownMenuItem(value: null, child: Text('All Vehicles')),
+                ...vehicles.map((v) => DropdownMenuItem<String>(
                       value: v.id,
                       child: Text(v.licensePlate),
                     )),
@@ -312,7 +296,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               value: filters.driverId,
               items: [
                 const DropdownMenuItem(value: null, child: Text('All Drivers')),
-                ...drivers.map((d) => DropdownMenuItem(
+                ...drivers.map((d) => DropdownMenuItem<String>(
                       value: d.id,
                       child: Text(d.fullName),
                     )),
@@ -327,9 +311,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Customer'),
               value: filters.customerId,
               items: [
-                const DropdownMenuItem(
-                    value: null, child: Text('All Customers')),
-                ...customers.map((c) => DropdownMenuItem(
+                const DropdownMenuItem(value: null, child: Text('All Customers')),
+                ...customers.map((c) => DropdownMenuItem<String>(
                       value: c.id,
                       child: Text(c.name),
                     )),
@@ -372,8 +355,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
         final val = kpis[key];
         return Card(
           elevation: 0,
-          color:
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.15),
           shape: RoundedRectangleBorder(
             side: BorderSide(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
@@ -389,10 +371,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                 Text(
                   key,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurfaceVariant
-                            .withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.8),
                       ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -416,11 +395,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
   }
 
   // --- CHART ROUTING SELECTOR ---
-  Widget _buildChart(
-      String type, List<ChartDataPoint> chartData, ThemeData theme) {
+  Widget _buildChart(String type, List<ChartDataPoint> chartData, ThemeData theme) {
     if (chartData.isEmpty) {
-      return const Center(
-          child: Text('No visual data points available for this selection.'));
+      return const Center(child: Text('No visual data points available for this selection.'));
     }
 
     // Pie chart suited reports
@@ -439,17 +416,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     // Area/Line chart suited reports (financial summaries)
     return CustomLineChart(
       data: chartData,
-      fillArea: type == 'financial_revenue' ||
-          type == 'financial_profit_loss' ||
-          type == 'financial_cash_flow',
+      fillArea: type == 'financial_revenue' || type == 'financial_profit_loss' || type == 'financial_cash_flow',
     );
   }
 
   // --- DATA GRID TABLE ---
   Widget _buildDataTable(List<Map<String, dynamic>> rows, ThemeData theme) {
     if (rows.isEmpty) {
-      return const Center(
-          child: Text('No tabular data records matching the filters.'));
+      return const Center(child: Text('No tabular data records matching the filters.'));
     }
 
     final headers = rows.first.keys.toList();
@@ -458,8 +432,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
       scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
         child: DataTable(
-          headingRowColor: MaterialStateProperty.all(
-              theme.colorScheme.surfaceVariant.withOpacity(0.5)),
+          headingRowColor: MaterialStateProperty.all(theme.colorScheme.surfaceVariant.withOpacity(0.5)),
           columns: headers
               .map((h) => DataColumn(
                     label: Text(
@@ -490,9 +463,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     ThemeData theme,
   ) {
     if (list.isEmpty) {
-      return const Center(
-          child:
-              Text('No saved reports archived. Create one from the sidebar.'));
+      return const Center(child: Text('No saved reports archived. Create one from the sidebar.'));
     }
 
     return ListView.separated(
@@ -512,9 +483,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
             onPressed: () async {
               final user = ref.read(currentUserProvider);
               if (user?.companyId != null) {
-                await ref
-                    .read(reportRepositoryProvider)
-                    .deleteReport(user!.companyId!, r.id);
+                await ref.read(reportRepositoryProvider).deleteReport(user!.companyId!, r.id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Report deleted successfully.')),
                 );
@@ -524,17 +493,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           onTap: () {
             // Load filters and values back in
             ref.read(selectedReportTypeProvider.notifier).state = r.type;
-
+            
             // Re-apply filters
             final filterNotifier = ref.read(reportFiltersProvider.notifier);
             filterNotifier.reset();
-            if (r.filters['vehicleId'] != null)
-              filterNotifier.setVehicleId(r.filters['vehicleId']);
-            if (r.filters['driverId'] != null)
-              filterNotifier.setDriverId(r.filters['driverId']);
-            if (r.filters['customerId'] != null)
-              filterNotifier.setCustomerId(r.filters['customerId']);
-
+            if (r.filters['vehicleId'] != null) filterNotifier.setVehicleId(r.filters['vehicleId']);
+            if (r.filters['driverId'] != null) filterNotifier.setDriverId(r.filters['driverId']);
+            if (r.filters['customerId'] != null) filterNotifier.setCustomerId(r.filters['customerId']);
+            
             _tabController.animateTo(0); // Go to Visual analytics
           },
         );
@@ -576,64 +542,26 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
             value: selectedType,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: const [
-              DropdownMenuItem(
-                  value: 'financial_revenue', child: Text('Revenue report')),
-              DropdownMenuItem(
-                  value: 'financial_expense', child: Text('Expense report')),
-              DropdownMenuItem(
-                  value: 'financial_profit_loss',
-                  child: Text('Profit & Loss statement')),
-              DropdownMenuItem(
-                  value: 'financial_cash_flow',
-                  child: Text('Cash Flow statement')),
-              DropdownMenuItem(
-                  value: 'financial_outstanding_receivables',
-                  child: Text('Outstanding Aging')),
-              DropdownMenuItem(
-                  value: 'financial_customer_ledger',
-                  child: Text('Customer General Ledger')),
-              DropdownMenuItem(
-                  value: 'financial_driver_expense',
-                  child: Text('Driver Payroll expenses')),
-              DropdownMenuItem(
-                  value: 'financial_vehicle_expense',
-                  child: Text('Vehicle Expense Ledger')),
-              DropdownMenuItem(
-                  value: 'fleet_vehicle_utilization',
-                  child: Text('Vehicle Utilization')),
-              DropdownMenuItem(
-                  value: 'fleet_trip_summary',
-                  child: Text('Trip logistics summary')),
-              DropdownMenuItem(
-                  value: 'fleet_availability',
-                  child: Text('Availability matrix')),
-              DropdownMenuItem(
-                  value: 'fleet_driver_utilization',
-                  child: Text('Driver shift allocation')),
-              DropdownMenuItem(
-                  value: 'fleet_driver_performance',
-                  child: Text('Driver safety index')),
-              DropdownMenuItem(
-                  value: 'fleet_fuel_consumption',
-                  child: Text('Fuel efficiency spend')),
-              DropdownMenuItem(
-                  value: 'fleet_maintenance_cost',
-                  child: Text('Maintenance Cost ledger')),
-              DropdownMenuItem(
-                  value: 'fleet_inventory_usage',
-                  child: Text('Spare Parts consumption')),
-              DropdownMenuItem(
-                  value: 'customer_revenue',
-                  child: Text('Customer Billing summaries')),
-              DropdownMenuItem(
-                  value: 'customer_outstanding',
-                  child: Text('Customer Debt exposure')),
-              DropdownMenuItem(
-                  value: 'customer_payment_history',
-                  child: Text('Customer settlement checks')),
-              DropdownMenuItem(
-                  value: 'customer_contract_summary',
-                  child: Text('Active Contract reviews')),
+              DropdownMenuItem(value: 'financial_revenue', child: Text('Revenue report')),
+              DropdownMenuItem(value: 'financial_expense', child: Text('Expense report')),
+              DropdownMenuItem(value: 'financial_profit_loss', child: Text('Profit & Loss statement')),
+              DropdownMenuItem(value: 'financial_cash_flow', child: Text('Cash Flow statement')),
+              DropdownMenuItem(value: 'financial_outstanding_receivables', child: Text('Outstanding Aging')),
+              DropdownMenuItem(value: 'financial_customer_ledger', child: Text('Customer General Ledger')),
+              DropdownMenuItem(value: 'financial_driver_expense', child: Text('Driver Payroll expenses')),
+              DropdownMenuItem(value: 'financial_vehicle_expense', child: Text('Vehicle Expense Ledger')),
+              DropdownMenuItem(value: 'fleet_vehicle_utilization', child: Text('Vehicle Utilization')),
+              DropdownMenuItem(value: 'fleet_trip_summary', child: Text('Trip logistics summary')),
+              DropdownMenuItem(value: 'fleet_availability', child: Text('Availability matrix')),
+              DropdownMenuItem(value: 'fleet_driver_utilization', child: Text('Driver shift allocation')),
+              DropdownMenuItem(value: 'fleet_driver_performance', child: Text('Driver safety index')),
+              DropdownMenuItem(value: 'fleet_fuel_consumption', child: Text('Fuel efficiency spend')),
+              DropdownMenuItem(value: 'fleet_maintenance_cost', child: Text('Maintenance Cost ledger')),
+              DropdownMenuItem(value: 'fleet_inventory_usage', child: Text('Spare Parts consumption')),
+              DropdownMenuItem(value: 'customer_revenue', child: Text('Customer Billing summaries')),
+              DropdownMenuItem(value: 'customer_outstanding', child: Text('Customer Debt exposure')),
+              DropdownMenuItem(value: 'customer_payment_history', child: Text('Customer settlement checks')),
+              DropdownMenuItem(value: 'customer_contract_summary', child: Text('Active Contract reviews')),
             ],
             onChanged: (val) {
               if (val != null) {
@@ -651,14 +579,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: const [
               DropdownMenuItem(value: 'daily', child: Text('Daily Partition')),
-              DropdownMenuItem(
-                  value: 'weekly', child: Text('Weekly Partition')),
-              DropdownMenuItem(
-                  value: 'monthly', child: Text('Monthly Partition')),
-              DropdownMenuItem(
-                  value: 'quarterly', child: Text('Quarterly Partition')),
-              DropdownMenuItem(
-                  value: 'yearly', child: Text('Yearly Partition')),
+              DropdownMenuItem(value: 'weekly', child: Text('Weekly Partition')),
+              DropdownMenuItem(value: 'monthly', child: Text('Monthly Partition')),
+              DropdownMenuItem(value: 'quarterly', child: Text('Quarterly Partition')),
+              DropdownMenuItem(value: 'yearly', child: Text('Yearly Partition')),
             ],
             onChanged: (val) {
               if (val != null) {
@@ -695,8 +619,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 44)),
+            style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 44)),
             icon: const Icon(Icons.table_rows_outlined),
             label: const Text('Export to CSV'),
             onPressed: () {
@@ -715,8 +638,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           ),
           const SizedBox(height: 10),
           OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 44)),
+            style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 44)),
             icon: const Icon(Icons.grid_on_outlined),
             label: const Text('Export to Excel'),
             onPressed: () {
@@ -747,17 +669,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           ),
           const SizedBox(height: 12),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 44)),
+            style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 44)),
             onPressed: reportSaveState.isLoading
                 ? null
                 : () async {
                     final title = _saveTitleController.text.trim();
                     if (title.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Please enter a name for the saved report.')),
+                        const SnackBar(content: Text('Please enter a name for the saved report.')),
                       );
                       return;
                     }
@@ -766,20 +685,15 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                       await ref
                           .read(reportSaveControllerProvider.notifier)
                           .saveReport(title, selectedType, data, filters);
-
+                      
                       _saveTitleController.clear();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content:
-                                Text('Successfully archived this report!')),
+                        const SnackBar(content: Text('Successfully archived this report!')),
                       );
                     }
                   },
             child: reportSaveState.isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                 : const Text('Save Report Parameters'),
           ),
         ],

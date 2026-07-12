@@ -744,7 +744,7 @@ class _DocumentListScreenState extends ConsumerState<DocumentListScreen>
                   Icon(_getCategoryIcon(doc.category),
                       color: colorScheme.primary, size: 28),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),

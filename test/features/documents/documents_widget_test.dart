@@ -20,7 +20,6 @@ void main() {
     final testDoc = DocumentEntity(
       id: 'doc_1',
       companyId: 'c_1',
-      name: 'GST Certificate 2026',
       fileName: 'GST Certificate 2026',
       category: 'company',
       type: 'gst_certificate',
@@ -31,6 +30,8 @@ void main() {
       downloadUrl: 'https://mock-storage/gst.pdf',
       uploadDate: now,
       status: 'pending_verification',
+      uploadedBy: 'Operator John',
+      documentNumber: 'GST-9988-12',
       createdAt: now,
       updatedAt: now,
     );
