@@ -6,7 +6,6 @@ import '../../auth/presentation/auth_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
-import '../../trips/presentation/trip_providers.dart';
 import '../domain/report_entity.dart';
 import 'report_providers.dart';
 import 'report_export_helper.dart';

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../domain/document_entity.dart';
 import 'document_providers.dart';
 
 class DocumentDetailScreen extends ConsumerStatefulWidget {

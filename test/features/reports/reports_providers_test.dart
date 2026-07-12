@@ -10,16 +10,12 @@ import 'package:fleet_os_erp/features/trips/domain/trip_entity.dart';
 import 'package:fleet_os_erp/features/trips/presentation/trip_providers.dart';
 import 'package:fleet_os_erp/features/customers/domain/invoice_entity.dart';
 import 'package:fleet_os_erp/features/billing/presentation/billing_providers.dart';
-import 'package:fleet_os_erp/features/billing/domain/payment_entity.dart';
 import 'package:fleet_os_erp/features/finance/domain/finance_transaction_entity.dart';
 import 'package:fleet_os_erp/features/finance/presentation/finance_providers.dart';
-import 'package:fleet_os_erp/features/fleet_ops/domain/fuel_entity.dart';
-import 'package:fleet_os_erp/features/fleet_ops/domain/maintenance_entity.dart';
 import 'package:fleet_os_erp/features/fleet_ops/presentation/fleet_ops_providers.dart';
 import 'package:fleet_os_erp/features/inventory/presentation/inventory_providers.dart';
 import 'package:fleet_os_erp/features/customers/presentation/customer_providers.dart';
 import 'package:fleet_os_erp/features/customers/domain/customer_entity.dart';
-import 'package:fleet_os_erp/features/customers/domain/contract_entity.dart';
 import 'package:fleet_os_erp/features/reports/domain/report_entity.dart';
 import 'package:fleet_os_erp/features/reports/domain/report_repository.dart';
 import 'package:fleet_os_erp/features/reports/presentation/report_providers.dart';
@@ -220,7 +216,7 @@ void main() {
       await pumpEventQueue();
 
       final reportDataVal = container.read(reportDataProvider);
-      expect(reportDataVal, isA<AsyncData>());
+      expect(reportDataVal, isA<AsyncData<ReportData>>());
 
       final data = reportDataVal.value!;
       expect(data.kpis['Total Invoiced'], '\$5500.00');

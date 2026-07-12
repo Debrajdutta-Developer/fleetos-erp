@@ -11,15 +11,10 @@ import '../../trips/presentation/trip_providers.dart';
 import '../../trips/domain/audit_log_entity.dart';
 import '../../customers/presentation/customer_providers.dart';
 import '../../customers/domain/customer_entity.dart';
-import '../../customers/domain/invoice_entity.dart';
 import '../../fleet_ops/presentation/fleet_ops_providers.dart';
-import '../../fleet_ops/domain/fuel_entity.dart';
-import '../../fleet_ops/domain/maintenance_entity.dart';
 import '../../inventory/presentation/inventory_providers.dart';
 import '../../billing/presentation/billing_providers.dart';
-import '../../billing/domain/payment_entity.dart';
 import '../../finance/presentation/finance_providers.dart';
-import '../../finance/domain/finance_transaction_entity.dart';
 import '../domain/report_entity.dart';
 import '../domain/report_repository.dart';
 import '../data/report_repository_impl.dart';
@@ -500,7 +495,7 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
                   })
               .toList());
 
-        rows.sort((a, b) => b['Date'].compareTo(a['Date']));
+        rows.sort((a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
         break;
 
       case 'financial_outstanding_receivables':
@@ -606,7 +601,7 @@ final reportDataProvider = Provider.autoDispose<AsyncValue<ReportData>>((ref) {
                   'Status': i.status,
                 })
             .toList();
-        rows.sort((a, b) => b['Date'].compareTo(a['Date']));
+        rows.sort((a, b) => (b['Date'] as String).compareTo(a['Date'] as String));
         break;
 
       case 'financial_driver_expense':
