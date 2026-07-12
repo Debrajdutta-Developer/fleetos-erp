@@ -252,9 +252,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     BuildContext context,
     WidgetRef ref,
     ReportFilters filters,
-    List<dynamic> vehicles,
-    List<dynamic> drivers,
-    List<dynamic> customers,
+    List<VehicleEntity> vehicles,
+    List<DriverEntity> drivers,
+    List<CustomerEntity> customers,
   ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
