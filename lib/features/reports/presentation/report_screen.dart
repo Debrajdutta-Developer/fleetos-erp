@@ -316,7 +316,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Driver'),
               value: filters.driverId,
               items: [
-                const DropdownMenuItem<String>(value: null, child: Text('All Drivers')),
+                const DropdownMenuItem<String>(
+                    value: null, child: Text('All Drivers')),
                 ...drivers.map((DriverEntity d) => DropdownMenuItem<String>(
                       value: d.id,
                       child: Text(d.fullName),
