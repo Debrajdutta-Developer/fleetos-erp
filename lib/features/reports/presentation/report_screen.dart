@@ -299,9 +299,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Vehicle'),
               value: filters.vehicleId,
               items: [
-                const DropdownMenuItem(
+                const DropdownMenuItem<String>(
                     value: null, child: Text('All Vehicles')),
-                ...vehicles.map((v) => DropdownMenuItem<String>(
+                ...vehicles.map((VehicleEntity v) => DropdownMenuItem<String>(
                       value: v.id,
                       child: Text(v.licensePlate),
                     )),
@@ -316,8 +316,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Driver'),
               value: filters.driverId,
               items: [
-                const DropdownMenuItem(value: null, child: Text('All Drivers')),
-                ...drivers.map((d) => DropdownMenuItem<String>(
+                const DropdownMenuItem<String>(value: null, child: Text('All Drivers')),
+                ...drivers.map((DriverEntity d) => DropdownMenuItem<String>(
                       value: d.id,
                       child: Text(d.fullName),
                     )),
@@ -332,9 +332,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
               hint: const Text('Filter Customer'),
               value: filters.customerId,
               items: [
-                const DropdownMenuItem(
+                const DropdownMenuItem<String>(
                     value: null, child: Text('All Customers')),
-                ...customers.map((c) => DropdownMenuItem<String>(
+                ...customers.map((CustomerEntity c) => DropdownMenuItem<String>(
                       value: c.id,
                       child: Text(c.name),
                     )),
