@@ -6,6 +6,9 @@ import '../../auth/presentation/auth_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../drivers/presentation/driver_providers.dart';
 import '../../customers/presentation/customer_providers.dart';
+import '../../vehicles/domain/vehicle_entity.dart';
+import '../../drivers/domain/driver_entity.dart';
+import '../../customers/domain/customer_entity.dart';
 import '../domain/report_entity.dart';
 import 'report_providers.dart';
 import 'report_export_helper.dart';
@@ -94,9 +97,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
     final filters = ref.watch(reportFiltersProvider);
 
     // Watch query streams for filter dropdown values
-    final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? [];
-    final drivers = ref.watch(driversStreamProvider).valueOrNull ?? [];
-    final customers = ref.watch(customersStreamProvider).valueOrNull ?? [];
+    final vehicles = ref.watch(vehiclesStreamProvider).valueOrNull ?? <VehicleEntity>[];
+    final drivers = ref.watch(driversStreamProvider).valueOrNull ?? <DriverEntity>[];
+    final customers = ref.watch(customersStreamProvider).valueOrNull ?? <CustomerEntity>[];
 
     final reportDataAsync = ref.watch(reportDataProvider);
     final savedReports = ref.watch(savedReportsProvider).valueOrNull ?? [];

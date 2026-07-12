@@ -217,7 +217,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       // Simulate Upload Progress if fileBytes are provided
       if (fileBytes != null) {
         for (var progress = 0.1; progress <= 0.9; progress += 0.2) {
-          await Future.delayed(const Duration(milliseconds: 150));
+          await Future<void>.delayed(const Duration(milliseconds: 150));
           state = state.copyWith(uploadProgress: progress);
         }
 
@@ -285,7 +285,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
 
       // Simulate Upload Progress
       for (var progress = 0.1; progress <= 0.9; progress += 0.2) {
-        await Future.delayed(const Duration(milliseconds: 150));
+        await Future<void>.delayed(const Duration(milliseconds: 150));
         state = state.copyWith(uploadProgress: progress);
       }
 

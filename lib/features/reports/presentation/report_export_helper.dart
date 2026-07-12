@@ -78,7 +78,7 @@ class ReportExportHelper {
           action: SnackBarAction(
             label: 'View Bytes',
             onPressed: () {
-              showDialog(
+              showDialog<void>(
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: Text('Exported Data ($format)'),
