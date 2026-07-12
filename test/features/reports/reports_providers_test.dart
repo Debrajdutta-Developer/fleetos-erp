@@ -74,6 +74,9 @@ void main() {
       status: 'active',
       fuelType: 'diesel',
       odometer: 150000.0,
+      fitnessExpiry: now.add(const Duration(days: 180)),
+      insuranceExpiry: now.add(const Duration(days: 180)),
+      pucExpiry: now.add(const Duration(days: 180)),
       createdAt: now,
       updatedAt: now,
     );

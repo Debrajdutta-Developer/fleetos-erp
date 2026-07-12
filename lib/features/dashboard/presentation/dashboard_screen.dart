@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:collection/collection.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../company_setup/presentation/company_providers.dart';
 import '../../company_setup/domain/company_entity.dart';
@@ -579,9 +580,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         [];
                                     final grouped = <String, int>{};
                                     for (final t in trips) {
-                                      final v = vehicles.firstWhere(
-                                          (veh) => veh.id == t.vehicleId,
-                                          orElse: () => null as dynamic);
+                                      final v = vehicles.firstWhereOrNull(
+                                          (veh) => veh.id == t.vehicleId);
                                       final label = v != null
                                           ? v.licensePlate
                                           : t.vehicleId;

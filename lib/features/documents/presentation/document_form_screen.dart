@@ -143,7 +143,9 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
       companyId: '', // Filled in controller
       relatedEntityId: _category == 'company' ? null : _selectedEntityId,
       relatedEntityType: _category == 'company' ? null : _category,
+      entityName: _category == 'company' ? null : _selectedEntityName,
       category: _category,
+      type: _type,
       fileName: _nameController.text.trim(),
       originalFileName: _fileName,
       fileSize: _fileSize,
@@ -157,6 +159,7 @@ class _DocumentFormScreenState extends ConsumerState<DocumentFormScreen> {
       status: 'pending_verification',
       notes: _notesController.text.trim(),
       uploadedBy: '', // Filled in controller
+      documentNumber: _numberController.text.trim(),
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
