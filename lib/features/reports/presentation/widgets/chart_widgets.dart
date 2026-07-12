@@ -241,7 +241,6 @@ class LineChartPainter extends CustomPainter {
           ..lineTo(firstOffset.dx, size.height - paddingBottom)
           ..close();
 
-
         final areaPaint = Paint()
           ..shader = LinearGradient(
             begin: Alignment.topCenter,
