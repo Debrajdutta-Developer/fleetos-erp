@@ -163,7 +163,8 @@ void main() {
           cloudStorageServiceProvider.overrideWithValue(storageMock),
         ],
       );
-      formSubscription = container.listen(documentFormControllerProvider, (_, __) {});
+      formSubscription =
+          container.listen(documentFormControllerProvider, (_, __) {});
     });
 
     tearDown(() {
