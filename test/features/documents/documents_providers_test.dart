@@ -143,6 +143,7 @@ void main() {
     late ProviderContainer container;
     late MockDocumentRepository docRepo;
     late MockCloudStorageService storageMock;
+    late ProviderSubscription formSubscription;
     final now = DateTime.now();
 
     setUp(() {
@@ -162,9 +163,11 @@ void main() {
           cloudStorageServiceProvider.overrideWithValue(storageMock),
         ],
       );
+      formSubscription = container.listen(documentFormControllerProvider, (_, __) {});
     });
 
     tearDown(() {
+      formSubscription.close();
       container.dispose();
     });
 

@@ -186,6 +186,8 @@ void main() {
           contractsStreamProvider.overrideWith((ref) => Stream.value([])),
         ],
       );
+      // Listen to reportDataProvider to keep stream subscriptions warm and active
+      container.listen(reportDataProvider, (previous, next) {});
     });
 
     tearDown(() {

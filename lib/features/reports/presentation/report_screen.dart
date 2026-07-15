@@ -521,7 +521,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                 await ref
                     .read(reportRepositoryProvider)
                     .deleteReport(user!.companyId!, r.id);
-                if (!mounted) return;
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Report deleted successfully.')),
                 );
@@ -580,6 +580,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           Text('Report Category', style: theme.textTheme.titleSmall),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
+            isExpanded: true,
             value: selectedType,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: const [
@@ -654,6 +655,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
           Text('Aggregation Timeframe', style: theme.textTheme.titleSmall),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
+            isExpanded: true,
             value: timeframe,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: const [
@@ -774,7 +776,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen>
                           .read(reportSaveControllerProvider.notifier)
                           .saveReport(title, selectedType, data, filters);
 
-                      if (!mounted) return;
+                      if (!context.mounted) return;
                       _saveTitleController.clear();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

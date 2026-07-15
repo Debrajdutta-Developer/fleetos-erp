@@ -100,7 +100,9 @@ void main() {
     expect(find.byType(CustomPaint), findsAtLeastNWidgets(1));
 
     // Tap Data Table Grid tab
-    await tester.tap(find.text('Data Table Grid'));
+    final dataTableTab = find.text('Data Table Grid');
+    await tester.ensureVisible(dataTableTab);
+    await tester.tap(dataTableTab);
     await tester.pumpAndSettle();
 
     // Verify invoice number inside data table row
