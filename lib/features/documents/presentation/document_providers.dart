@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -206,8 +206,9 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null)
         throw Exception('No company session context.');
+      final companyId = user!.companyId!;
 
-      final existingDocs = await _repo.getDocuments(user!.companyId!);
+      final existingDocs = await _repo.getDocuments(companyId);
 
       // Perform local business rule validations
       validateDocument(doc, existingDocs);
@@ -223,7 +224,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
 
         // Trigger abstract storage service upload
         finalUrl = await _storage.uploadFile(
-          companyId: user!.companyId!,
+          companyId: companyId,
           path: doc.storagePath,
           fileBytes: fileBytes,
           fileName: doc.originalFileName,
@@ -235,7 +236,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
 
       final isEdit = doc.id.isNotEmpty;
       final savedDoc = await _repo.createDocument(
-        user!.companyId!,
+        companyId,
         doc.copyWith(
           downloadUrl: finalUrl,
           uploadedBy: user.displayName,
@@ -478,10 +479,11 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
     try {
       final user = _ref.read(currentUserProvider);
       if (user?.companyId == null) return;
+      final companyId = user!.companyId!;
 
       final auditLog = AuditLogEntity(
         id: const Uuid().v4(),
-        companyId: user!.companyId!,
+        companyId: companyId,
         entityType: 'document',
         entityId: entityId,
         action: action,
@@ -499,7 +501,7 @@ class DocumentFormController extends StateNotifier<DocumentFormState> {
           .set(auditLog.toMap());
     } catch (e) {
       // Gracefully handle Firestore failures in tests/offline environments
-      print('Audit log write failed: $e');
+      debugPrint('Audit log write failed: $e');
     }
   }
 }
