@@ -48,6 +48,10 @@ import '../../features/reports/presentation/report_screen.dart';
 import '../../features/documents/presentation/document_list_screen.dart';
 import '../../features/documents/presentation/document_form_screen.dart';
 import '../../features/documents/presentation/document_detail_screen.dart';
+import '../../features/notifications/domain/notification_entity.dart';
+import '../../features/notifications/presentation/screens/notification_center_screen.dart';
+import '../../features/notifications/presentation/screens/alert_details_screen.dart';
+import '../../features/notifications/presentation/screens/notification_settings_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -369,6 +373,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/routes',
         builder: (context, state) => const RouteListScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationCenterScreen(),
+      ),
+      GoRoute(
+        path: '/notifications/alert-details',
+        builder: (context, state) {
+          final n = state.extra as NotificationEntity;
+          return AlertDetailsScreen(notification: n);
+        },
+      ),
+      GoRoute(
+        path: '/notifications/settings',
+        builder: (context, state) => const NotificationSettingsScreen(),
       ),
     ],
     redirect: (context, state) {

@@ -10,6 +10,8 @@ import '../../reports/presentation/widgets/chart_widgets.dart';
 import '../../reports/presentation/report_providers.dart';
 import '../../trips/presentation/trip_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
+import '../../notifications/presentation/notifications_providers.dart';
+import '../../notifications/domain/notification_entity.dart';
 
 /// State notifier for global app theme configuration overrides.
 class ThemeController extends StateNotifier<ThemeMode> {
@@ -107,6 +109,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth > 992;
+
+    final notificationsAsync = ref.watch(notificationsStreamProvider);
+    final unreadCount =
+        notificationsAsync.valueOrNull?.where((n) => !n.isRead).length ?? 0;
 
     // Loading details
     final companyName = _loadingCompany
@@ -631,53 +637,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ),
                       ),
                     ),
+                    if (!isDesktop) ...[
+                      const SizedBox(height: 16),
+                      const _DashboardAlertsWidget(),
+                    ],
                   ],
                 ),
               ),
               if (isDesktop) ...[
                 const SizedBox(width: 16),
-                Expanded(
+                const Expanded(
                   flex: 1,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Active Diagnostics Feed',
-                            style: theme.textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 16),
-                          _ActivityItem(
-                            icon: Icons.flash_on,
-                            color: Colors.amber,
-                            title: 'Route Warning Engine',
-                            time: '2 mins ago',
-                            subtitle:
-                                'Vehicle F-201 reported traffic deviation.',
-                          ),
-                          const Divider(height: 24),
-                          _ActivityItem(
-                            icon: Icons.check_circle_outline_rounded,
-                            color: Colors.green,
-                            title: 'Maintenance Sync',
-                            time: '1 hour ago',
-                            subtitle:
-                                'Truck T-88 service log uploaded to database.',
-                          ),
-                          const Divider(height: 24),
-                          _ActivityItem(
-                            icon: Icons.error_outline_rounded,
-                            color: Colors.red,
-                            title: 'Fuel Drop Threshold',
-                            time: '4 hours ago',
-                            subtitle: 'Van V-302 sudden fuel drop detected.',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: _DashboardAlertsWidget(),
                 ),
               ],
             ],
@@ -815,6 +786,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   icon: Icons.verified_user_rounded,
                   label: 'Compliance Docs',
                   onTap: () => context.push('/compliance'),
+                ),
+                _SidebarNavItem(
+                  icon: Icons.notifications_rounded,
+                  label: 'Notifications',
+                  onTap: () => context.push('/notifications'),
+                  badge: unreadCount > 0 ? '$unreadCount' : null,
                 ),
                 _SidebarNavItem(
                   icon: Icons.settings_outlined,
@@ -1072,6 +1049,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       context.push('/inventory/transactions');
                     },
                   ),
+                  ListTile(
+                    leading: const Icon(Icons.notifications_rounded),
+                    title: const Text('Notifications'),
+                    trailing: unreadCount > 0
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colorScheme.error,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '$unreadCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : null,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/notifications');
+                    },
+                  ),
                   const ListTile(
                     leading: Icon(Icons.settings_outlined),
                     title: Text('Settings'),
@@ -1188,12 +1191,14 @@ class _SidebarNavItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback? onTap;
+  final String? badge;
 
   const _SidebarNavItem({
     required this.icon,
     required this.label,
     this.isSelected = false,
     this.onTap,
+    this.badge,
   });
 
   @override
@@ -1226,78 +1231,202 @@ class _SidebarNavItem extends StatelessWidget {
             fontSize: 14,
           ),
         ),
+        trailing: badge != null
+            ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.error,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  badge!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
+            : null,
         onTap: onTap,
       ),
     );
   }
 }
 
-class _ActivityItem extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final String title;
-  final String time;
-  final String subtitle;
+class _DashboardAlertsWidget extends ConsumerStatefulWidget {
+  const _DashboardAlertsWidget();
 
-  const _ActivityItem({
-    required this.icon,
-    required this.color,
-    required this.title,
-    required this.time,
-    required this.subtitle,
-  });
+  @override
+  ConsumerState<_DashboardAlertsWidget> createState() =>
+      _DashboardAlertsWidgetState();
+}
+
+class _DashboardAlertsWidgetState extends ConsumerState<_DashboardAlertsWidget>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: color, size: 16),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
+    final notificationsAsync = ref.watch(notificationsStreamProvider);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Operations Control Center',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                    time,
-                    style: TextStyle(
-                      color: theme.colorScheme.onBackground.withOpacity(0.4),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: theme.colorScheme.onBackground.withOpacity(0.6),
-                  fontSize: 12,
-                  height: 1.3,
                 ),
+                IconButton(
+                  icon: const Icon(Icons.open_in_new_rounded, size: 20),
+                  onPressed: () => context.push('/notifications'),
+                  tooltip: 'Go to Notification Center',
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TabBar(
+              controller: _tabController,
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              isScrollable: true,
+              tabs: const [
+                Tab(text: 'Critical'),
+                Tab(text: 'Today'),
+                Tab(text: 'Expiries'),
+                Tab(text: 'Pending'),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 350,
+              child: notificationsAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text('Error: $err')),
+                data: (list) {
+                  final now = DateTime.now();
+
+                  // 1. Critical Alerts (critical & high priority)
+                  final criticalAlerts = list
+                      .where((n) =>
+                          n.priority == 'critical' || n.priority == 'high')
+                      .toList();
+
+                  // 2. Notifications Today
+                  final notificationsToday = list
+                      .where((n) =>
+                          n.createdAt.year == now.year &&
+                          n.createdAt.month == now.month &&
+                          n.createdAt.day == now.day)
+                      .toList();
+
+                  // 3. Upcoming Expiries
+                  final upcomingExpiries = list
+                      .where((n) =>
+                          n.title.contains('Expiring Soon') ||
+                          n.title.contains('Expired'))
+                      .toList();
+
+                  // 4. Pending Actions (Unread)
+                  final pendingActions = list.where((n) => !n.isRead).toList();
+
+                  Widget buildList(
+                      List<NotificationEntity> items, String emptyMessage) {
+                    if (items.isEmpty) {
+                      return Center(
+                        child: Text(
+                          emptyMessage,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey.shade500),
+                        ),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, idx) {
+                        final item = items[idx];
+                        Color iconColor = Colors.grey;
+                        if (item.priority == 'critical')
+                          iconColor = Colors.red;
+                        else if (item.priority == 'high')
+                          iconColor = Colors.orange;
+                        else if (item.priority == 'medium')
+                          iconColor = Colors.blue;
+
+                        return ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(
+                            item.isRead
+                                ? Icons.notifications_none_rounded
+                                : Icons.notifications_active_rounded,
+                            color: iconColor,
+                          ),
+                          title: Text(
+                            item.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: item.isRead
+                                  ? FontWeight.normal
+                                  : FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            item.message,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          trailing:
+                              const Icon(Icons.chevron_right_rounded, size: 16),
+                          onTap: () => context.push(
+                              '/notifications/alert-details',
+                              extra: item),
+                        );
+                      },
+                    );
+                  }
+
+                  return TabBarView(
+                    controller: _tabController,
+                    children: [
+                      buildList(criticalAlerts, 'No critical alerts active.'),
+                      buildList(notificationsToday,
+                          'No notifications generated today.'),
+                      buildList(
+                          upcomingExpiries, 'No upcoming expiries found.'),
+                      buildList(
+                          pendingActions, 'All caught up! No pending actions.'),
+                    ],
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
