@@ -12,6 +12,7 @@ import '../../trips/presentation/trip_providers.dart';
 import '../../vehicles/presentation/vehicle_providers.dart';
 import '../../notifications/presentation/notifications_providers.dart';
 import '../../notifications/domain/notification_entity.dart';
+import '../../hr/presentation/hr_providers.dart';
 
 /// State notifier for global app theme configuration overrides.
 class ThemeController extends StateNotifier<ThemeMode> {
@@ -119,9 +120,53 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ? 'Loading company...'
         : (_company?.name ?? 'FleetOS Operator');
 
+    final employees = ref.watch(employeesStreamProvider).valueOrNull ?? [];
+    final leaves = ref.watch(leavesStreamProvider).valueOrNull ?? [];
+    final todayAttendance =
+        ref.watch(attendanceStreamProvider(DateTime.now())).valueOrNull ?? [];
+
+    final totalEmployees = employees.length;
+    final activeEmployees = employees.where((e) => e.status == 'active').length;
+    final leavesToday = leaves.where((l) {
+      final now = DateTime.now();
+      return l.status == 'approved' &&
+          (l.startDate.isBefore(now) || l.startDate.isAtSameMomentAs(now)) &&
+          (l.endDate.isAfter(now) || l.endDate.isAtSameMomentAs(now));
+    }).length;
+
+    final todayPresent = todayAttendance
+        .where((a) => a.status == 'present' || a.status == 'late')
+        .length;
+    final attendanceRate =
+        totalEmployees > 0 ? (todayPresent / totalEmployees) * 100 : 100.0;
+
     final statsAsync = ref.watch(dashboardStatsProvider);
     final stats = statsAsync.when(
       data: (data) => [
+        _StatCardData(
+          title: 'Total Employees',
+          value: totalEmployees.toString(),
+          subtitle: 'Active roster count',
+          icon: Icons.people_outline,
+          trend: '$activeEmployees Active',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'HR Leaves Today',
+          value: leavesToday.toString(),
+          subtitle: 'Approved absences',
+          icon: Icons.time_to_leave_outlined,
+          trend: 'Scheduled leaves',
+          isPositive: true,
+        ),
+        _StatCardData(
+          title: 'Today Attendance Rate',
+          value: '${attendanceRate.toStringAsFixed(0)}%',
+          subtitle: 'Check-in completion',
+          icon: Icons.done_all_outlined,
+          trend: '$todayPresent Present today',
+          isPositive: attendanceRate >= 80.0,
+        ),
         _StatCardData(
           title: 'Active Fleet Count',
           value: data.activeFleetCount.toString(),
@@ -794,6 +839,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   badge: unreadCount > 0 ? '$unreadCount' : null,
                 ),
                 _SidebarNavItem(
+                  icon: Icons.people_outline_rounded,
+                  label: 'HR & Employees',
+                  onTap: () => context.push('/hr/employees'),
+                ),
+                _SidebarNavItem(
                   icon: Icons.settings_outlined,
                   label: 'ERP Settings',
                 ),
@@ -1073,6 +1123,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     onTap: () {
                       Navigator.of(context).pop();
                       context.push('/notifications');
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.people_outline_rounded),
+                    title: const Text('HR & Employees'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      context.push('/hr/employees');
                     },
                   ),
                   const ListTile(

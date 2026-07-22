@@ -52,6 +52,13 @@ import '../../features/notifications/domain/notification_entity.dart';
 import '../../features/notifications/presentation/screens/notification_center_screen.dart';
 import '../../features/notifications/presentation/screens/alert_details_screen.dart';
 import '../../features/notifications/presentation/screens/notification_settings_screen.dart';
+import '../../features/hr/presentation/screens/employee_list_screen.dart';
+import '../../features/hr/presentation/screens/employee_form_screen.dart';
+import '../../features/hr/presentation/screens/employee_profile_screen.dart';
+import '../../features/hr/presentation/screens/attendance_screen.dart';
+import '../../features/hr/presentation/screens/leave_screen.dart';
+import '../../features/hr/presentation/screens/payroll_screen.dart';
+import '../../features/hr/presentation/screens/hr_settings_screen.dart';
 
 /// Stream-to-Listenable converter helper class for GoRouter reactive redirects.
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -388,6 +395,40 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/notifications/settings',
         builder: (context, state) => const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/hr/employees',
+        builder: (context, state) => const EmployeeListScreen(),
+      ),
+      GoRoute(
+        path: '/hr/employees/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return EmployeeProfileScreen(employeeId: id);
+        },
+      ),
+      GoRoute(
+        path: '/hr/employees/:id/edit',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return EmployeeFormScreen(employeeId: id);
+        },
+      ),
+      GoRoute(
+        path: '/hr/attendance',
+        builder: (context, state) => const AttendanceScreen(),
+      ),
+      GoRoute(
+        path: '/hr/leaves',
+        builder: (context, state) => const LeaveScreen(),
+      ),
+      GoRoute(
+        path: '/hr/payroll',
+        builder: (context, state) => const PayrollScreen(),
+      ),
+      GoRoute(
+        path: '/hr/settings',
+        builder: (context, state) => const HrSettingsScreen(),
       ),
     ],
     redirect: (context, state) {

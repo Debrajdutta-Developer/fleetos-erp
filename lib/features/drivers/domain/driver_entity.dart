@@ -8,6 +8,7 @@ class DriverEntity {
   final double safetyScore;
   final String? assignedVehicleId;
   final String? assignedVehicleLicensePlate;
+  final String? employeeId;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
@@ -22,6 +23,7 @@ class DriverEntity {
     required this.safetyScore,
     this.assignedVehicleId,
     this.assignedVehicleLicensePlate,
+    this.employeeId,
     required this.createdAt,
     required this.updatedAt,
     this.deletedAt,
@@ -38,6 +40,7 @@ class DriverEntity {
       'safetyScore': safetyScore,
       'assignedVehicleId': assignedVehicleId,
       'assignedVehicleLicensePlate': assignedVehicleLicensePlate,
+      'employeeId': employeeId,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
@@ -58,6 +61,7 @@ class DriverEntity {
       assignedVehicleId: map['assignedVehicleId'] as String?,
       assignedVehicleLicensePlate:
           map['assignedVehicleLicensePlate'] as String?,
+      employeeId: map['employeeId'] as String?,
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : DateTime.now(),
@@ -80,6 +84,7 @@ class DriverEntity {
     double? safetyScore,
     String? assignedVehicleId,
     String? assignedVehicleLicensePlate,
+    String? employeeId,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -95,6 +100,7 @@ class DriverEntity {
       assignedVehicleId: assignedVehicleId ?? this.assignedVehicleId,
       assignedVehicleLicensePlate:
           assignedVehicleLicensePlate ?? this.assignedVehicleLicensePlate,
+      employeeId: employeeId ?? this.employeeId,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
