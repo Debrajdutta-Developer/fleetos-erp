@@ -133,6 +133,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                           flex: 2,
                           child: DropdownButtonFormField<String>(
                             value: _selectedDeptId,
+                            isExpanded: true,
                             decoration: InputDecoration(
                               labelText: 'Department',
                               border: OutlineInputBorder(
@@ -160,6 +161,7 @@ class _EmployeeListScreenState extends ConsumerState<EmployeeListScreen> {
                           flex: 2,
                           child: DropdownButtonFormField<String>(
                             value: _selectedStatus,
+                            isExpanded: true,
                             decoration: InputDecoration(
                               labelText: 'Status',
                               border: OutlineInputBorder(

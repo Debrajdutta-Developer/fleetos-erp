@@ -79,14 +79,17 @@ class _PayrollScreenState extends ConsumerState<PayrollScreen> {
                             ),
                           ),
                           const SizedBox(width: 16),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 20),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16, horizontal: 8),
+                              ),
+                              icon: const Icon(Icons.calculate_outlined),
+                              label: const Text('Process / Calculate',
+                                  overflow: TextOverflow.ellipsis),
+                              onPressed: () => _generatePayroll(),
                             ),
-                            icon: const Icon(Icons.calculate_outlined),
-                            label: const Text('Process / Calculate'),
-                            onPressed: () => _generatePayroll(),
                           ),
                         ],
                       ),
