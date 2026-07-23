@@ -132,7 +132,7 @@ void main() {
 
     expect(find.text('HR & Employee Management'), findsOneWidget);
     expect(find.text('Alice Smith'), findsOneWidget);
-    expect(find.text('alice@fleet.com'), findsOneWidget);
+    expect(find.textContaining('DRIVER'), findsOneWidget);
   });
 
   testWidgets('AttendanceScreen renders and allows checking details',
